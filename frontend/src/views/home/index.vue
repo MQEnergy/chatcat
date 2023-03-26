@@ -1,6 +1,6 @@
 <template>
   <div>
-    home pageasd
+    <a-empty />
   </div>
 </template>
 
