@@ -1,0 +1,20 @@
+app:
+  mode: 'debug'
+  defaultPageSize: 10 # 默认分页条数
+  maxPageSize: 500    # 最大分页条数
+  appName: "chatcat"
+  version: "v0.1.0"  # 当前版本
+  description: "一个好用的chatGPT客户端工具"
+  versionNewMsg: "当前已经是最新版本!"
+  versionOldMsg: "最新版本: %s, 是否立即更新?"
+  btnConfirmText: "确定"
+  btnCancelText: "取消"
+  width: 1024
+  height: 768
+  upgradeUrl: "" # 更新地址
+  homeUrl: "" # 应用主页
+  serverUrl: "" # 服务器地址
+log:
+  debug: true
+  fileName: 'chatcat' # 日志文件名称
+  dirPath: 'runtime/logs' # 日志默认存放目录
