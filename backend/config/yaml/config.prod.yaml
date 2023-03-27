@@ -9,7 +9,7 @@ app:
   versionOldMsg: "最新版本: %s, 是否立即更新?"
   btnConfirmText: "确定"
   btnCancelText: "取消"
-  width: 1280
+  width: 1024
   height: 720
   upgradeUrl: "" # 更新地址
   homeUrl: "" # 应用主页
