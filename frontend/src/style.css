@@ -1,6 +1,5 @@
 html {
-    background-color: rgba(27, 38, 54, 1);
-    text-align: center;
+    background-color: #e5e6ec;
 }
 
 body {
@@ -28,5 +27,4 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
     height: 100vh;
-    text-align: center;
 }
