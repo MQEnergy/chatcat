@@ -1,16 +1,16 @@
 <template>
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
-    <a-avatar shape="square" :style="{ backgroundColor: '#3370ff' }">A</a-avatar>
-    <a-avatar shape="square" :style="{ backgroundColor: '#14C9C9' }">B</a-avatar>
-    <a-avatar shape="square" :style="{ backgroundColor: '#168CFF' }">C</a-avatar>
-    <a-avatar shape="square" :style="{ backgroundColor: '#FF7D00' }">D</a-avatar>
-    <a-avatar shape="square" :style="{ backgroundColor: '#FFC72E' }">E</a-avatar>
-    <a-avatar shape="square" :style="{ backgroundColor: '#3370ff' }">F</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#3370ff' }">A</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#14C9C9' }">B</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#168CFF' }">C</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#FF7D00' }">D</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#FFC72E' }">E</a-avatar>
+    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#3370ff' }">F</a-avatar>
   </a-space>
   <div class="menu-cate-container">
     <a-space direction="vertical" :size="20">
-      <a-avatar :size="30" :style="{ backgroundColor: '#3370ff' }">
-        <IconUser/>
+      <a-avatar :size="36" :style="{ backgroundColor: '#3370ff' }">
+        <icon-robot />
       </a-avatar>
       <div style="position: relative; cursor: pointer;">
         <icon-menu @click="handleMenuIconHover" size="26"/>
@@ -29,6 +29,7 @@
 <script setup>
 import {useRouter} from 'vue-router'
 import {ref} from "vue";
+import {Message} from "@arco-design/web-vue";
 
 const router = useRouter()
 const isShow = ref(false)
@@ -36,11 +37,14 @@ const isShow = ref(false)
 const handleMenuClick = (e) => {
   switch (e) {
     case '0_1':
-      router.push('/settings/prompt')
+      router.push('/settings/index?tab=3');
+      break
     case '0_2':
-      router.push('/settings/notice')
+      Message.info("检查更新中");
+      break
     case '0_3':
-      router.push('/settings/index')
+      router.push('/settings/index?tab=1');
+      break
   }
 }
 
@@ -72,6 +76,6 @@ const handleMenuIconHover = (e) => {
   position: absolute;
   z-index: 9;
   bottom: 0px;
-  left: 53px;
+  left: 56px;
 }
 </style>

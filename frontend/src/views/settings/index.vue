@@ -9,28 +9,28 @@
           基础设置
         </div>
         <a-menu
-            :default-selected-keys="['0_1']"
+            :default-selected-keys="tabName"
             :style="{ width: '100%' }"
             @menu-item-click="onClickMenuItem"
         >
-          <a-menu-item key="0_1">
-            <IconHome></IconHome>
+          <a-menu-item key="1">
+            <icon-settings />
             通用配置
           </a-menu-item>
-          <a-menu-item key="0_2">
-            <IconHome></IconHome>
+          <a-menu-item key="2">
+            <icon-sync />
             数据同步
           </a-menu-item>
-          <a-menu-item key="0_3">
-            <IconHome></IconHome>
+          <a-menu-item key="3">
+            <icon-select-all />
             提示词管理
           </a-menu-item>
-          <a-menu-item key="0_4">
-            <IconHome></IconHome>
+          <a-menu-item key="4">
+            <icon-message />
             更新信息
           </a-menu-item>
-          <a-menu-item key="0_5">
-            <IconHome></IconHome>
+          <a-menu-item key="5">
+            <icon-tool />
             其他工具
           </a-menu-item>
         </a-menu>
@@ -45,16 +45,19 @@
 </template>
 
 <script>
-import {defineComponent} from 'vue';
+import {defineComponent, reactive} from 'vue';
+import { useRouter } from 'vue-router';
 import {Message} from '@arco-design/web-vue';
-import {IconCalendar, IconCaretLeft, IconCaretRight, IconHome,} from '@arco-design/web-vue/es/icon';
 
 export default defineComponent({
-  components: {
-    IconCaretRight,
-    IconCaretLeft,
-    IconHome,
-    IconCalendar,
+  setup() {
+    const route = useRouter()
+    const {tab} = route.currentRoute.value.query
+    const tabName = reactive([tab])
+
+    return {
+      tabName
+    }
   },
   methods: {
     onClickMenuItem(key) {
