@@ -36,8 +36,10 @@
         </a-menu>
       </a-layout-sider>
       <a-layout>
-        <a-layout style="padding: 0 24px; border-radius: 8px;">
-          <a-layout-content>Content</a-layout-content>
+        <a-layout style="padding: 0 16px; border-radius: 8px;">
+          <a-layout-content>
+            <general></general>
+          </a-layout-content>
         </a-layout>
       </a-layout>
     </a-layout>
@@ -48,8 +50,10 @@
 import {defineComponent, reactive} from 'vue';
 import { useRouter } from 'vue-router';
 import {Message} from '@arco-design/web-vue';
+import General from "@views/settings/components/general.vue";
 
 export default defineComponent({
+  components: {General},
   setup() {
     const route = useRouter()
     const {tab} = route.currentRoute.value.query
@@ -120,16 +124,6 @@ export default defineComponent({
   font-size: 14px;
   background: var(--color-bg-3);
   border-radius: 8px;
+  padding: 24px;
 }
-
-.layout-demo :deep(.arco-layout-footer),
-.layout-demo :deep(.arco-layout-content) {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: var(--color-white);
-  font-size: 16px;
-  font-stretch: condensed;
-  text-align: center;
-}
-</style>  
+</style>
