@@ -1,6 +1,6 @@
-<div style="text-align: center">
+<center>
 <img src="assets/chatcat.png" width="180" height="180" />
-</div>
+</center>
 
 # chatcat
 ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
