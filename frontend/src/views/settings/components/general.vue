@@ -18,23 +18,24 @@
     <a-card title="国际化" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <a-select v-model="value" :field-names="fieldNames" :style="{width:'440px'}"
                 placeholder="Please select ..." allow-search>
-        <a-option v-for="(item, index) in options" :value="item.city" :key="index">
-          <a-space>
-            {{ item.text }}{{ item.city }}
-          </a-space>
+        <a-option style="width: 100%;" v-for="(item, index) in lanList" :value="item.letter" :key="index">
+          {{ item.label }}
+          <template #extra>
+            {{ item.desc }}
+          </template>
         </a-option>
       </a-select>
     </a-card>
     <!-- 主题 -->
     <a-card title="主题" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
-      <a-radio-group>
+      <a-radio-group @change="handleCheckTheme">
         <template v-for="(item, index) in themeList" :key="index">
           <a-radio :value="item.id">
             <template #radio="{ checked }">
               <a-space
                   align="start"
                   class="custom-radio-card"
-                  :class="{ 'custom-radio-card-checked': checked }"
+                  :class="{ 'custom-radio-card-checked': item.checked }"
               >
                 <div className="custom-radio-card-mask">
                   <div className="custom-radio-card-mask-dot"/>
@@ -50,62 +51,58 @@
         </template>
       </a-radio-group>
     </a-card>
+
     <!-- 侧边栏 -->
-    <a-drawer :width="500" :visible="visible" @ok="handleOk" @cancel="handleCancel" unmountOnClose>
-      <template #title>
-        歡迎使用ChatGPT Sidebar！ 這是您開始的旅程：
-      </template>
-      <info-drawer :visible="visible"></info-drawer>
-    </a-drawer>
+    <general-drawer :visible="visible" @cancel="handleCancelDrawer"></general-drawer>
   </div>
 </template>
 
 <script>
 import {reactive, ref} from 'vue';
-import InfoDrawer from "@views/settings/components/info-drawer.vue";
+import GeneralDrawer from "@views/settings/components/general-drawer.vue";
 
 export default {
-  components: {InfoDrawer},
+  components: {GeneralDrawer},
   setup() {
-    const checked = ref(1)
-    const value = ref('bj');
+    const checked = ref(true)
+    const value = ref('zh');
     const fieldNames = {value: 'city', label: 'text'}
     const themeList = reactive([
-      {id: 1, name: '跟随系统'},
-      {id: 2, name: '亮色模式'},
-      {id: 3, name: '黑暗模式'},
+      {id: 1, name: '跟随系统', checked: true},
+      {id: 2, name: '亮色模式', checked: false},
+      {id: 3, name: '黑暗模式', checked: false},
     ])
-    const options = reactive([
+    const lanList = reactive([
       {
-        letter: 'eng',
-        text: 'English',
-        en: 'English'
-      },{
-        letter: 'eng',
-        text: 'English',
-        en: 'English'
+        letter: 'en',
+        label: 'English',
+        desc: 'English'
+      }, {
+        letter: 'zh',
+        label: '中文(简体)',
+        desc: 'Chinese(Simplified)'
       },
     ]);
     const visible = ref(false);
     const handleNotice = () => {
       visible.value = true;
     }
-    const handleOk = () => {
-      visible.value = false;
+    const handleCheckTheme = () => {
+      checked.value = !checked.value;
     }
-    const handleCancel = () => {
+    const handleCancelDrawer = () => {
       visible.value = false;
     }
     return {
       checked,
       value,
       fieldNames,
-      options,
+      lanList,
       themeList,
       visible,
       handleNotice,
-      handleOk,
-      handleCancel,
+      handleCheckTheme,
+      handleCancelDrawer
     }
   }
 }

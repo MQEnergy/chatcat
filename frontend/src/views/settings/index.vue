@@ -4,33 +4,33 @@
       <icon-close-circle-fill @click="handleClose" size="40"/>
     </div>
     <a-layout class="layout-demo">
-      <a-layout-sider collapsible hide-trigger :collapsed="false">
-        <div class="logo">
-          基础设置
-        </div>
+      <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px' }">
+        <!--        <div class="logo">-->
+        <!--          基础设置-->
+        <!--        </div>-->
         <a-menu
             :default-selected-keys="tabName"
-            :style="{ width: '100%' }"
+            :style="{ width: '170px' }"
             @menu-item-click="onClickMenuItem"
         >
           <a-menu-item key="1">
-            <icon-settings />
+            <icon-settings/>
             通用配置
           </a-menu-item>
           <a-menu-item key="2">
-            <icon-sync />
+            <icon-sync/>
             数据同步
           </a-menu-item>
           <a-menu-item key="3">
-            <icon-select-all />
+            <icon-select-all/>
             提示词管理
           </a-menu-item>
           <a-menu-item key="4">
-            <icon-message />
+            <icon-message/>
             更新信息
           </a-menu-item>
           <a-menu-item key="5">
-            <icon-tool />
+            <icon-tool/>
             其他工具
           </a-menu-item>
         </a-menu>
@@ -38,7 +38,9 @@
       <a-layout>
         <a-layout style="padding: 0 16px; border-radius: 8px;">
           <a-layout-content>
-            <general></general>
+            <general v-if="tabValue == 1"></general>
+            <datasync v-if="tabValue == 2"></datasync>
+            <prompt v-if="tabValue == 3"></prompt>
           </a-layout-content>
         </a-layout>
       </a-layout>
@@ -47,26 +49,30 @@
 </template>
 
 <script>
-import {defineComponent, reactive} from 'vue';
-import { useRouter } from 'vue-router';
-import {Message} from '@arco-design/web-vue';
+import {defineComponent, reactive, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import General from "@views/settings/components/general.vue";
+import Datasync from "@views/settings/components/datasync.vue";
+import Prompt from "@views/settings/components/prompt.vue";
 
 export default defineComponent({
-  components: {General},
+  components: {Prompt, Datasync, General},
   setup() {
     const route = useRouter()
-    const {tab} = route.currentRoute.value.query
-    const tabName = reactive([tab])
-
+    let {tab} = route.currentRoute.value.query
+    let tabName = reactive([tab])
+    const tabValue = ref(tab)
+    const onClickMenuItem = (key) => {
+      tabValue.value = key
+      route.push(`/settings/index?tab=${key}`);
+    }
     return {
-      tabName
+      tabName,
+      tabValue,
+      onClickMenuItem
     }
   },
   methods: {
-    onClickMenuItem(key) {
-      Message.info({content: `You select ${key}`, showIcon: true});
-    },
     handleClose() {
       const router = this.$router;
       const location = {path: '/index'}
@@ -93,6 +99,10 @@ export default defineComponent({
   text-align: center;
   font-size: 20px;
   line-height: 32px;
+}
+
+.layout-demo :deep(.arco-menu-vertical .arco-menu-inner) {
+  padding: 8px;
 }
 
 .layout-demo :deep(.arco-layout-sider-light) {

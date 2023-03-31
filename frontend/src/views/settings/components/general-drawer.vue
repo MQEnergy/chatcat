@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <a-drawer :width="500"
+            :visible="props.visible"
+            @ok="handleOk"
+            @cancel="handleCancel"
+            :hide-cancel="true"
+            unmountOnClose>
+    <template #title>
+      歡迎使用ChatGPT Sidebar！ 這是您開始的旅程：
+    </template>
     <a-typography-title :heading="3" style="margin-top: 0px;">
       如何
       <a-link style="font-size: 28px;" status="danger">免費</a-link>
@@ -62,14 +70,28 @@
           查看您18美元的積分
         </a-space>
       </a-typography-title>
-
     </a-typography>
-  </div>
+  </a-drawer>
 </template>
 
 <script setup>
 import Img1 from '@assets/images/img.png';
 import Img2 from '@assets/images/img_1.png';
+
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const emits = defineEmits(['cancel']);
+const handleOk = () => {
+  emits('cancel', false);
+}
+const handleCancel = () => {
+  emits('cancel', false);
+}
 </script>
 
 <style scoped>
