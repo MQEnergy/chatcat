@@ -13,6 +13,7 @@
     "path": "^0.12.7",
     "vite-plugin-style-import": "^2.0.0",
     "vue": "^3.2.37",
+    "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
@@ -22,6 +23,8 @@
     "less-loader": "^11.1.0",
     "unplugin-auto-import": "^0.15.2",
     "unplugin-vue-components": "^0.24.1",
-    "vite": "^3.0.7"
+    "vite": "^3.0.7",
+    "vite-svg-loader": "^4.0.0",
+    "vue-tsc": "^1.2.0"
   }
 }

@@ -1,24 +1,22 @@
 <template>
   <div>
-    <!-- 配置key -->
-    <a-card title="基础配置" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
+    <a-card :title="$t('settings.general')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <a-space direction="vertical" size="medium">
-        <a-typography-text>您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。</a-typography-text>
-        <a-input-password :style="{width:'440px'}" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" allow-clear>
+        <a-typography-text>{{ $t('settings.general.keyTips') }}</a-typography-text>
+        <a-input-password :style="{width:'460px'}" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" allow-clear>
           <template #prepend>
             API key
           </template>
         </a-input-password>
         <a-alert type="warning">
-          <a-link @click="handleNotice">按照指南從 OpenAI 免費獲取 API 密鑰和高達 18 美元的積分</a-link>
+          <a-link @click="handleNotice">{{ $t('settings.general.alertTips') }}</a-link>
         </a-alert>
       </a-space>
     </a-card>
-    <!-- 国际化 -->
-    <a-card title="国际化" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
-      <a-select v-model="value" :field-names="fieldNames" :style="{width:'440px'}"
-                placeholder="Please select ..." allow-search>
-        <a-option style="width: 100%;" v-for="(item, index) in lanList" :value="item.letter" :key="index">
+    <a-card :title="$t('settings.language')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
+      <a-select v-model="currentLocale" :field-names="fieldNames" :style="{width:'460px'}"
+                allow-search @change="changeLocale">
+        <a-option style="width: 100%;" v-for="(item, index) in locales" :value="item.value" :key="index">
           {{ item.label }}
           <template #extra>
             {{ item.desc }}
@@ -26,8 +24,7 @@
         </a-option>
       </a-select>
     </a-card>
-    <!-- 主题 -->
-    <a-card title="主题" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
+    <a-card :title="$t('settings.theme')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <a-radio-group @change="handleCheckTheme">
         <template v-for="(item, index) in themeList" :key="index">
           <a-radio :value="item.id">
@@ -52,59 +49,40 @@
       </a-radio-group>
     </a-card>
 
-    <!-- 侧边栏 -->
     <general-drawer :visible="visible" @cancel="handleCancelDrawer"></general-drawer>
   </div>
 </template>
 
-<script>
-import {reactive, ref} from 'vue';
+<script setup>
+import {computed, ref} from 'vue';
 import GeneralDrawer from "@views/settings/components/general-drawer.vue";
+import {LOCALE_OPTIONS} from "@/locale";
+import useLocale from "@/hooks/locale";
+import {useI18n} from "vue-i18n";
 
-export default {
-  components: {GeneralDrawer},
-  setup() {
-    const checked = ref(true)
-    const value = ref('zh');
-    const fieldNames = {value: 'city', label: 'text'}
-    const themeList = reactive([
-      {id: 1, name: '跟随系统', checked: true},
-      {id: 2, name: '亮色模式', checked: false},
-      {id: 3, name: '黑暗模式', checked: false},
-    ])
-    const lanList = reactive([
-      {
-        letter: 'en',
-        label: 'English',
-        desc: 'English'
-      }, {
-        letter: 'zh',
-        label: '中文(简体)',
-        desc: 'Chinese(Simplified)'
-      },
-    ]);
-    const visible = ref(false);
-    const handleNotice = () => {
-      visible.value = true;
-    }
-    const handleCheckTheme = () => {
-      checked.value = !checked.value;
-    }
-    const handleCancelDrawer = () => {
-      visible.value = false;
-    }
-    return {
-      checked,
-      value,
-      fieldNames,
-      lanList,
-      themeList,
-      visible,
-      handleNotice,
-      handleCheckTheme,
-      handleCancelDrawer
-    }
-  }
+const {t} = useI18n();
+const fieldNames = {value: 'city', label: 'text'}
+const themeList = computed(() => [
+  {id: 1, name: t('settings.theme.system'), checked: true},
+  {id: 2, name: t('settings.theme.toLight'), checked: false},
+  {id: 3, name: t('settings.theme.toDark'), checked: false},
+])
+const locales = [...LOCALE_OPTIONS]
+const visible = ref(false);
+const {changeLocale, currentLocale} = useLocale();
+
+const handleNotice = () => {
+  visible.value = true;
+}
+const handleCheckTheme = (e) => {
+  console.log(e);
+  const theme = themeList.value.filter((item) => {
+    return item.id == e
+  });
+  theme[0].checked = true;
+}
+const handleCancelDrawer = () => {
+  visible.value = false;
 }
 </script>
 
@@ -113,7 +91,7 @@ export default {
   padding: 10px 16px;
   border: 1px solid var(--color-border-2);
   border-radius: 4px;
-  width: 128px;
+  width: 134px;
   box-sizing: border-box;
 }
 

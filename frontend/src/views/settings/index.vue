@@ -5,9 +5,6 @@
     </div>
     <a-layout class="layout-demo">
       <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px' }">
-        <!--        <div class="logo">-->
-        <!--          基础设置-->
-        <!--        </div>-->
         <a-menu
             :default-selected-keys="tabName"
             :style="{ width: '170px' }"
@@ -15,32 +12,29 @@
         >
           <a-menu-item key="1">
             <icon-settings/>
-            通用配置
+            {{ $t('settings.general') }}
           </a-menu-item>
           <a-menu-item key="2">
             <icon-sync/>
-            数据同步
+            {{ $t('settings.datasync') }}
           </a-menu-item>
           <a-menu-item key="3">
             <icon-select-all/>
-            提示词管理
+            {{ $t('settings.prompt') }}
           </a-menu-item>
           <a-menu-item key="4">
-            <icon-message/>
-            更新信息
-          </a-menu-item>
-          <a-menu-item key="5">
             <icon-tool/>
-            其他工具
+            {{ $t('settings.contact') }}
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
         <a-layout style="padding: 0 16px; border-radius: 8px;">
           <a-layout-content>
-            <general v-if="tabValue == 1"></general>
-            <datasync v-if="tabValue == 2"></datasync>
-            <prompt v-if="tabValue == 3"></prompt>
+            <general v-if="tabValue === '1'"></general>
+            <datasync v-if="tabValue === '2'"></datasync>
+            <prompt v-if="tabValue === '3'"></prompt>
+            <contact v-if="tabValue === '4'"></contact>
           </a-layout-content>
         </a-layout>
       </a-layout>
@@ -54,9 +48,10 @@ import {useRouter} from 'vue-router';
 import General from "@views/settings/components/general.vue";
 import Datasync from "@views/settings/components/datasync.vue";
 import Prompt from "@views/settings/components/prompt.vue";
+import Contact from "@views/settings/components/contact.vue";
 
 export default defineComponent({
-  components: {Prompt, Datasync, General},
+  components: {Contact, Prompt, Datasync, General},
   setup() {
     const route = useRouter()
     let {tab} = route.currentRoute.value.query

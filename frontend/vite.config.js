@@ -16,6 +16,7 @@ export default defineConfig({
       '@api': path.resolve(__dirname, 'src/api'),
       '@views': path.resolve(__dirname, 'src/views'),
       '@plugins': path.resolve(__dirname, 'src/plugins'),
+      '@config': path.resolve(__dirname, 'src/config'),
     }
   },
   server: {

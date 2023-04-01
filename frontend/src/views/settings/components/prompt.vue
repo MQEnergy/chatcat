@@ -1,12 +1,12 @@
 <template>
   <div class="prompt-container">
-    <a-card title="分类管理" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
+    <a-card :title="$t('settings.prompt.cate')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <template #extra>
         <a-button type="primary" @click="handleAddCate">
           <template #icon>
             <icon-plus/>
           </template>
-          分类
+          {{ $t('settings.prompt.cateAddBtn') }}
         </a-button>
       </template>
       <!-- 分类列表 -->
@@ -25,7 +25,7 @@
                   </a-avatar>
                   <a-typography-text>{{ item.name }}</a-typography-text>
                 </span>
-                <a-link @click="handlePromptClick">查看</a-link>
+                <a-link @click="handlePromptClick">{{ $t('settings.prompt.viewBtn') }}</a-link>
               </div>
             </a-card>
           </a-col>

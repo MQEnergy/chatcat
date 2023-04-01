@@ -1,11 +1,15 @@
 <template>
-  <a-modal v-model:visible="props.visible" title="添加分类" @cancel="handleCancel" @before-ok="handleBeforeOk">
-    <a-form :model="form" layout="vertical" >
-      <a-form-item field="name" label="名称">
-        <a-input v-model="form.name" placeholder="请输入分类名称 如：笔记"/>
+  <a-modal v-model:visible="props.visible" :title="$t('settings.prompt.cate')"
+           :cancel-text="$t('settings.prompt.cate.cancel')"
+           :ok-text="$t('settings.prompt.cate.submit')"
+           @cancel="handleCancel"
+           @before-ok="handleBeforeOk">
+    <a-form :model="form" layout="vertical">
+      <a-form-item field="name" :label="$t('settings.prompt.cate.name')">
+        <a-input v-model="form.name" :placeholder="$t('settings.prompt.cate.name.placeholder')"/>
       </a-form-item>
-      <a-form-item field="desc" label="备注">
-        <a-textarea v-model="form.desc" placeholder="请填写备注说明" allow-clear/>
+      <a-form-item field="desc" :label="$t('settings.prompt.cate.desc')">
+        <a-textarea v-model="form.desc" :placeholder="$t('settings.prompt.cate.desc.placeholder')" allow-clear/>
       </a-form-item>
     </a-form>
   </a-modal>
