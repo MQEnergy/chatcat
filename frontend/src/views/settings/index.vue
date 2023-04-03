@@ -26,6 +26,10 @@
             <icon-tool/>
             {{ $t('settings.contact') }}
           </a-menu-item>
+          <a-menu-item key="5">
+            <icon-download />
+            {{ $t('settings.releaseNotes') }}
+          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -35,6 +39,7 @@
             <datasync v-if="tabValue === '2'"></datasync>
             <prompt v-if="tabValue === '3'"></prompt>
             <contact v-if="tabValue === '4'"></contact>
+            <release-notes v-if="tabValue === '5'"></release-notes>
           </a-layout-content>
         </a-layout>
       </a-layout>
@@ -49,9 +54,10 @@ import General from "@views/settings/components/general.vue";
 import Datasync from "@views/settings/components/datasync.vue";
 import Prompt from "@views/settings/components/prompt.vue";
 import Contact from "@views/settings/components/contact.vue";
+import ReleaseNotes from "@views/settings/components/release-notes.vue";
 
 export default defineComponent({
-  components: {Contact, Prompt, Datasync, General},
+  components: {ReleaseNotes, Contact, Prompt, Datasync, General},
   setup() {
     const route = useRouter()
     let {tab} = route.currentRoute.value.query

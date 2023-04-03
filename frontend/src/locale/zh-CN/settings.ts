@@ -3,6 +3,9 @@ export default {
   'settings.general': '通用配置',
   'settings.general.keyTips': '您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。',
   'settings.general.alertTips': '请遵循指南，从OpenAI免费获取API密钥和高达18美元的积分。',
+  'settings.general.apiKey': 'API 密钥',
+  'settings.general.apiModel': 'API 模型',
+  'settings.general.apiModel.placeholder': '请选择api模型',
   'settings.language': '国际化',
   'settings.theme': '主题',
   'settings.theme.system': '跟随系统',
@@ -28,6 +31,7 @@ export default {
   'settings.prompt.cate.submit': '确定',
   'settings.prompt.viewBtn': '查看',
   'settings.prompt.cateAddBtn': '添加',
+  'settings.prompt.drawerTitle': 'prompt提示词列表',
   // 联系我们
   'settings.contact': '联系我们',
   'settings.contact.star': '给个star',
@@ -52,4 +56,8 @@ export default {
   'settings.contact.email.errorTips2': '最少五个字符',
   'settings.contact.cancelBtn': '重置',
   'settings.contact.addBtn': '提交',
+  // 更新信息
+  'settings.releaseNotes': '更新信息',
+  'settings.updateCate': '更新信息',
+  'settings.checkUpdate': '检查更新'
 };

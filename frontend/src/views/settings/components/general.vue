@@ -5,12 +5,23 @@
         <a-typography-text>{{ $t('settings.general.keyTips') }}</a-typography-text>
         <a-input-password :style="{width:'460px'}" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" allow-clear>
           <template #prepend>
-            API key
+            {{ $t('settings.general.apiKey') }}
           </template>
         </a-input-password>
         <a-alert type="warning">
           <a-link @click="handleNotice">{{ $t('settings.general.alertTips') }}</a-link>
         </a-alert>
+        <a-space>
+          {{ $t('settings.general.apiModel') }}:
+          <a-select :style="{width:'383px'}" :placeholder="$t('settings.general.apiModel.placeholder')">
+            <a-option>gpt-3.5-turbo</a-option>
+            <a-option>gpt-3.5-turbo-0301</a-option>
+            <a-option>gpt-4</a-option>
+            <a-option>gpt-4-0314</a-option>
+            <a-option>gpt-4-32k</a-option>
+            <a-option>gpt-4-32k-0314</a-option>
+          </a-select>
+        </a-space>
       </a-space>
     </a-card>
     <a-card :title="$t('settings.language')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
@@ -75,11 +86,13 @@ const handleNotice = () => {
   visible.value = true;
 }
 const handleCheckTheme = (e) => {
-  console.log(e);
-  const theme = themeList.value.filter((item) => {
-    return item.id == e
-  });
-  theme[0].checked = true;
+  themeList.value.forEach((item) => {
+    if (item.id === e) {
+      item.checked =true;
+    } else {
+      item.checked = false;
+    }
+  })
 }
 const handleCancelDrawer = () => {
   visible.value = false;

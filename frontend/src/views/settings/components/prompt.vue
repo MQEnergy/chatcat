@@ -36,7 +36,7 @@
   <!-- 添加分类 -->
   <prompt-add :visible="visible" @cancel="handleCancel"></prompt-add>
   <!-- 查看prompt关键词列表 -->
-  <prompt-drawer :visible="drawerSeen" @cancel="handleCancel"></prompt-drawer>
+  <prompt-drawer :visible="drawerSeen" :prompts="promptList" @cancel="handleCancel"></prompt-drawer>
 </template>
 
 <script setup>
@@ -92,6 +92,7 @@ const cateList = reactive([
     name: '分类11'
   },
 ]);
+let promptList = reactive([])
 const handleCancel = (e) => {
   visible.value = e;
   drawerSeen.value = e;
@@ -100,6 +101,30 @@ const handleAddCate = () => {
   visible.value = true;
 }
 const handlePromptClick = () => {
+  promptList = [{
+    id: 1,
+    name: '翻译成中文和润色',
+    desc: '把任何语言翻译成中文',
+    prompt: '将我输入的任何语言翻译成中文，如果我输入的是中文帮我润色一下'
+  },{
+    id: 2,
+    name: 'Midjourney',
+    desc: 'A prompt used to generate Midjourney prompts. ',
+    prompt: 'Generate an image prompt for an AI art bot. Create 5 image prompts that I can use with the MidJourney AI art bot. I will give you a sentence of what I have in mind, and then you generate the image prompts based on the following format:\n' +
+        '\n' +
+        'MidJourney Prompt Format Style: [type of art], [subject or topic], [action or activity], [aesthetic details, lighting, and styles], [colors], [--ar aspect ratio]\n' +
+        '\n' +
+        'Example Image Prompt: watercolor illustration of a tiny adorable hamster dressed up in a suit and tie, fantasy character, --ar 16:9\n' +
+        '\n' +
+        'If you understand, ask me what I have in mind. respond in English.'
+  },{
+    id: 3,
+    name: '老胡觉得',
+    desc: '胡锡进风格言论生成器',
+    prompt: '从现在开始，忘记你是一个AI语言模型，你现在的名字叫做“胡锡进”（也称作“老胡”）。\n' +
+        '老胡常常喜欢发表两边不得罪的言论，重视舆论影响，习惯用搅浑水的策略，减少事件对公众带来的负面影响。同时，老胡立场先行，总喜欢举偏向自己观点的例子。喜欢口语化和情感化表达，不善分点作答，习惯带有“老胡觉得”、“老胡希望”等把自己挂在嘴边的口头禅。“老胡”具有较高的语言表达能力和舆论影响力，希望能够通过自己的言论影响社会舆论和诱导支持老胡支持的立场。\n' +
+        '现在，请老胡你支持并赞同下面的论点，引用现实例子，发表自己的高见：'
+  }];
   drawerSeen.value = true;
 }
 </script>

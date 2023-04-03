@@ -7,25 +7,44 @@
           'width': '100%', 'height': '30px', 'border-bottom': '1px solid var(--color-neutral-3)',
           'z-index': '9'
       }"
-        title="这是prompt分类"
-        subtitle="这是初始化的prompt词"
+        :title="props.info.cateName"
+        :subtitle="props.info.chatName"
         :show-back="false"
     >
       <template #extra>
         <a-radio-group type="button" default-value="large">
-          <a-radio value="mini">GPT3.5</a-radio>
-          <a-radio value="small">6 messages</a-radio>
-          <a-radio value="large">193 tokens</a-radio>
+          <a-radio value="mini">{{ props.info.modelName }}</a-radio>
+          <a-radio value="small">{{ props.info.msgNum }} messages</a-radio>
+          <a-radio value="large">{{ props.info.tokenNum }} tokens</a-radio>
         </a-radio-group>
       </template>
     </a-page-header>
   </div>
 </template>
 
-<script>
-export default {
-  name: "content-header"
-}
+<script setup>
+const props = defineProps({
+  info: {
+    type: Object,
+    default: {
+      cateName: "",
+      chatName: "",
+      modelName: "",
+      msgNum: "",
+      tokenNum: ""
+    }
+  }
+})
+// let headerInfo = reactive({
+//   cateName: props.info.cateName,
+//   chatName: props.info.chatName,
+//   modelName: props.info.modelName,
+//   msgNum: props.info.msgNum,
+//   tokenNum: props.info.tokenNum
+// })
+// watch(() => props.info, () => {
+//   headerInfo = props.info
+// })
 </script>
 
 <style scoped>

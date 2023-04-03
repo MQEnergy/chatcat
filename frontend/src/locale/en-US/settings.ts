@@ -3,6 +3,9 @@ export default {
   'settings.general': 'General',
   'settings.general.keyTips': 'Your API key is stored locally in your browser and will never be sent anywhere else',
   'settings.general.alertTips': 'Please follow the guidelines to obtain API keys and up to $18 credit for free from OpenAI',
+  'settings.general.apiKey': 'API Key',
+  'settings.general.apiModel': 'API Model',
+  'settings.general.apiModel.placeholder': 'Please select an API model',
   'settings.language': 'Language',
   'settings.theme': 'Theme',
   'settings.theme.system': 'Auto',
@@ -28,6 +31,7 @@ export default {
   'settings.prompt.cate.submit': 'Submit',
   'settings.prompt.viewBtn': 'View',
   'settings.prompt.cateAddBtn': 'Add Cate',
+  'settings.prompt.drawerTitle': 'Prompt list',
   // contact us
   'settings.contact': 'Contact',
   'settings.contact.star': 'Give me a star.',
@@ -51,5 +55,8 @@ export default {
   'settings.contact.email.errorTips2': 'Cannot be less than five characters',
   'settings.contact.cancelBtn': 'Reset',
   'settings.contact.addBtn': 'Submit',
-
+  // update info
+  'settings.releaseNotes': 'Update',
+  'settings.updateCate': 'Update information',
+  'settings.checkUpdate': 'Check update',
 };

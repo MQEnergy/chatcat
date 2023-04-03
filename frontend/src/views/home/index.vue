@@ -4,52 +4,28 @@
       <a-layout>
         <!-- 侧边分类栏 -->
         <a-layout-sider style="width: 76px; background: #121212; text-align: center; ">
-          <menu-cate></menu-cate>
+          <menu-cate :list="cateList"></menu-cate>
         </a-layout-sider>
-
-        <!-- 侧边内容列表栏 -->
+        <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3)">
-          <menu-list></menu-list>
+          <menu-list :list="chatList"></menu-list>
         </a-layout-sider>
-
-        <!-- 内容区 -->
+        <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
           <a-layout>
             <!-- 头部 -->
             <a-layout-header>
-              <content-header></content-header>
+              <content-header :info="headerInfo"></content-header>
             </a-layout-header>
             <!-- 内容区域 -->
             <a-layout-content class="absolute-div">
-              <div style="padding: 20px;">
-                <a-space direction="vertical" :size="30">
-                  <a-space align="start" :size="10" v-for="n in 10">
-                    <a-avatar :style="{backgroundColor: '#165DFF'}" :size="32">A</a-avatar>
-                    <a-card hoverable :style="{width: '500px', 'border-radius': '8px'}">
-                      ByteDance's core product, Toutiao ("Headlines"), is a content platform in
-                      China and around the world. Toutiao started out as a news recommendation
-                      engine and gradually evolved into a platform delivering content in various
-                      formats.
-                      <template #actions>
-                        <span class="icon-hover"><IconThumbUp/></span>
-                        <span class="icon-hover"><IconShareInternal/></span>
-                        <span class="icon-hover"><IconMore/></span>
-                      </template>
-                    </a-card>
-                  </a-space>
-                </a-space>
-              </div>
+              <chat-list :list="contentList"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
             <menu-tips></menu-tips>
             <!-- 对话输入框 -->
-            <a-layout-footer class="prompt-input-container"
-                             style="">
-              <a-space direction="horizontal" style="width: 100%;">
-                <a-mention size="large" :data="['翻译', '润色', '总结', '分析', '解释', '解释代码', '检查代码']"
-                           prefix="/" placeholder="输入 / 或直接输入对话关键词"/>
-                <a-button size="large" type="primary">send</a-button>
-              </a-space>
+            <a-layout-footer class="prompt-input-container">
+              <prompt-input :value="prompt"></prompt-input>
             </a-layout-footer>
           </a-layout>
         </a-layout-content>
@@ -62,7 +38,77 @@
 import MenuTips from "@components/home/menu-tips.vue";
 import MenuCate from "@components/home/menu-cate.vue";
 import MenuList from "@components/home/menu-list.vue";
-import ContentHeader from "@components/home/content-header.vue";</script>
+import ContentHeader from "@components/home/content-header.vue";
+import ChatList from "@views/home/chat-list.vue";
+import PromptInput from "@views/home/prompt-input.vue";
+import {useRouter} from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+
+const router = useRouter();
+const prompt = ref('');
+
+onMounted(() => {
+  // 输入框
+  const promptValue = router.currentRoute.value.query.prompt || '';
+  prompt.value = promptValue;
+})
+
+// 头部显示
+const headerInfo = ref({
+  cateName: '这是分类名称',
+  chatName: '这是对话语句',
+  modelName: 'GPT3.5',
+  msgNum: '16',
+  tokenNum: '193'
+})
+// 分类列表
+const cateList = reactive([
+  {
+    id: 1,
+    cateName: '前端',
+    letter: 'Q',
+    color: '#3370ff'
+  }, {
+    id: 2,
+    cateName: '后端',
+    letter: 'H',
+    color: '#14c9c9'
+  }, {
+    id: 3,
+    cateName: '设计',
+    letter: 'S',
+    color: '#ff7d00'
+  }, {
+    id: 4,
+    cateName: '服务器',
+    letter: 'F',
+    color: '#ffc72e'
+  }
+])
+// 分类下的chat列表
+const chatList = reactive([{
+  id: 1,
+  name: '这是chat对话语句1',
+  sort: 50
+}, {
+  id: 2,
+  name: '这是chat对话语句2',
+  sort: 50
+}, {
+  id: 3,
+  name: '这是chat对话语句3',
+  sort: 50
+}])
+
+// 聊天内容列表
+const contentList = reactive([
+  {
+    id: 1,
+    content: '',
+    avatar: '',
+  }
+])
+</script>
 
 <style scoped>
 .layout-demo :deep(.arco-space-item:nth-child(1)) {

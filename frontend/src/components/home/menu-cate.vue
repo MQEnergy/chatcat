@@ -1,16 +1,13 @@
 <template>
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#3370ff' }">A</a-avatar>
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#14C9C9' }">B</a-avatar>
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#168CFF' }">C</a-avatar>
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#FF7D00' }">D</a-avatar>
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#FFC72E' }">E</a-avatar>
-    <a-avatar shape="square" :size="36" :style="{ backgroundColor: '#3370ff' }">F</a-avatar>
+    <a-avatar v-for="(item, index) in cateList" :key="index" shape="square" :size="36"
+              :style="{ backgroundColor: item.color }">{{ item.letter }}
+    </a-avatar>
   </a-space>
   <div class="menu-cate-container">
     <a-space direction="vertical" :size="20">
       <a-avatar :size="36" :style="{ backgroundColor: '#3370ff' }">
-        <icon-robot />
+        <icon-robot/>
       </a-avatar>
       <div style="position: relative; cursor: pointer;">
         <icon-menu @click="handleMenuIconHover" size="26"/>
@@ -28,11 +25,23 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {ref} from "vue";
+import {reactive, ref, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
+
+const props = defineProps({
+  list: {
+    type: Array,
+    default: []
+  }
+})
 
 const router = useRouter()
 const isShow = ref(false)
+
+let cateList = reactive(props.list)
+watch(() => props.list, () => {
+  cateList = props.list
+})
 // handleMenuClick 点击菜单
 const handleMenuClick = (e) => {
   switch (e) {
