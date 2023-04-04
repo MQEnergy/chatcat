@@ -1,8 +1,11 @@
 <template>
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
-    <a-avatar v-for="(item, index) in cateList" :key="index" shape="square" :size="36"
-              :style="{ backgroundColor: item.color }">{{ item.letter }}
-    </a-avatar>
+    <a-tooltip :content="item.cateName" position="right" v-for="(item, index) in cateList">
+      <a-avatar :key="index" shape="square" :size="36"
+                :style="{ backgroundColor: item.color, cursor: 'pointer' }" @click="handleCateClick(item, index)">
+        {{ item.letter }}
+      </a-avatar>
+    </a-tooltip>
   </a-space>
   <div class="menu-cate-container">
     <a-space direction="vertical" :size="20">
@@ -25,7 +28,7 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {reactive, ref, watch} from "vue";
+import {defineEmits, reactive, ref, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
 
 const props = defineProps({
@@ -34,7 +37,7 @@ const props = defineProps({
     default: []
   }
 })
-
+const emits = defineEmits(["select"])
 const router = useRouter()
 const isShow = ref(false)
 
@@ -56,9 +59,11 @@ const handleMenuClick = (e) => {
       break
   }
 }
-
 const handleMenuIconHover = (e) => {
   isShow.value = !isShow.value
+}
+const handleCateClick = (row, index) => {
+  emits('select', row)
 }
 </script>
 

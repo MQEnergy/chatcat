@@ -5,7 +5,7 @@
         <a-avatar :style="{backgroundColor: '#165DFF'}" :size="32">A</a-avatar>
         <a-card hoverable size="medium" :style="{
           width: '500px', 'border-radius': '8px',
-          background: n % 2 == 0 ? 'white': 'blue',
+          background: n % 2 == 0 ? 'white': '#165dff',
         }">
           <div :style="{color: n % 2 == 0 ? 'black': 'white'}">
             ByteDance's core product, Toutiao ("Headlines"), is a content platform in

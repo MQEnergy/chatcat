@@ -19,6 +19,7 @@ export default {
   'settings.datasync.loginBtn': '登录',
   'settings.datasync.registerBtn': '暂无账号，请去注册',
   'settings.datasync.beginSync': '开启同步',
+  'settings.datasync.accountTips': '注册Chatcat账号，为您的数据提供云存储，您可以将数据备份到云端并跨设备同步数据。',
   'settings.datasync.syncTips': '5s自动同步一次',
   // 提示词管理
   'settings.prompt': '提示词',

@@ -19,6 +19,7 @@ export default {
   'settings.datasync.loginBtn': 'Login',
   'settings.datasync.registerBtn': 'Please go to register',
   'settings.datasync.beginSync': 'Start sync',
+  'settings.datasync.accountTips': 'Register a Chatcat account to provide cloud storage for your data. You can backup your data to the cloud and synchronize it across devices.',
   'settings.datasync.syncTips': '5s automatically syncs once',
   // prompt
   'settings.prompt': 'Prompt',

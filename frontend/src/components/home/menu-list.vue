@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {reactive, ref, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
 
 const props = defineProps({
@@ -47,7 +47,11 @@ const props = defineProps({
     default: []
   }
 })
-const list = reactive(props.list)
+let list = reactive([])
+watch(props.list, () => {
+  console.log(props.list)
+  list = props.list
+})
 const editIdx = ref(null)
 const handleSelect = (e) => {
   console.log(e)

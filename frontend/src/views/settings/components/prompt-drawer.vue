@@ -15,7 +15,9 @@
               <a-dropdown @select="handleSelect($event, item)">
                 <a-link>{{ $t('common.operation') }}</a-link>
                 <template #content>
-                  <a-doption :value="1"><icon-plus /> 加入chat</a-doption>
+                  <a-doption :value="1"><icon-plus />chat</a-doption>
+                  <a-doption :value="2"><icon-edit />编辑</a-doption>
+                  <a-doption :value="2"><icon-delete />删除</a-doption>
                 </template>
               </a-dropdown>
             </template>
