@@ -4,11 +4,11 @@
       <a-layout>
         <!-- 侧边分类栏 -->
         <a-layout-sider style="width: 76px; background: #121212; text-align: center; ">
-          <menu-cate :list="chatData.cateList" @select="handleCateList"></menu-cate>
+          <menu-cate :list="cateList" @select="handleCateList"></menu-cate>
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3)">
-          <menu-list :list="chatData.chatList"></menu-list>
+          <menu-list :list="chatList.list"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
@@ -62,54 +62,32 @@ const headerInfo = ref({
   tokenNum: '193'
 })
 // 分类列表
-// const cateList = reactive([
-//   {
-//     id: 1,
-//     cateName: '前端',
-//     letter: 'Q',
-//     color: '#3370ff'
-//   }, {
-//     id: 2,
-//     cateName: '后端',
-//     letter: 'H',
-//     color: '#14c9c9'
-//   }, {
-//     id: 3,
-//     cateName: '设计',
-//     letter: 'S',
-//     color: '#ff7d00'
-//   }, {
-//     id: 4,
-//     cateName: '服务器',
-//     letter: 'F',
-//     color: '#ffc72e'
-//   }
-// ])
+const cateList = reactive([
+  {
+    id: 1,
+    cateName: '前端',
+    letter: 'Q',
+    color: '#3370ff'
+  }, {
+    id: 2,
+    cateName: '后端',
+    letter: 'H',
+    color: '#14c9c9'
+  }, {
+    id: 3,
+    cateName: '设计',
+    letter: 'S',
+    color: '#ff7d00'
+  }, {
+    id: 4,
+    cateName: '服务器',
+    letter: 'F',
+    color: '#ffc72e'
+  }
+])
 // 分类下的chat列表
-let chatData = reactive({
-  cateList: [
-    {
-      id: 1,
-      cateName: '前端',
-      letter: 'Q',
-      color: '#3370ff'
-    }, {
-      id: 2,
-      cateName: '后端',
-      letter: 'H',
-      color: '#14c9c9'
-    }, {
-      id: 3,
-      cateName: '设计',
-      letter: 'S',
-      color: '#ff7d00'
-    }, {
-      id: 4,
-      cateName: '服务器',
-      letter: 'F',
-      color: '#ffc72e'
-    }],
-  chatList: []
+let chatList = reactive({
+  list: []
 })
 
 // 聊天内容列表
@@ -120,8 +98,6 @@ const contentList = reactive([
     avatar: '',
   }
 ])
-
-// handleCateList
 const handleCateList = (item) => {
   let _chatList = [];
   switch (item.id) {
@@ -156,7 +132,7 @@ const handleCateList = (item) => {
       }]
       break;
   }
-  chatData.chatList = _chatList
+  chatList.list = _chatList
 }
 </script>
 

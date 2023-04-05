@@ -28,9 +28,9 @@
       <template #actions>
         <icon-check class="check-icon" @click="handleCheck(item, index)" v-if="index == editIdx"/>
         <icon-edit v-else @click="handleEdit(item, index)"/>
-        <icon-close @click="handleClose" v-if="index == editIdx" />
+        <icon-close @click="handleClose" v-if="index == editIdx"/>
         <a-popconfirm v-else :content="$t('common.confirmDel')" @ok="handleDelete(item, index)">
-          <icon-delete />
+          <icon-delete/>
         </a-popconfirm>
       </template>
     </a-list-item>
@@ -38,20 +38,16 @@
 </template>
 
 <script setup>
-import {reactive, ref, watch} from "vue";
-import {Message} from "@arco-design/web-vue";
+import {defineProps, ref, toRefs} from "vue";
 
-const props = defineProps({
+let props = defineProps({
   list: {
     type: Array,
     default: []
   }
 })
-let list = reactive([])
-watch(props.list, () => {
-  console.log(props.list)
-  list = props.list
-})
+const {list} = toRefs(props)
+
 const editIdx = ref(null)
 const handleSelect = (e) => {
   console.log(e)
@@ -67,7 +63,6 @@ const handleClose = () => {
 }
 const handleCheck = (row, index) => {
   if (row.name.trim() === "") {
-    Message.warning('对话不能为空')
     return
   }
   editIdx.value = null
