@@ -33,6 +33,8 @@ export default {
   'settings.prompt.viewBtn': '查看',
   'settings.prompt.cateAddBtn': '添加',
   'settings.prompt.drawerTitle': 'prompt提示词列表',
+  // 对话管理
+  'settings.chat': '对话管理',
   // 联系我们
   'settings.contact': '联系我们',
   'settings.contact.star': '给个star',

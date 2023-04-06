@@ -33,6 +33,8 @@ export default {
   'settings.prompt.viewBtn': 'View',
   'settings.prompt.cateAddBtn': 'Add Cate',
   'settings.prompt.drawerTitle': 'Prompt list',
+  // chat management
+  'settings.chat': 'Chat',
   // contact us
   'settings.contact': 'Contact',
   'settings.contact.star': 'Give me a star.',
@@ -54,7 +56,7 @@ export default {
   'settings.contact.email.placeholder': 'Please provide a detailed description',
   'settings.contact.email.errorTips1': 'Detailed description is required',
   'settings.contact.email.errorTips2': 'Cannot be less than five characters',
-  'settings.contact.cancelBtn': 'Reset',
+  'settings.contact.cancelBtn': 'Cancel',
   'settings.contact.addBtn': 'Submit',
   // update info
   'settings.releaseNotes': 'Update',

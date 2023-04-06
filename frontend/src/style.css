@@ -28,3 +28,15 @@ body {
     overflow: hidden;
     height: 100vh;
 }
+
+.arco-modal-header {
+    border-bottom: none !important;
+}
+
+.arco-modal-footer {
+    border-top: none !important;
+}
+
+.scrollbar::-webkit-scrollbar {
+    display: none;
+}

@@ -20,13 +20,17 @@
           </a-menu-item>
           <a-menu-item key="3">
             <icon-select-all/>
-            {{ $t('settings.prompt') }}
+            {{ $t('settings.chat') }}
           </a-menu-item>
           <a-menu-item key="4">
+            <icon-select-all/>
+            {{ $t('settings.prompt') }}
+          </a-menu-item>
+          <a-menu-item key="5">
             <icon-tool/>
             {{ $t('settings.contact') }}
           </a-menu-item>
-          <a-menu-item key="5">
+          <a-menu-item key="6">
             <icon-download />
             {{ $t('settings.releaseNotes') }}
           </a-menu-item>
@@ -37,9 +41,10 @@
           <a-layout-content>
             <general v-if="tabValue === '1'"></general>
             <datasync v-if="tabValue === '2'"></datasync>
-            <prompt v-if="tabValue === '3'"></prompt>
-            <contact v-if="tabValue === '4'"></contact>
-            <release-notes v-if="tabValue === '5'"></release-notes>
+            <chat v-if="tabValue === '3'"></chat>
+            <prompt v-if="tabValue === '4'"></prompt>
+            <contact v-if="tabValue === '5'"></contact>
+            <release-notes v-if="tabValue === '6'"></release-notes>
           </a-layout-content>
         </a-layout>
       </a-layout>
@@ -55,9 +60,10 @@ import Datasync from "@views/settings/components/datasync.vue";
 import Prompt from "@views/settings/components/prompt.vue";
 import Contact from "@views/settings/components/contact.vue";
 import ReleaseNotes from "@views/settings/components/release-notes.vue";
+import Chat from "@views/settings/components/chat.vue";
 
 export default defineComponent({
-  components: {ReleaseNotes, Contact, Prompt, Datasync, General},
+  components: {Chat, ReleaseNotes, Contact, Prompt, Datasync, General},
   setup() {
     const route = useRouter()
     let {tab} = route.currentRoute.value.query

@@ -1,28 +1,42 @@
 <template>
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
+    <!-- cate list -->
     <a-tooltip :content="item.cateName" position="right" v-for="(item, index) in cateList">
       <a-avatar :key="index" shape="square" :size="36"
-                :style="{ backgroundColor: item.color, cursor: 'pointer' }" @click="handleCateClick(item, index)">
+                :style="{ backgroundColor: item.color, cursor: 'pointer' }"
+                @click="handleCateClick(item, index)">
         {{ item.letter }}
       </a-avatar>
     </a-tooltip>
   </a-space>
   <div class="menu-cate-container">
     <a-space direction="vertical" :size="20">
-      <a-avatar :size="36" :style="{ backgroundColor: '#3370ff' }">
+      <a-tooltip :content="$t('home.menuCate.settings.addCate')" position="right">
+        <a-avatar :size="36"
+                  :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
+                  @click="handleAddCate">
+          <icon-plus/>
+        </a-avatar>
+      </a-tooltip>
+      <a-avatar :size="36"
+                :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
+                @click="handleUserProfile">
         <icon-robot/>
       </a-avatar>
       <div style="position: relative; cursor: pointer;">
         <icon-menu @click="handleMenuIconHover" size="26"/>
         <div v-if="isShow" class="menu-div">
           <a-menu theme="dark" @menu-item-click="handleMenuClick">
-            <a-menu-item key="0_1">提示词</a-menu-item>
-            <a-menu-item key="0_2">检查更新</a-menu-item>
-            <a-menu-item key="0_3">系统设置</a-menu-item>
+            <a-menu-item key="0_1">{{ $t('home.menuCate.settings.prompt') }}</a-menu-item>
+            <a-menu-item key="0_2">{{ $t('home.menuCate.settings.upgrade') }}</a-menu-item>
+            <a-menu-item key="0_3">{{ $t('home.menuCate.settings.sysSettings') }}</a-menu-item>
           </a-menu>
         </div>
       </div>
     </a-space>
+
+    <!-- add cate -->
+    <cate-add :visible="visible" @cancel="handleCateCancel" @ok="handleCateOk"></cate-add>
   </div>
 </template>
 
@@ -30,6 +44,7 @@
 import {useRouter} from 'vue-router'
 import {defineEmits, reactive, ref, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
+import CateAdd from "@views/home/components/cate-add.vue";
 
 const props = defineProps({
   list: {
@@ -40,7 +55,7 @@ const props = defineProps({
 const emits = defineEmits(["select"])
 const router = useRouter()
 const isShow = ref(false)
-
+const visible = ref(false)
 let cateList = reactive(props.list)
 watch(() => props.list, () => {
   cateList = props.list
@@ -49,7 +64,7 @@ watch(() => props.list, () => {
 const handleMenuClick = (e) => {
   switch (e) {
     case '0_1':
-      router.push('/settings/index?tab=3');
+      router.push('/settings/index?tab=4');
       break
     case '0_2':
       Message.info("检查更新中");
@@ -65,6 +80,25 @@ const handleMenuIconHover = (e) => {
 const handleCateClick = (row, index) => {
   emits('select', row)
 }
+const handleAddCate = () => {
+  visible.value = true;
+}
+const handleUserProfile = () => {
+  Message.info("handle user profile")
+}
+const handleCateCancel = () => {
+  visible.value = false;
+}
+const handleCateOk = (form) => {
+  visible.value = false;
+  cateList.push({
+    id: 0,
+    cateName: form.name,
+    letter: 'Q',
+    color: '#3370ff'
+  })
+  console.log("form", form);
+}
 </script>
 
 <style scoped>
@@ -76,7 +110,7 @@ const handleCateClick = (row, index) => {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  height: 95px;
+  height: 155px;
   width: 100%;
   color: #fff;
 }

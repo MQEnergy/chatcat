@@ -18,7 +18,7 @@
               <content-header :info="headerInfo"></content-header>
             </a-layout-header>
             <!-- 内容区域 -->
-            <a-layout-content class="absolute-div">
+            <a-layout-content class="absolute-div scrollbar">
               <chat-list :list="contentList"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
@@ -35,12 +35,12 @@
 </template>
 
 <script setup>
-import MenuTips from "@components/home/menu-tips.vue";
-import MenuCate from "@components/home/menu-cate.vue";
-import MenuList from "@components/home/menu-list.vue";
-import ContentHeader from "@components/home/content-header.vue";
-import ChatList from "@views/home/chat-list.vue";
-import PromptInput from "@views/home/prompt-input.vue";
+import MenuTips from "@views/home/components/menu-tips.vue";
+import MenuCate from "@views/home/components/menu-cate.vue";
+import MenuList from "@views/home/components/menu-list.vue";
+import ContentHeader from "@views/home/components/content-header.vue";
+import ChatList from "@views/home/components/chat-list.vue";
+import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
 
@@ -103,6 +103,90 @@ const handleCateList = (item) => {
   switch (item.id) {
     case 1:
       _chatList = [{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
+        id: 1,
+        name: '这是chat对话语句1',
+        sort: 50
+      }, {
+        id: 2,
+        name: '这是chat对话语句2',
+        sort: 50
+      }, {
+        id: 3,
+        name: '这是chat对话语句3',
+        sort: 50
+      },{
         id: 1,
         name: '这是chat对话语句1',
         sort: 50

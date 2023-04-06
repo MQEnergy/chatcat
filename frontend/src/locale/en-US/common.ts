@@ -22,4 +22,9 @@ export default {
   'common.color.tooltip':
       '10 gradient colors generated according to the theme color',
   'common.menuFromServer': 'Menu From Server',
+  'common.reset': 'Reset',
+  'common.cancel': 'Cancel',
+  'common.submit': 'Submit',
+  'common.ok': 'Ok',
+  'common.group': 'Group',
 };
