@@ -3,10 +3,10 @@
     <a-space direction="vertical" :size="30">
       <a-space align="start" :size="10" v-for="n in 10">
         <a-avatar :style="{backgroundColor: n % 2 == 0 ? '#fff' : '#165DFF', overflow: 'hidden'}" :size="32">
-            <img v-if="n % 2 == 0"
-                alt="avatar"
-                :src="ChatGPTLogo"
-            />
+          <img v-if="n % 2 == 0"
+               alt="avatar"
+               :src="ChatGPTLogo"
+          />
           <template v-else>
             A
           </template>
@@ -18,9 +18,10 @@
         }">
           <div class="chat-div" :style="{color: n % 2 == 0 ? '#000': '#155dff'}">
             <template v-if="n % 2 == 0">
-              <code>
-                {{ codePre }}
-              </code>
+              <highlightjs
+                  language="js"
+                  :code="codePre"
+              />
             </template>
             vue3 子组件A通过emits给父组件B赋值给一个reactive数组，这个数组在渲染到子组件C，子组件C的props接受如何动态变化，请给出示例。
           </div>
@@ -42,9 +43,11 @@
 
 <script setup>
 import ChatGPTLogo from '@assets/images/chatgpt_black_logo.svg';
-import {ref} from "vue";
-const codePre = ref(`
-<!-- ChildComponent.vue -->
+import {defineComponent, ref} from "vue";
+// import 'highlight.js/lib/common';
+// import hljsVuePlugin from "@highlightjs/vue-plugin";
+
+const codePre = ref(`<!-- ChildComponent.vue -->
 <template>
   <div>
     <p>子组件接收到的名字：{{ name }}</p>
@@ -69,6 +72,10 @@ export default defineComponent({
   }
 });
 <\/script>`)
+
+// defineComponent({
+//   highlightjs: hljsVuePlugin.component
+// })
 const handleSelect = (e) => {
 
 }
@@ -78,6 +85,7 @@ const handleSelect = (e) => {
 .chat-container :deep(.arco-card-size-medium) {
   /*font-size: 16px;*/
 }
+
 .chat-container :deep(.arco-card-size-medium .arco-card-body) {
   padding: 15px;
 }

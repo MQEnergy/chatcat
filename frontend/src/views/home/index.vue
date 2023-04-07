@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-demo">
+  <div class="layout-container">
     <a-layout style="height: 100vh;">
       <a-layout>
         <!-- 侧边分类栏 -->
@@ -22,7 +22,7 @@
               <chat-list :list="contentList"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
-            <menu-tips></menu-tips>
+            <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
             <!-- 对话输入框 -->
             <a-layout-footer class="prompt-input-container">
               <prompt-input :value="prompt"></prompt-input>
@@ -114,7 +114,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -126,7 +126,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -138,7 +138,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -150,7 +150,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -162,7 +162,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -174,7 +174,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -186,7 +186,7 @@ const handleCateList = (item) => {
         id: 3,
         name: '这是chat对话语句3',
         sort: 50
-      },{
+      }, {
         id: 1,
         name: '这是chat对话语句1',
         sort: 50
@@ -218,23 +218,22 @@ const handleCateList = (item) => {
   }
   chatList.list = _chatList
 }
+const handlePromptToChat = (row) => {
+  prompt.value = row.prompt
+}
 </script>
 
 <style scoped>
-.layout-demo :deep(.arco-space-item:nth-child(1)) {
+.layout-container :deep(.arco-space-item:nth-child(1)) {
   width: 100%;
 }
 
-.layout-demo :deep(.arco-layout-sider) {
+.layout-container :deep(.arco-layout-sider) {
   width: 300px;
 }
 
-.layout-demo :deep(.arco-layout-content) {
+.layout-container :deep(.arco-layout-content) {
   background-color: var(--color-bg-2);
-}
-
-.arco-icon {
-  stroke-width: 2;
 }
 
 .prompt-input-container {

@@ -2,13 +2,18 @@
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
     <!-- cate list -->
     <a-tooltip :content="item.cateName" position="right" v-for="(item, index) in cateList">
-      <a-avatar :key="index" shape="square" :size="36"
-                :style="{ backgroundColor: item.color, cursor: 'pointer' }"
-                @click="handleCateClick(item, index)">
-        {{ item.letter }}
-      </a-avatar>
+      <div :style="{position: 'relative', width: '100%'}">
+        <a-avatar class="avatar flash" :key="index" shape="square" :size="36"
+                  :style="{backgroundColor: item.color}"
+                  @click="handleCateClick(item, index)">
+          {{ item.letter }}
+        </a-avatar>
+        <!-- selected cate -->
+        <div :class="{'avatar-selected': currCateId == item.id}"></div>
+      </div>
     </a-tooltip>
   </a-space>
+  <!-- menu list -->
   <div class="menu-cate-container">
     <a-space direction="vertical" :size="20">
       <a-tooltip :content="$t('home.menuCate.settings.addCate')" position="right">
@@ -58,6 +63,7 @@ const router = useRouter()
 const isShow = ref(false)
 const visible = ref(false)
 let cateList = reactive(props.list)
+const currCateId = ref(null)
 watch(() => props.list, () => {
   cateList = props.list
 })
@@ -79,6 +85,7 @@ const handleMenuIconHover = (e) => {
   isShow.value = !isShow.value
 }
 const handleCateClick = (row, index) => {
+  currCateId.value = row.id
   emits('select', row)
 }
 const handleAddCate = () => {
@@ -127,4 +134,37 @@ const handleCateOk = (form) => {
   bottom: 0px;
   left: 56px;
 }
+
+.avatar {
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar-selected {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  height: 35px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-left: 4px solid #fff;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flash {
+  animation: flash 0.2s linear;
+  animation-iteration-count: 1;
+}
+
 </style>

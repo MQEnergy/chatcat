@@ -7,10 +7,10 @@ body {
     font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+/Edge */
-    user-select: none; /* Standard */
+    /*-webkit-user-select: none; !* Safari *!*/
+    /*-moz-user-select: none; !* Firefox *!*/
+    /*-ms-user-select: none; !* IE10+/Edge *!*/
+    /*user-select: none; !* Standard *!*/
 }
 
 @font-face {
@@ -41,9 +41,13 @@ body {
     display: none;
 }
 
+.arco-icon {
+    stroke-width: 2;
+}
+
 .chat-div {
     margin: 0;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     font-size: 15px;
     line-height: 1.5;
     word-wrap: break-word;

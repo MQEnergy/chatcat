@@ -7,19 +7,34 @@
             :closable="true"
             unmountOnClose>
     <template #title>
-      {{ $t('settings.prompt.drawerTitle') }}
+      {{ $t('settings.chat.drawerTitle') }}
     </template>
     <div>
       <a-row :gutter="[10, 10]">
-        <a-col :span="12" v-for="(item, index) in props.prompts" :key="index">
+        <a-col :span="12" v-for="(item, index) in props.chats" :key="index">
           <a-card :title="item.name" class="prompt-card">
             <template #extra>
               <a-dropdown @select="handleSelect($event, item)">
-                <a-link>{{ $t('common.operation') }}</a-link>
+                <a-link style="color: #000">
+                  <icon-more size="large"/>
+                </a-link>
                 <template #content>
-                  <a-doption :value="1"><icon-plus />chat</a-doption>
-                  <a-doption :value="2"><icon-edit />编辑</a-doption>
-                  <a-doption :value="2"><icon-delete />删除</a-doption>
+                  <a-doption :value="1">
+                    <icon-send/>
+                    {{ $t('common.chat') }}
+                  </a-doption>
+                  <a-doption :value="2">
+                    <icon-edit/>
+                    {{ $t('common.edit') }}
+                  </a-doption>
+                  <a-doption :value="3">
+                    <icon-delete/>
+                    {{ $t('common.del') }}
+                  </a-doption>
+                  <a-doption :value="4">
+                    <icon-drive-file/>
+                    {{ $t('common.view') }}
+                  </a-doption>
                 </template>
               </a-dropdown>
             </template>
@@ -33,13 +48,14 @@
 
 <script setup>
 import {useRouter} from "vue-router";
+import {Message} from "@arco-design/web-vue";
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
   },
-  prompts: {
+  chats: {
     type: Array,
     default: []
   }
@@ -53,16 +69,29 @@ const handleOk = () => {
 const handleSelect = (e, row) => {
   switch (e) {
     case 1:
-      router.push('/index?prompt='+row.prompt)
+      router.push('/index?chats=' + row.name)
       break
+    case 2:
+      Message.info("Edit")
+      break;
+    case 3:
+      Message.info("Delete")
+      break;
+    case 4:
+      Message.info("View")
+      break;
   }
+}
+const handleDelete = (row, index) => {
+
 }
 </script>
 
 <style scoped>
 .prompt-card {
-  border-radius: 4px;
+  border-radius: 8px;
 }
+
 .prompt-card :deep(.arco-card-header) {
   border: none;
 }

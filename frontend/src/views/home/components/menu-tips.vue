@@ -1,7 +1,7 @@
 <template>
   <div class="menu-container">
     <a-trigger
-        :trigger="['click', 'hover']"
+        :trigger="['click']"
         clickToClose
         position="top"
         v-model:popupVisible="popupVisible"
@@ -34,33 +34,21 @@
             </a-menu-item>
             <template #content>
               <div class="prompt-tips-container">
-                <a-card :style="{ width: '100%', borderRadius: '8px', height: '400px'}" title="这是prompt热门提示词">
-
+                <a-card class="prompt-tips-card scrollbar"
+                        :body-style="{height: '340px', overflowY: 'scroll'}"
+                        :title="$t('settings.prompt.common')">
+                  <a-space direction="vertical">
+                    <prompt-simple-item v-for="(item, index) in PromptEnums"
+                                        :item="item" :index="index" @add:prompt="handlePromptToChat">
+                    </prompt-simple-item>
+                  </a-space>
                 </a-card>
               </div>
             </template>
           </a-trigger>
-
         </a-menu>
       </template>
     </a-trigger>
-
-    <!-- drawer -->
-    <a-drawer
-        :width="320"
-        :visible="visible"
-        :mask="true"
-        :placement="position"
-        @ok="handleOk"
-        @cancel="handleCancel"
-        unmountOnClose
-    >
-      <template #title>
-        常用热门提示词
-      </template>
-      <div>这是热门prompt词
-      </div>
-    </a-drawer>
   </div>
 </template>
 
@@ -68,34 +56,25 @@
 import {IconBug, IconBulb, IconClose, IconMessage} from '@arco-design/web-vue/es/icon';
 import {ref} from "vue";
 import {useRouter} from "vue-router";
+import PromptSimpleItem from "@components/prompt/prompt-simple-item.vue";
+import PromptEnums from "@config/prompt.js";
 
 const router = useRouter();
-const visible = ref(false);
 const position = ref('right');
-const tipSeen = ref(false);
 const popupVisible = ref(false);
+const emits = defineEmits(['add:prompt'])
 const handleMenuClick = (e) => {
   switch (e) {
     case "1": // contact
       router.push('/settings/index?tab=5')
       break;
     case "2": // prompt
-      // handleClick()
-      // tipSeen.value = !tipSeen.value
-      // router.push('/settings/index?tab=3')
       break;
   }
 }
-const handleClick = () => {
-  visible.value = true;
-};
-const handleOk = () => {
-  visible.value = false;
-};
-const handleCancel = () => {
-  visible.value = false;
+const handlePromptToChat = (row) => {
+  emits('add:prompt', row)
 }
-
 </script>
 
 <style scoped>
@@ -133,9 +112,19 @@ const handleCancel = () => {
   position: absolute;
   right: -40px;
   bottom: 0px;
+  overflow: hidden;
 }
 
 .prompt-tips-container :deep(.arco-card-header) {
   border: none;
+}
+
+.prompt-tips-container :deep(.arco-card-body) {
+  padding: 0px 10px 10px;
+}
+
+.prompt-tips-card {
+  border-radius: 8px;
+  height: 398px;
 }
 </style>

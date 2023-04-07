@@ -6,7 +6,7 @@
           <template #icon>
             <icon-plus/>
           </template>
-          {{ $t('settings.prompt.cateAddBtn') }}
+          {{ $t('settings.prompt.addBtn') }}
         </a-button>
       </template>
       <!-- prompt list -->
@@ -19,7 +19,7 @@
       </div>
     </a-card>
   </div>
-  <!-- 添加分类 -->
+  <!-- add prompt -->
   <prompt-add :visible="visible" @cancel="handleCancel"></prompt-add>
 </template>
 
@@ -48,12 +48,12 @@ const handleAddCate = () => {
   position: relative;
 }
 .prompt-container :deep(.arco-card-body) {
-  padding: 10px;
-  padding-top: 0px;
+  padding: 0px 10px 10px;
 }
 .prompt-list {
   height: 700px;
   padding-top: 20px;
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 </style>

@@ -25,7 +25,6 @@
         <icon-check class="check-icon" @click="handleCheck(item, index)"
                     v-if="index == editIdx"/>
         <icon-edit v-else @click="handleEdit(item, index)"/>
-
         <icon-close @click="handleClose(item, index)" v-if="index == editIdx"/>
         <a-popconfirm v-else
                       :cancel-text="$t('common.cancel')"
