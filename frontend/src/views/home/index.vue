@@ -237,19 +237,6 @@ const handleCateList = (item) => {
   stroke-width: 2;
 }
 
-.absolute-div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: auto;
-  min-height: 80px;
-  max-height: calc(100% - 124px);
-  width: 100%;
-  background-color: blue;
-  overflow-y: scroll;
-}
-
 .prompt-input-container {
   position: absolute;
   z-index: 9;

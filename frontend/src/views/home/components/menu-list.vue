@@ -14,6 +14,7 @@
       <a-list-item-meta style="position: relative;">
         <template #title>
           <a-input style="position: absolute; left: -8px; top: -5px;"
+                   @press-enter="handleCheck(item, index)"
                    v-if="index == editIdx" v-model="item.name"
                    placeholder="请输入对话关键词"
                    allow-clear/>

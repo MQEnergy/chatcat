@@ -30,6 +30,7 @@
             <a-menu-item key="0_1">{{ $t('home.menuCate.settings.prompt') }}</a-menu-item>
             <a-menu-item key="0_2">{{ $t('home.menuCate.settings.upgrade') }}</a-menu-item>
             <a-menu-item key="0_3">{{ $t('home.menuCate.settings.sysSettings') }}</a-menu-item>
+            <a-menu-item key="0_4">{{ $t('home.menuCate.settings.shortcut') }}</a-menu-item>
           </a-menu>
         </div>
       </div>

@@ -1,9 +1,9 @@
 <template>
-  <div style="width: 80%; margin: 0 auto; position: relative; margin-top: 60px;">
+  <div class="settings-container">
     <div class="close-container">
       <icon-close-circle-fill @click="handleClose" size="40"/>
     </div>
-    <a-layout class="layout-demo">
+    <a-layout class="layout-container">
       <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px' }">
         <a-menu
             :default-selected-keys="tabName"
@@ -31,22 +31,20 @@
             {{ $t('settings.contact') }}
           </a-menu-item>
           <a-menu-item key="6">
-            <icon-download />
+            <icon-download/>
             {{ $t('settings.releaseNotes') }}
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
-      <a-layout>
-        <a-layout style="padding: 0 16px; border-radius: 8px;">
-          <a-layout-content>
-            <general v-if="tabValue === '1'"></general>
-            <datasync v-if="tabValue === '2'"></datasync>
-            <chat v-if="tabValue === '3'"></chat>
-            <prompt v-if="tabValue === '4'"></prompt>
-            <contact v-if="tabValue === '5'"></contact>
-            <release-notes v-if="tabValue === '6'"></release-notes>
-          </a-layout-content>
-        </a-layout>
+      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden">
+        <a-layout-content>
+          <general v-if="tabValue === '1'"></general>
+          <datasync v-if="tabValue === '2'"></datasync>
+          <chat v-if="tabValue === '3'"></chat>
+          <prompt v-if="tabValue === '4'"></prompt>
+          <contact v-if="tabValue === '5'"></contact>
+          <release-notes v-if="tabValue === '6'"></release-notes>
+        </a-layout-content>
       </a-layout>
     </a-layout>
   </div>
@@ -90,6 +88,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.settings-container {
+  width: 85%;
+  height: 90%;
+  margin: 0 auto;
+  position: relative;
+  margin-top: 60px;
+}
+
 .close-container {
   position: absolute;
   top: 0;
@@ -100,7 +106,11 @@ export default defineComponent({
   cursor: pointer;
 }
 
-.layout-demo :deep(.arco-layout-sider) .logo {
+.layout-container {
+  height: 100vh;
+}
+
+.layout-container :deep(.arco-layout-sider) .logo {
   height: 32px;
   margin: 12px 0px;
   text-align: center;
@@ -108,26 +118,26 @@ export default defineComponent({
   line-height: 32px;
 }
 
-.layout-demo :deep(.arco-menu-vertical .arco-menu-inner) {
+.layout-container :deep(.arco-menu-vertical .arco-menu-inner) {
   padding: 8px;
 }
 
-.layout-demo :deep(.arco-layout-sider-light) {
+.layout-container :deep(.arco-layout-sider-light) {
   box-shadow: none;
   border-radius: 8px;
 }
 
-.layout-demo :deep(.arco-layout-sider-children) {
+.layout-container :deep(.arco-layout-sider-children) {
   border-radius: 8px;
 }
 
-.layout-demo :deep(.arco-layout-header) {
+.layout-container :deep(.arco-layout-header) {
   height: 64px;
   line-height: 64px;
   background: var(--color-bg-3);
 }
 
-.layout-demo :deep(.arco-layout-footer) {
+.layout-container :deep(.arco-layout-footer) {
   height: 48px;
   color: var(--color-text-2);
   font-weight: 400;
@@ -135,7 +145,7 @@ export default defineComponent({
   line-height: 48px;
 }
 
-.layout-demo :deep(.arco-layout-content) {
+.layout-container :deep(.arco-layout-content) {
   color: var(--color-text-2);
   font-weight: 400;
   font-size: 14px;

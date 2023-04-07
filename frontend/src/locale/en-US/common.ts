@@ -1,6 +1,10 @@
 export default {
   'common.title': 'Settings',
   'common.operation': 'Operate',
+  'common.edit': 'Edit',
+  'common.del': 'Delete',
+  'common.chat': 'Chat',
+  'common.copy': 'Copy',
   'common.themeColor': 'Theme Color',
   'common.search': 'Search',
   'common.confirmDel': 'Are you sure you want to delete?',

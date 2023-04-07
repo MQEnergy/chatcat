@@ -34,30 +34,8 @@
             </a-menu-item>
             <template #content>
               <div class="prompt-tips-container">
-                <a-card :style="{ width: '100%', borderRadius: '8px', height: '400px' }" title="这是prompt热门提示词">
-                  <div :style="{ height: '400px', overflow: 'hidden', overflowY: 'scroll' }">
-                    <a-list>
-                      <a-list-item v-for="idx in 4" :key="idx">
-                        <a-list-item-meta
-                            title="Beijing Bytedance Technology Co., Ltd."
-                            description="Beijing ByteDance Technology Co., Ltd. is an enterprise located in China."
-                        >
-                          <template #avatar>
-                            <a-avatar shape="square">
-                              <img
-                                  alt="avatar"
-                                  src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-                              />
-                            </a-avatar>
-                          </template>
-                        </a-list-item-meta>
-                        <template #actions>
-                          <icon-edit/>
-                          <icon-delete/>
-                        </template>
-                      </a-list-item>
-                    </a-list>
-                  </div>
+                <a-card :style="{ width: '100%', borderRadius: '8px', height: '400px'}" title="这是prompt热门提示词">
+
                 </a-card>
               </div>
             </template>
@@ -69,7 +47,7 @@
 
     <!-- drawer -->
     <a-drawer
-        :width="500"
+        :width="320"
         :visible="visible"
         :mask="true"
         :placement="position"
@@ -121,7 +99,7 @@ const handleCancel = () => {
 </script>
 
 <style scoped>
-.menu-demo {
+.menu-container {
 }
 
 .button-trigger {
@@ -150,10 +128,14 @@ const handleCancel = () => {
 }
 
 .prompt-tips-container {
-  width: 400px;
+  width: 310px;
   height: 400px;
   position: absolute;
   right: -40px;
   bottom: 0px;
+}
+
+.prompt-tips-container :deep(.arco-card-header) {
+  border: none;
 }
 </style>

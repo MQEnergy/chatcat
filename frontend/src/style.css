@@ -40,3 +40,24 @@ body {
 .scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+.chat-div {
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.absolute-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    min-height: 80px;
+    max-height: calc(100% - 124px);
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

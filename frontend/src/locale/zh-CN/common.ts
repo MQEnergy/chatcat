@@ -1,6 +1,10 @@
 export default {
   'common.title': '页面配置',
   'common.operation': '操作',
+  'common.edit': '编辑',
+  'common.del': '删除',
+  'common.chat': '对话',
+  'common.copy': '复制',
   'common.themeColor': '主题色',
   'common.search': '搜索',
   'common.confirmDel': '你确定要删除吗?',
