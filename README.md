@@ -5,6 +5,10 @@
 # chatcat
 ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 
+<p align="center" style="text-align: center">
+<img src="screenshot/home.png" />
+</p>
+
 English | [中文文档](README-zh_CN.md)
 
 ## Technology Stack

@@ -3,6 +3,10 @@
 
 中文文档 | [English](README.md)
 
+<p align="center" style="text-align: center">
+<img src="screenshot/home.png" />
+</p>
+
 ## 技术栈
 vue3 + arco.design + golang + wails + sqlite
 
