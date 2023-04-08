@@ -4,7 +4,7 @@
 中文文档 | [English](README.md)
 
 <p align="center" style="text-align: center">
-<img src="screenshot/home.png" />
+<img src="screenshot/home.jpg" />
 </p>
 
 ## 技术栈
