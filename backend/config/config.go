@@ -30,6 +30,7 @@ type (
 		UpgradeUrl      string `yaml:"upgradeUrl" default:""`
 		HomeUrl         string `yaml:"homeUrl" default:""`
 		ServerUrl       string `yaml:"serverUrl" default:""`
+		DbName          string `yaml:"dbName" default:""`
 	}
 	Log struct {
 		Debug    bool   `yaml:"debug" default:"true"`

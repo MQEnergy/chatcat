@@ -1,18 +1,21 @@
 package clog
 
 import (
+	"chatcat/backend/pkg/chelp"
 	"fmt"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
 
 var (
-	logger *logrus.Logger
-	once   sync.Once
+	logger      *logrus.Logger
+	once        sync.Once
+	runtimePath string
 )
 
 // NewLogger 构造日志服务
@@ -22,9 +25,12 @@ func NewLogger(logPath, module string, debug bool) *logrus.Logger {
 		if err != nil {
 			panic("创建日志文件失败: " + err.Error())
 		}
+		runtimeDir := chelp.GetRuntimeUserHomeDir()
+		path, _ := os.Executable()
+		_, pathAppName := filepath.Split(path)
 		// 定义文件前缀和日志名称
-		prefix := logPath + "/" + module
-		latestLogFile := prefix + ".log"
+		runtimePath = runtimeDir + "/" + pathAppName + "/" + logPath + "/"
+		latestLogFile := runtimePath + module + ".log"
 		logger = logrus.New()
 		// 设置输出
 		logger.Out = src
@@ -34,7 +40,7 @@ func NewLogger(logPath, module string, debug bool) *logrus.Logger {
 		}
 		// 设置rotatelogs
 		logWriter, err := rotatelogs.New(
-			prefix+"-%Y-%m-%d.log",                    // 生成实际文件名的模式
+			runtimePath+module+"-%Y-%m-%d.log",        // 生成实际文件名的模式
 			rotatelogs.WithLinkName(latestLogFile),    // 生成软链，指向最新日志文件
 			rotatelogs.WithMaxAge(30*24*time.Hour),    // 设置最大保存时间(30天)
 			rotatelogs.WithRotationTime(24*time.Hour), // 设置日志切割时间间隔(1天)
@@ -57,6 +63,11 @@ func NewLogger(logPath, module string, debug bool) *logrus.Logger {
 		))
 	})
 	return logger
+}
+
+// GetRuntimePath ...
+func GetRuntimePath() string {
+	return runtimePath
 }
 
 // PrintInfo ...

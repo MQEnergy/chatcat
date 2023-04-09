@@ -2,7 +2,9 @@ package main
 
 import (
 	"chatcat/backend/service"
+	"chatcat/backend/service/chat"
 	"chatcat/backend/service/prompt"
+	"chatcat/backend/service/setting"
 	"embed"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -31,7 +33,7 @@ func main() {
 		MinHeight:         app.Cfg.App.Height,      // 最小高度
 		MaxWidth:          app.Cfg.App.Width * 10,  // 最大宽度
 		MaxHeight:         app.Cfg.App.Height * 10, // 最大高度
-		DisableResize:     true,                    // 调整窗口尺寸
+		DisableResize:     false,                   // 调整窗口尺寸
 		Frameless:         fremeless,               // 无边框
 		StartHidden:       false,                   // 启动后隐藏
 		HideWindowOnClose: false,                   // 关闭窗口将隐藏而不退出应用程序
@@ -50,7 +52,9 @@ func main() {
 		},
 		//BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Bind: []interface{}{
+			chat.New(app),
 			prompt.New(app),
+			setting.New(app),
 		},
 	})
 

@@ -1,4 +1,5 @@
 <template>
+  <div class="mask-container"></div>
   <div class="settings-container">
     <div class="close-container">
       <icon-close-circle-fill @click="handleClose" size="40"/>
@@ -93,7 +94,12 @@ export default defineComponent({
   height: 90%;
   margin: 0 auto;
   position: relative;
-  margin-top: 60px;
+}
+
+.mask-container {
+  height: 60px;
+  width: 100%;
+  --wails-draggable: drag;
 }
 
 .close-container {

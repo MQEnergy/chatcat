@@ -10,6 +10,7 @@ require (
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/sirupsen/logrus v1.9.0
+	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
 	github.com/wailsapp/wails/v2 v2.4.1
 	gorm.io/driver/sqlite v1.4.4
@@ -22,6 +23,7 @@ require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

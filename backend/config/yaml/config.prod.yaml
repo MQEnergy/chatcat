@@ -14,6 +14,7 @@ app:
   upgradeUrl: "" # 更新地址
   homeUrl: "" # 应用主页
   serverUrl: "" # 服务器地址
+  dbName: "chatcat.db" # db名字
 log:
   debug: true
   fileName: 'chatcat' # 日志文件名称

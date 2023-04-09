@@ -11,11 +11,14 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hashicorp/go-uuid"
 	"github.com/shirou/gopsutil/host"
+	"gorm.io/gorm/schema"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
 	"os/exec"
+	"reflect"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -224,4 +227,44 @@ func ArrayChunk[T any](arr []T, size int) [][]T {
 		chunks = append(chunks, arr[i:end])
 	}
 	return chunks
+}
+
+// GetRuntimeUserHomeDir
+// @Description: get runtime user home directory
+// @return runtimeDir
+// @author cx
+func GetRuntimeUserHomeDir() (runtimeDir string) {
+	switch runtime.GOOS {
+	case "windows":
+		runtimeDir = os.Getenv("APPDATA")
+	case "darwin":
+		runtimeDir, _ = os.UserHomeDir()
+	default:
+		runtimeDir, _ = os.UserHomeDir()
+	}
+	return
+}
+
+// GetStructColumnName 获取结构体中的字段名称 _type: 1: 获取tag字段值 2：获取结构体字段值
+func GetStructColumnName(s interface{}, _type int) ([]string, error) {
+	v := reflect.ValueOf(s)
+	if v.Kind() != reflect.Struct {
+		return []string{}, fmt.Errorf("interface is not a struct")
+	}
+	t := v.Type()
+	var fields []string
+	for i := 0; i < v.NumField(); i++ {
+		var field string
+		if _type == 1 {
+			field = t.Field(i).Tag.Get("json")
+			if field == "" {
+				tagSetting := schema.ParseTagSetting(t.Field(i).Tag.Get("gorm"), ";")
+				field = tagSetting["COLUMN"]
+			}
+		} else {
+			field = t.Field(i).Name
+		}
+		fields = append(fields, field)
+	}
+	return fields, nil
 }

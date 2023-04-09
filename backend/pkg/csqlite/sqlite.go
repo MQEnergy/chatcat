@@ -1,6 +1,7 @@
 package csqlite
 
 import (
+	"chatcat/backend/config"
 	"chatcat/backend/model"
 	"chatcat/backend/pkg/chelp"
 	"chatcat/backend/pkg/clog"
@@ -9,41 +10,65 @@ import (
 )
 
 var (
-	isAutoMigrate = false
-	databasePath  = "./runtime/chatcat.db"
+	isAutoMigrate bool
+	databasePath  string
 	db            *gorm.DB
 	err           error
 )
 
-func WithConnect() (*gorm.DB, error) {
+// WithConnect
+// @Description: sqlite with connect
+// @param conf
+// @return *gorm.DB
+// @return error
+// @author cx
+func WithConnect(conf *config.Conf) (*gorm.DB, error) {
+	runtimeDir := chelp.GetRuntimeUserHomeDir()
+	// ${userHome}/chatcat/chatcat.db
+	databasePath := runtimeDir + "/" + conf.App.AppName + "/" + conf.App.DbName
 	clog.PrintInfo("sqlite db path: ", databasePath)
+	// check if db already exists Todo
 	if !chelp.IsPathExist(databasePath) {
 		_, err := chelp.MakeFileOrPath(databasePath)
 		if err != nil {
 			return nil, err
 		}
+		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
+		clog.PrintInfo("======== migrate start ========")
+		autoMigrate()
+		clog.PrintInfo("======== migrate end ========")
+		isAutoMigrate = true
+	} else {
+		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 	}
-	db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
-	clog.PrintInfo("======== 迁移数据开始 ========")
-	// 迁移数据
-	autoMigrate()
-	clog.PrintInfo("======== 迁移数据结束 ========")
-	// 迁移完成给出迁移完成标识
-	isAutoMigrate = true
 	return db, err
 }
 
+// GetDatabasePath get the database path
+func GetDatabasePath() string {
+	return databasePath
+}
+
 // GetIsAutoMigrate
-// @Description: 获取是否已经执行migrate
+// @Description: get migrate is or not executed
 // @return bool
 // @author cx
 func GetIsAutoMigrate() bool {
 	return isAutoMigrate
 }
 
+// autoMigrate ...
 func autoMigrate() {
 	db.Migrator().CreateTable(
+		&model.Chat{},
+		&model.ChatCate{},
+		&model.ChatRecord{},
 		&model.Prompt{},
+		&model.Setting{},
+		&model.Tag{},
 	)
 	// 写入初始化数据
+	MockTagList(db)
+	MockChatCate(db)
+	MockPromptList(db)
 }
