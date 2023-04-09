@@ -5,6 +5,8 @@
 
 <p align="center" style="text-align: center">
 <img src="screenshot/home.jpg" />
+<img src="screenshot/setting_general.png" />
+<img src="screenshot/setting_prompt.png" />
 </p>
 
 ## 技术栈
