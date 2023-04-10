@@ -1,5 +1,7 @@
 html {
     background-color: #e5e6ec;
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -39,10 +41,6 @@ body {
 
 .scrollbar::-webkit-scrollbar {
     display: none;
-}
-
-.arco-icon {
-    stroke-width: 2;
 }
 
 .chat-div {

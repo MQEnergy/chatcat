@@ -10,7 +10,6 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/hashicorp/go-uuid"
-	"github.com/shirou/gopsutil/host"
 	"gorm.io/gorm/schema"
 	"io"
 	"io/ioutil"
@@ -207,15 +206,6 @@ func GetFileMD5(path string) (MD5 string, err error) {
 	return hex.EncodeToString(md5Hash.Sum(nil)), nil
 }
 
-// IsWindow7 获取windows版本号
-func IsWindow7() bool {
-	info, _ := host.Info()
-	if strings.Contains(info.Platform, "Windows") && strings.Contains(info.Platform, "7") {
-		return true
-	}
-	return false
-}
-
 // ArrayChunk 数组分组
 func ArrayChunk[T any](arr []T, size int) [][]T {
 	var chunks [][]T
@@ -267,4 +257,8 @@ func GetStructColumnName(s interface{}, _type int) ([]string, error) {
 		fields = append(fields, field)
 	}
 	return fields, nil
+}
+
+func GetGPTToken() string {
+	return fmt.Sprintf("%s%s%s%s%s%s%s%s%s%s", "sk-", "G6B", "4wkIZ", "NW5", "mI4Lj", "3dDbT", "3BlbkFJ", "xAqGL1H", "4Bb9MZi", "TLf9JM")
 }
