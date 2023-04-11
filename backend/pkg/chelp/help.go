@@ -258,7 +258,3 @@ func GetStructColumnName(s interface{}, _type int) ([]string, error) {
 	}
 	return fields, nil
 }
-
-func GetGPTToken() string {
-	return fmt.Sprintf("%s%s%s%s%s%s%s%s%s%s", "sk-", "G6B", "4wkIZ", "NW5", "mI4Lj", "3dDbT", "3BlbkFJ", "xAqGL1H", "4Bb9MZi", "TLf9JM")
-}
