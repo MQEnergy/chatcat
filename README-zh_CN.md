@@ -4,9 +4,7 @@
 中文文档 | [English](README.md)
 
 <p align="center" style="text-align: center">
-<video id="video" controls="" preload="none" poster="封面">
-      <source id="mp4" src="screenshot/use_video.mp4" type="video/mp4">
-</video>
+<img src="screenshot/use.gif" />
 <img src="screenshot/home.jpg" />
 <img src="screenshot/setting_general.png" />
 <img src="screenshot/setting_prompt.png" />
