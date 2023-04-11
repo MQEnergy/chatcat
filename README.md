@@ -8,7 +8,7 @@ ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 English | [中文文档](README-zh_CN.md)
 
 <p align="center" style="text-align: center">
-<video id="video" controls="" preload="none" poster="封面">
+<video id="video" controls="" preload="none" poster="screenshot/home.jpg">
       <source id="mp4" src="screenshot/use_video.mp4" type="video/mp4">
 </video>
 <img src="screenshot/home.jpg" />
