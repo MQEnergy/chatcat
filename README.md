@@ -5,13 +5,14 @@
 # chatcat
 ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 
+English | [中文文档](README-zh_CN.md)
+
 <p align="center" style="text-align: center">
+<video src="screenshot/use_video.mp4"></video>
 <img src="screenshot/home.jpg" />
 <img src="screenshot/setting_general.png" />
 <img src="screenshot/setting_prompt.png" />
 </p>
-
-English | [中文文档](README-zh_CN.md)
 
 ## Technology Stack
 Vue3 + arco.design + golang + wails + sqlite

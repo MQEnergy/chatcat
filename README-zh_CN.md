@@ -4,6 +4,7 @@
 中文文档 | [English](README.md)
 
 <p align="center" style="text-align: center">
+<video src="screenshot/use_video.mp4"></video>
 <img src="screenshot/home.jpg" />
 <img src="screenshot/setting_general.png" />
 <img src="screenshot/setting_prompt.png" />
