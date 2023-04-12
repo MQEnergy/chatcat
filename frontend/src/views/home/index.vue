@@ -25,7 +25,7 @@
             <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
             <!-- 对话输入框 -->
             <a-layout-footer class="prompt-input-container">
-              <prompt-input :value="prompt"></prompt-input>
+              <prompt-input :value="prompt" @ok="handleChat"></prompt-input>
             </a-layout-footer>
           </a-layout>
         </a-layout-content>
@@ -43,6 +43,8 @@ import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
+import {CompletionsNoStream, CompletionsStream} from "../../api/settings.js";
+import {GetGeneralInfo} from "../../../wailsjs/go/setting/Service.js";
 
 const router = useRouter();
 const prompt = ref('');
@@ -52,7 +54,6 @@ onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
 })
-
 // 头部显示
 const headerInfo = ref({
   cateName: '这是分类名称',
@@ -85,6 +86,7 @@ const cateList = reactive([
     color: '#ffc72e'
   }
 ])
+
 // 分类下的chat列表
 let chatList = reactive({
   list: []
@@ -220,6 +222,13 @@ const handleCateList = (item) => {
 }
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
+}
+const handleChat = (value) => {
+  GetGeneralInfo().then(async res => {
+    const apiKey = res.data.api_key;
+    const modelName = res.data.model_name;
+    await CompletionsStream(apiKey, modelName, value);
+  })
 }
 </script>
 

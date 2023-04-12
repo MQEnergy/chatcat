@@ -4,8 +4,10 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"chatcat/backend/model"
 	"chatcat/backend/pkg/cgpt"
-	"chatcat/backend/pkg/chelp"
+	"chatcat/backend/service"
+	"chatcat/backend/service/setting"
 	"fmt"
 	"github.com/sashabaranov/go-openai"
 
@@ -13,9 +15,9 @@ import (
 )
 
 var (
-	prompt string
-	model  string
-	token  string
+	prompt    string
+	modelName string
+	token     string
 )
 
 // chatgptCmd represents the chatgpt command
@@ -31,20 +33,43 @@ var chatgptCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(chatgptCmd)
-	chatgptCmd.PersistentFlags().StringVar(&model, "m", openai.GPT3Dot5Turbo, "模型 gpt3.5 gpt4")
-	chatgptCmd.PersistentFlags().StringVar(&token, "t", chelp.GetGPTToken(), "token值")
+	chatgptCmd.PersistentFlags().StringVar(&modelName, "m", openai.GPT3Dot5Turbo, "模型 gpt3.5 gpt4")
 	chatgptCmd.Flags().StringVar(&prompt, "p", "", "提示词")
 	chatgptCmd.MarkFlagRequired("p")
 	chatgptCmd.MarkFlagRequired("m")
-	chatgptCmd.MarkFlagRequired("t")
 }
 
 func handleChat() {
-	cgpt.New(token, model).WithProxy("http://127.0.0.1:7890").ChatGPTCompletionStream(prompt)
-	//cgpt.New(token, model).WithProxy("http://127.0.0.1:7890").GPT3CompletionStream(prompt)
-	//cgpt.New(token, model).WithProxy("http://127.0.0.1:7890").NormalChatCompletion(prompt)
-	// ada
-	//cgpt.New(token, model).WithProxy("http://127.0.0.1:7890").GPT3CompletionNoStream(prompt)
-	//cgpt.New(token, model).WithProxy("http://127.0.0.1:7890").GetModels()
+	app := service.NewApp()
+	fmt.Println("OK app")
+	generalInfo := setting.New(app).GetGeneralInfo()
+	data := generalInfo.Data.(model.Setting)
+	token = data.ApiKey
+	gpt := cgpt.New(token).WithProxy("http://127.0.0.1:7890")
+
+	// /completions no stream
+	//stream, err := gpt.WithModel(openai.GPT3TextDavinci003).
+	//	WithPrompt(prompt).
+	//	WithStream(false).
+	//	WithMaxTokens(0).
+	//	WithCompletionRequest().
+	//	CompletionNoStream()
+	//fmt.Println(stream, err)
+
+	// /completions stream
+	gpt.WithModel(openai.GPT3TextDavinci003).
+		WithPrompt(prompt).
+		WithStream(false).
+		WithMaxTokens(0).
+		WithCompletionRequest().
+		CompletionStream()
+
+	// /chat/completions
+	//gpt.WithModel(openai.GPT3Dot5Turbo).WithMessages([]openai.ChatCompletionMessage{
+	//	{
+	//		Role:    openai.ChatMessageRoleUser,
+	//		Content: prompt,
+	//	},
+	//}).WithChatCompletionRequest().ChatCompletionStream()
 
 }

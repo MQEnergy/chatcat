@@ -1,11 +1,14 @@
 package main
 
 import (
+	"chatcat/backend/config"
+	"chatcat/backend/pkg/clog"
 	"chatcat/backend/service"
 	"chatcat/backend/service/chat"
 	"chatcat/backend/service/prompt"
 	"chatcat/backend/service/setting"
 	"embed"
+	"errors"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -16,16 +19,35 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
+var (
+	env       = "test"
+	app       *service.App
+	fremeless = true
+)
 
 func main() {
+	if env != "test" && env != "prod" {
+		panic(errors.New("环境变量异常，只能设置test、prod"))
+	}
 	// Create an instance of the app structure
-	app := service.NewApp()
-	fremeless := true
+	config.ConfEnv = env
+	app = service.NewApp()
+	app.LogInfo("env:", env)
+	app.LogInfo("sqlite db:", app.GetDatabasePath())
+	app.LogInfo("runtime path:", clog.GetRuntimePath())
+
+	// 启动websocket
+	//hub := gowebsocket.NewHub()
+	//go hub.Run()
+	//cws.Hub(hub, app)
+
+	// frameless
 	if runtime.GOOS == "darwin" {
 		fremeless = false
 	}
+
 	// Create application with options
-	err := wails.Run(&options.App{
+	if err := wails.Run(&options.App{
 		Title:             app.Cfg.App.AppName + " " + app.Cfg.App.Version,
 		Width:             app.Cfg.App.Width,
 		Height:            app.Cfg.App.Height,
@@ -56,9 +78,8 @@ func main() {
 			prompt.New(app),
 			setting.New(app),
 		},
-	})
-
-	if err != nil {
+	}); err != nil {
 		app.LogErrorf("Error: %s", err.Error())
+		panic(err)
 	}
 }

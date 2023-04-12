@@ -18,7 +18,7 @@
                    v-if="index == editIdx" v-model="item.name"
                    placeholder="请输入对话关键词"
                    allow-clear/>
-          <div v-else>{{ item.name }}</div>
+          <div v-else style="width: 150px; overflow: hidden;">{{ item.name }}</div>
         </template>
       </a-list-item-meta>
       <template #actions>

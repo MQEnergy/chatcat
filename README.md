@@ -5,6 +5,16 @@
 # chatcat
 ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 
+The ChatGPT client aims to be the best assistant, providing support for learning and work, and allowing users to deeply understand the charm of artificial intelligence. In the process of using it, you will unconsciously progress and learn in the AI era.
+
+As an efficient chat tool, Chatcat has always been committed to providing the best chat experience for users. We always maintain an attitude of continuous evolution and improvement, striving to make the most optimized and outstanding products.
+
+To this end, we will constantly improve and enhance the efficiency and quality of the chat tool, striving to meet the needs and expectations of users. Through continuous technological upgrades and optimization, we will provide users with faster, smarter and more convenient chat experience.
+
+At the same time, we will continue to expand and extend the features and characteristics of the chat tool. We will actively listen to user feedback and suggestions, as much as possible to meet the needs and usage scenarios of different users, and strive to make the most comprehensive, diverse and flexible tool.
+
+We believe that as long as we continue to work hard and pursue, Chatcat will surely become the best chat efficiency tool, creating more value for users.
+
 English | [中文文档](README-zh_CN.md)
 
 <p align="center" style="text-align: center">

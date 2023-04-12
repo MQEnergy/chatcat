@@ -21,20 +21,18 @@ type App struct {
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	// 读取配置
-	config.ConfEnv = "test"
 	conf, err := config.InitConfig()
 	if err != nil {
 		panic(err)
 	}
-	// 连接sqlite
-	db, err := csqlite.WithConnect(conf)
+	logger := clog.NewLogger(conf.Log.DirPath, conf.Log.FileName, conf.Log.Debug)
+	db, err := csqlite.WithConnect(logger, conf)
 	if err != nil {
 		panic(err)
 	}
 	return &App{
 		Cfg:            conf,
-		Log:            clog.NewLogger(conf.Log.DirPath, conf.Log.FileName, conf.Log.Debug),
+		Log:            logger,
 		DB:             db,
 		ChatRecordChan: make(chan bool),
 	}

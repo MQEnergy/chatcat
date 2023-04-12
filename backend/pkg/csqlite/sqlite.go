@@ -5,42 +5,59 @@ import (
 	"chatcat/backend/model"
 	"chatcat/backend/pkg/chelp"
 	"chatcat/backend/pkg/clog"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"time"
 )
 
 var (
 	isAutoMigrate bool
 	databasePath  string
-	db            *gorm.DB
-	err           error
 )
 
 // WithConnect
 // @Description: sqlite with connect
+// @param logger
 // @param conf
 // @return *gorm.DB
 // @return error
 // @author cx
-func WithConnect(conf *config.Conf) (*gorm.DB, error) {
+func WithConnect(logger *logrus.Logger, conf *config.Conf) (*gorm.DB, error) {
+	var (
+		db  *gorm.DB
+		err error
+	)
 	runtimeDir := chelp.GetRuntimeUserHomeDir()
-	// ${userHome}/chatcat/chatcat.db
-	databasePath := runtimeDir + "/" + conf.App.AppName + "/" + conf.App.DbName
-	clog.PrintInfo("sqlite db path: ", databasePath)
-	// check if db already exists Todo
+	databasePath = runtimeDir + "/" + conf.App.AppName + "/" + conf.App.DbName
 	if !chelp.IsPathExist(databasePath) {
-		_, err := chelp.MakeFileOrPath(databasePath)
+		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 		if err != nil {
 			return nil, err
 		}
-		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 		clog.PrintInfo("======== migrate start ========")
-		autoMigrate()
+		logger.Info("======== migrate start ========")
+		autoMigrate(db)
 		clog.PrintInfo("======== migrate end ========")
+		logger.Info("======== migrate end ========")
 		isAutoMigrate = true
 	} else {
+		logger.Info("databasePath2", databasePath)
 		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
+		if err != nil {
+			return nil, err
+		}
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
+	sqlDB.SetMaxIdleConns(10)
+	// SetMaxOpenConns sets the maximum number of open connections to the database.
+	sqlDB.SetMaxOpenConns(100)
+	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
+	sqlDB.SetConnMaxLifetime(time.Hour)
 	return db, err
 }
 
@@ -58,17 +75,18 @@ func GetIsAutoMigrate() bool {
 }
 
 // autoMigrate ...
-func autoMigrate() {
+func autoMigrate(db *gorm.DB) {
 	db.Migrator().CreateTable(
+		&model.Setting{},
 		&model.Chat{},
 		&model.ChatCate{},
 		&model.ChatRecord{},
 		&model.Prompt{},
-		&model.Setting{},
 		&model.Tag{},
 	)
 	// 写入初始化数据
-	MockTagList(db)
+	MockSetting(db)
 	MockChatCate(db)
+	MockTagList(db)
 	MockPromptList(db)
 }
