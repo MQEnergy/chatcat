@@ -43,16 +43,37 @@ import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
-import {CompletionsNoStream, CompletionsStream} from "../../api/settings.js";
-import {GetGeneralInfo} from "../../../wailsjs/go/setting/Service.js";
+import {CompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
 
 const router = useRouter();
 const prompt = ref('');
-
+const initWs = () => {
+  GetWsUrl().then(res => {
+    let wsUrl = res + "?group_id=ask"
+    console.log("handleChat", wsUrl)
+    const socket = new WebSocket(wsUrl);
+    socket.addEventListener('open', (event) => {
+      console.log('WebSocket连接已打开');
+      // socket.send('Hello, WebSocket!');
+    });
+    socket.addEventListener('message', (event) => {
+      console.log(`接收到消息：${event.data}`);
+    });
+    socket.addEventListener('close', (event) => {
+      console.log('WebSocket连接已关闭');
+    });
+    socket.addEventListener('error', (event) => {
+      console.error('WebSocket连接出错');
+    });
+  })
+}
 onMounted(() => {
   // 输入框
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
+
+  // ws connect
+  initWs();
 })
 // 头部显示
 const headerInfo = ref({
@@ -224,11 +245,7 @@ const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
 const handleChat = (value) => {
-  GetGeneralInfo().then(async res => {
-    const apiKey = res.data.api_key;
-    const modelName = res.data.model_name;
-    await CompletionsStream(apiKey, modelName, value);
-  })
+  CompletionStream(value)
 }
 </script>
 

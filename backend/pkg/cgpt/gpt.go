@@ -1,7 +1,7 @@
 package cgpt
 
 import (
-	"context"
+	"chatcat/backend/service"
 	"errors"
 	"fmt"
 	"github.com/pkoukk/tiktoken-go"
@@ -48,17 +48,17 @@ var (
 
 // GPT top_p适用于需要控制模型生成文本多样性的场景，可以让生成的文本保持一定的可控性，适用于需要保留一些局部结构的场景。而temperature适用于需要生成更加多样、创新的文本，可以让生成的文本更具随机性，适用于需要在新领域进行探索的场景。
 type GPT struct {
-	Ctx                   context.Context
+	App                   *service.App
 	Client                *openai.Client
 	ChatCompletionRequest openai.ChatCompletionRequest
 	CompletionRequest     openai.CompletionRequest
 	Token                 string
 }
 
-func New(token string) *GPT {
+func New(token string, app *service.App) *GPT {
 	once.Do(func() {
 		gpt = &GPT{
-			Ctx:    context.Background(),
+			App:    app,
 			Client: openai.NewClient(token),
 			Token:  token,
 		}
@@ -181,7 +181,7 @@ func (g *GPT) ChatCompletionStream() {
 	if Stream == false {
 		panic("ChatCompletionStream should be set stream")
 	}
-	stream, err := g.Client.CreateChatCompletionStream(g.Ctx, g.ChatCompletionRequest)
+	stream, err := g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
 		fmt.Printf("ChatCompletionStream error: %v\n", err)
 		return
@@ -208,9 +208,8 @@ func (g *GPT) ChatCompletionStream() {
 // @param prompt
 // @author cx
 func (g *GPT) CompletionStream() {
-	stream, err := g.Client.CreateCompletionStream(g.Ctx, g.CompletionRequest)
+	stream, err := g.Client.CreateCompletionStream(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
-		fmt.Printf("\nCompletionStream error: %v\n", err)
 		return
 	}
 	defer stream.Close()
@@ -218,14 +217,25 @@ func (g *GPT) CompletionStream() {
 	for {
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			fmt.Println("\nStream finished")
+			g.App.WsPushChan <- service.PushResp{
+				Code: 1,
+				Data: "Stream finished",
+			}
 			return
 		}
 		if err != nil {
-			fmt.Printf("\nStream error: %v\n", err)
+			g.App.WsPushChan <- service.PushResp{
+				Code: -1,
+				Data: fmt.Sprintf("Stream error: %v", err.Error()),
+			}
 			return
 		}
-		fmt.Printf(response.Choices[0].Text)
+		// ws 推送
+		g.App.LogInfof("CompletionStream: %v", response)
+		g.App.WsPushChan <- service.PushResp{
+			Code: 0,
+			Data: response.Choices[0].Text,
+		}
 	}
 	return
 }
@@ -236,7 +246,7 @@ func (g *GPT) CompletionStream() {
 // @param prompt
 // @author cx
 func (g *GPT) ChatCompletionNoStream() (*openai.ChatCompletionResponse, error) {
-	resp, err := g.Client.CreateChatCompletion(g.Ctx, g.ChatCompletionRequest)
+	resp, err := g.Client.CreateChatCompletion(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +274,7 @@ func (g *GPT) ChatCompletionNoStream() (*openai.ChatCompletionResponse, error) {
 // @author cx
 func (g *GPT) CompletionNoStream() (openai.CompletionResponse, error) {
 	fmt.Println(g.CompletionRequest.Model)
-	resp, err := g.Client.CreateCompletion(g.Ctx, g.CompletionRequest)
+	resp, err := g.Client.CreateCompletion(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
 		return resp, err
 	}
@@ -278,7 +288,7 @@ func (g *GPT) CompletionNoStream() (openai.CompletionResponse, error) {
 // @return error
 // @author cx
 func (g *GPT) ListModels() (openai.ModelsList, error) {
-	modelList, err := g.Client.ListModels(g.Ctx)
+	modelList, err := g.Client.ListModels(g.App.Ctx)
 	if err != nil {
 		return modelList, err
 	}

@@ -31,6 +31,8 @@ type (
 		HomeUrl         string `yaml:"homeUrl" default:""`
 		ServerUrl       string `yaml:"serverUrl" default:""`
 		DbName          string `yaml:"dbName" default:""`
+		WsUrl           string `yaml:"wsUrl" default:""`
+		PushUrl         string `yaml:"pushUrl" default:""`
 	}
 	Log struct {
 		Debug    bool   `yaml:"debug" default:"true"`

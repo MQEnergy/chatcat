@@ -2,13 +2,18 @@ package main
 
 import (
 	"chatcat/backend/config"
+	"chatcat/backend/pkg/chttp"
 	"chatcat/backend/pkg/clog"
+	"chatcat/backend/pkg/cws"
 	"chatcat/backend/service"
 	"chatcat/backend/service/chat"
 	"chatcat/backend/service/prompt"
 	"chatcat/backend/service/setting"
 	"embed"
+	"encoding/json"
 	"errors"
+	"fmt"
+	gowebsocket "github.com/MQEnergy/go-websocket"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -36,10 +41,8 @@ func main() {
 	app.LogInfo("sqlite db:", app.GetDatabasePath())
 	app.LogInfo("runtime path:", clog.GetRuntimePath())
 
-	// 启动websocket
-	//hub := gowebsocket.NewHub()
-	//go hub.Run()
-	//cws.Hub(hub, app)
+	// initialize groutine
+	InitGoroutine()
 
 	// frameless
 	if runtime.GOOS == "darwin" {
@@ -82,4 +85,23 @@ func main() {
 		app.LogErrorf("Error: %s", err.Error())
 		panic(err)
 	}
+}
+
+// InitGoroutine ...
+func InitGoroutine() {
+	// start websocket :9991
+	hub := gowebsocket.NewHub()
+	cws.Hub(hub, app)
+	go hub.Run()
+	go func() {
+		for {
+			select {
+			case pushInfo := <-app.WsPushChan:
+				payload, _ := json.Marshal(pushInfo)
+				pushUrl := fmt.Sprintf("%s?client_id=%s&data=%s", app.Cfg.App.PushUrl, app.ClientId, string(payload))
+				res, err := chttp.Request("GET", pushUrl, "")
+				app.LogInfof("push: %v err: %v", res, err)
+			}
+		}
+	}()
 }

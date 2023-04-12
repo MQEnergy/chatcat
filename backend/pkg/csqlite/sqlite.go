@@ -42,7 +42,6 @@ func WithConnect(logger *logrus.Logger, conf *config.Conf) (*gorm.DB, error) {
 		logger.Info("======== migrate end ========")
 		isAutoMigrate = true
 	} else {
-		logger.Info("databasePath2", databasePath)
 		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 		if err != nil {
 			return nil, err

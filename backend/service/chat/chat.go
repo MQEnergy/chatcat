@@ -2,9 +2,12 @@ package chat
 
 import (
 	"chatcat/backend/model"
+	"chatcat/backend/pkg/cgpt"
 	"chatcat/backend/pkg/cpaginator"
 	"chatcat/backend/pkg/cresp"
 	"chatcat/backend/service"
+	"chatcat/backend/service/setting"
+	"github.com/sashabaranov/go-openai"
 )
 
 type Service struct {
@@ -123,4 +126,42 @@ func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
 		return cresp.Fail("chat record save failed")
 	}
 	return cresp.Success(chatRecordInfo)
+}
+
+// CompletionStream
+// @Description: 问答类型数据流
+// @receiver s
+// @param prompt
+// @author cx
+func (s *Service) CompletionStream(prompt string) {
+	generalInfo := setting.New(s.App).GetGeneralInfo()
+	data := generalInfo.Data.(model.Setting)
+	cgpt.New(data.ApiKey, s.App).
+		WithProxy(data.ProxyUrl).
+		WithModel(data.AskModel).
+		WithPrompt(prompt).
+		WithMaxTokens(0).
+		WithCompletionRequest().
+		CompletionStream()
+}
+
+func (s *Service) ChatCompletionStream(prompt string) {
+	generalInfo := setting.New(s.App).GetGeneralInfo()
+	data := generalInfo.Data.(model.Setting)
+	cgpt.New(data.ApiKey, s.App).
+		WithProxy(data.ProxyUrl).
+		WithModel(data.ChatModel).
+		WithMessages([]openai.ChatCompletionMessage{
+			{
+				Role:    openai.ChatMessageRoleUser,
+				Content: prompt,
+			},
+		}).
+		WithMaxTokens(0).
+		WithChatCompletionRequest().
+		ChatCompletionStream()
+}
+
+func (s *Service) GetWsUrl() string {
+	return s.App.Cfg.App.WsUrl
 }

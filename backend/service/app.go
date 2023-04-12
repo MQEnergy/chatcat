@@ -10,13 +10,20 @@ import (
 	"gorm.io/gorm"
 )
 
+type PushResp struct {
+	Code int    `json:"code"`
+	Data string `json:"data"`
+}
+
 // App struct
 type App struct {
 	Ctx            context.Context
 	Cfg            *config.Conf
 	Log            *logrus.Logger
 	DB             *gorm.DB
-	ChatRecordChan chan bool // channel for chat record Todo
+	ChatRecordChan chan bool // 保存聊天记录的管道
+	ClientId       string
+	WsPushChan     chan PushResp // 推送内容通道
 }
 
 // NewApp creates a new App application struct
@@ -35,6 +42,7 @@ func NewApp() *App {
 		Log:            logger,
 		DB:             db,
 		ChatRecordChan: make(chan bool),
+		WsPushChan:     make(chan PushResp),
 	}
 }
 
