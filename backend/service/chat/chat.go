@@ -151,6 +151,7 @@ func (s *Service) ChatCompletionStream(prompt string) {
 	cgpt.New(data.ApiKey, s.App).
 		WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
+		WithPrompt(prompt).
 		WithMessages([]openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleUser,

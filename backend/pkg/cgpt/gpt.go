@@ -3,7 +3,6 @@ package cgpt
 import (
 	"chatcat/backend/pkg/clog"
 	"chatcat/backend/service"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/pkoukk/tiktoken-go"
@@ -95,13 +94,17 @@ func (g *GPT) WithTemperature(temperature float32) *GPT {
 
 func (g *GPT) WithMaxTokens(tokens int) *GPT {
 	if tokens == 0 {
-		maxTokens := getMaxTokensByModel()
-		tikToken, err := g.getTikTokenByModel(Model)
+		modelTokens := getMaxTokensByModel()
+		prompt, ok := Prompt.(string)
+		if !ok {
+			panic("prompt must be a string")
+		}
+		tikToken, err := g.getTikTokenByEncoding(prompt)
 		if err != nil {
 			panic(err)
 		}
-		MaxTokens = maxTokens - tikToken*10
-		g.App.LogInfof("tikToken: %d maxTokens: %d leftToken: %d", tikToken, maxTokens, MaxTokens)
+		MaxTokens = modelTokens - tikToken
+		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s prompt: %s", tikToken, modelTokens, MaxTokens, Model, prompt)
 	} else {
 		MaxTokens = tokens
 	}
@@ -186,22 +189,27 @@ func (g *GPT) ChatCompletionStream() {
 	}
 	stream, err := g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
-		fmt.Printf("ChatCompletionStream error: %v\n", err)
 		return
 	}
 	defer stream.Close()
-	fmt.Printf("Stream response: ")
 	for {
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			fmt.Println("\nStream finished")
 			return
 		}
 		if err != nil {
-			fmt.Printf("\nStream error: %v\n", err)
+			g.App.WsPushChan <- service.PushResp{
+				Code: -1,
+				Data: fmt.Sprintf("Stream error: %s", err.Error()),
+			}
 			return
 		}
-		fmt.Printf(response.Choices[0].Delta.Content)
+		// ws 推送
+		clog.PrintInfo(fmt.Sprintf("ChatCompletionStream text: %#v", response.Choices[0].Delta.Content))
+		g.App.WsPushChan <- service.PushResp{
+			Code: 0,
+			Data: response.Choices[0].Delta.Content,
+		}
 	}
 }
 
@@ -211,6 +219,9 @@ func (g *GPT) ChatCompletionStream() {
 // @param prompt
 // @author cx
 func (g *GPT) CompletionStream() {
+	if Stream == false {
+		panic("CompletionStream should be set stream")
+	}
 	stream, err := g.Client.CreateCompletionStream(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
 		return
@@ -229,8 +240,6 @@ func (g *GPT) CompletionStream() {
 			return
 		}
 		// ws 推送
-		bytes, _ := json.Marshal(response)
-		g.App.Log.Infof("CompletionStream: %s", string(bytes))
 		clog.PrintInfo(fmt.Sprintf("CompletionStream text: %#v", response.Choices[0].Text))
 		g.App.WsPushChan <- service.PushResp{
 			Code: 0,
@@ -259,7 +268,6 @@ func (g *GPT) ChatCompletionNoStream() (*openai.ChatCompletionResponse, error) {
 // @param prompt
 // @author cx
 func (g *GPT) CompletionNoStream() (openai.CompletionResponse, error) {
-	fmt.Println(g.CompletionRequest.Model)
 	resp, err := g.Client.CreateCompletion(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
 		return resp, err
@@ -309,18 +317,61 @@ func getMaxTokensByModel() int {
 	return tokens[Model]
 }
 
-// getTikTokenByModel
-// @Description: get token by model
+// getTikTokenByEncoding
+// @Description: get token by model Todo
 // @receiver g
 // @param prompt
 // @return int
 // @return error
 // @author cx
-func (g *GPT) getTikTokenByModel(prompt string) (int, error) {
-	tkm, err := tiktoken.EncodingForModel(Model)
+func (g *GPT) getTikTokenByEncoding(prompt string) (int, error) {
+	encoding := g.getAvailableEncodingModel(Model)
+	g.App.LogInfo("encoding: ", encoding)
+	tkm, err := tiktoken.GetEncoding(encoding)
 	if err != nil {
 		return 0, err
 	}
 	token := tkm.Encode(prompt, nil, nil)
-	return len(token), nil
+	tokenNum := 0
+	switch Model {
+	case openai.GPT3Dot5Turbo, openai.GPT3Dot5Turbo0301:
+		for i := 0; i < len(prompt); i++ {
+			tokenNum += 4
+		}
+	case openai.GPT4, openai.GPT432K0314, openai.GPT40314, openai.GPT432K:
+		for i := 0; i < len(prompt); i++ {
+			tokenNum += 3
+		}
+	default:
+		tokenNum = len(token)
+	}
+	return tokenNum, nil
+}
+
+// getAvailableEncodingModel
+// @Description: get available encoding model
+// @receiver g
+// @param model
+// @return string
+// @author cx
+func (g *GPT) getAvailableEncodingModel(model string) string {
+	encodeMaps := map[string]string{
+		openai.GPT4:                "cl100k_base",
+		openai.GPT40314:            "cl100k_base",
+		openai.GPT432K:             "cl100k_base",
+		openai.GPT432K0314:         "cl100k_base",
+		openai.GPT3Dot5Turbo:       "cl100k_base",
+		openai.GPT3Dot5Turbo0301:   "cl100k_base",
+		openai.GPT3TextDavinci003:  "p50k_base",
+		openai.GPT3TextDavinci002:  "p50k_base",
+		openai.CodexCodeDavinci002: "p50k_base",
+		openai.GPT3TextCurie001:    "r50k_base",
+		openai.GPT3TextBabbage001:  "r50k_base",
+		openai.GPT3TextAda001:      "r50k_base",
+		openai.GPT3Davinci:         "r50k_base",
+		openai.GPT3Curie:           "r50k_base",
+		openai.GPT3Babbage:         "r50k_base",
+		openai.GPT3Ada:             "r50k_base",
+	}
+	return encodeMaps[model]
 }

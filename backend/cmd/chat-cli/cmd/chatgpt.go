@@ -41,26 +41,27 @@ func init() {
 
 func handleChat() {
 	app := service.NewApp()
-	fmt.Println("OK app")
 	generalInfo := setting.New(app).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
 	token = data.ApiKey
 	gpt := cgpt.New(token, app).WithProxy("http://127.0.0.1:7890")
 
-	// /completions no stream
-	//stream, err := gpt.WithModel(openai.GPT3TextDavinci003).
-	//	WithPrompt(prompt).
-	//	WithStream(false).
-	//	WithMaxTokens(0).
-	//	WithCompletionRequest().
-	//	CompletionNoStream()
-	//fmt.Println(stream, err)
-
 	// /completions stream
-	gpt.WithModel(openai.GPT3TextDavinci003).
+	gpt.WithModel(data.AskModel).
 		WithPrompt(prompt).
-		WithStream(false).
 		WithMaxTokens(0).
 		WithCompletionRequest().
 		CompletionStream()
+
+	// /chat/completions stream
+	gpt.WithModel(data.ChatModel).
+		WithMessages([]openai.ChatCompletionMessage{
+			{
+				Role:    openai.ChatMessageRoleUser,
+				Content: prompt,
+			},
+		}).
+		WithMaxTokens(0).
+		WithChatCompletionRequest().
+		ChatCompletionStream()
 }

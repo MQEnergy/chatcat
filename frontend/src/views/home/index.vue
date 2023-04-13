@@ -43,7 +43,7 @@ import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
-import {CompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
+import {ChatCompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
 
 const router = useRouter();
 const prompt = ref('');
@@ -51,6 +51,7 @@ const prompt = ref('');
 let contentList = reactive([]);
 // 临时生成内容
 let tempContent = ref('');
+
 const initWs = () => {
   GetWsUrl().then(res => {
     let wsUrl = res + "?group_id=ask"
@@ -66,7 +67,7 @@ const initWs = () => {
           break;
         case 10010:
           tempContent.value += data.data.data;
-          console.log(`接收到消息：${tempContent.value}`);
+          // console.log(`接收到消息：${tempContent.value}`);
           contentList[contentList.length - 1].content = tempContent.value;
           break;
       }
@@ -83,7 +84,6 @@ onMounted(() => {
   // 输入框
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
-
   // ws connect
   initWs();
 })
@@ -248,18 +248,23 @@ const handleCateList = (item) => {
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
+
 const handleChat = (value) => {
+  tempContent.value = '';
   contentList.push({
     id: 1,
     content: value,
     from: 1,
-  },{
+  }, {
     id: 2,
     content: "正在生成中...",
     from: 2,
   })
-  // completion stream
-  CompletionStream(value)
+  //
+  // chat completion stream 适用于：gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
+  ChatCompletionStream(value + ",用markdown格式回复我")
+  // completion stream 适用于：text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
+  // CompletionStream(value)
 }
 </script>
 

@@ -24,7 +24,7 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 		a.ClientId = client.ClientId
 	})
 
-	// 推送
+	// 推送单客户端
 	http.HandleFunc("/push", func(writer http.ResponseWriter, request *http.Request) {
 		clientId := request.FormValue("client_id")
 		data := request.FormValue("data")
@@ -38,6 +38,23 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 			Msg:  []byte(data),
 		}
 		writer.Write([]byte(`{"code":0,"msg":"push success"}`))
+		return
+	})
+
+	// 推送到群组
+	http.HandleFunc("/push_to_group", func(writer http.ResponseWriter, request *http.Request) {
+		groupId := request.FormValue("group_id")
+		data := request.FormValue("data")
+		writer.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if groupId == "" || data == "" {
+			writer.Write([]byte(`{"code": -1,"msg":"parameter error"}`))
+			return
+		}
+		hub.GroupBroadcast <- &gowebsocket.BroadcastChan{
+			Name: groupId,
+			Msg:  []byte(data),
+		}
+		writer.Write([]byte(`{"code":0,"msg":"push group success"}`))
 		return
 	})
 	a.LogInfo("websocket starting success port: 9991")
