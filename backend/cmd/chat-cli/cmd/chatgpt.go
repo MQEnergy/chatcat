@@ -45,7 +45,7 @@ func handleChat() {
 	generalInfo := setting.New(app).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
 	token = data.ApiKey
-	gpt := cgpt.New(token).WithProxy("http://127.0.0.1:7890")
+	gpt := cgpt.New(token, app).WithProxy("http://127.0.0.1:7890")
 
 	// /completions no stream
 	//stream, err := gpt.WithModel(openai.GPT3TextDavinci003).
@@ -63,13 +63,4 @@ func handleChat() {
 		WithMaxTokens(0).
 		WithCompletionRequest().
 		CompletionStream()
-
-	// /chat/completions
-	//gpt.WithModel(openai.GPT3Dot5Turbo).WithMessages([]openai.ChatCompletionMessage{
-	//	{
-	//		Role:    openai.ChatMessageRoleUser,
-	//		Content: prompt,
-	//	},
-	//}).WithChatCompletionRequest().ChatCompletionStream()
-
 }

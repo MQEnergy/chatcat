@@ -47,17 +47,29 @@ import {CompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
 
 const router = useRouter();
 const prompt = ref('');
+// 聊天内容列表
+let contentList = reactive([]);
+// 临时生成内容
+let tempContent = ref('');
 const initWs = () => {
   GetWsUrl().then(res => {
     let wsUrl = res + "?group_id=ask"
-    console.log("handleChat", wsUrl)
     const socket = new WebSocket(wsUrl);
     socket.addEventListener('open', (event) => {
       console.log('WebSocket连接已打开');
-      // socket.send('Hello, WebSocket!');
     });
     socket.addEventListener('message', (event) => {
-      console.log(`接收到消息：${event.data}`);
+      const data = JSON.parse(event.data);
+      switch (data.code) {
+        case 0:
+          console.log(`连接成功：${event.data}`);
+          break;
+        case 10010:
+          tempContent.value += data.data.data;
+          console.log(`接收到消息：${tempContent.value}`);
+          contentList[contentList.length - 1].content = tempContent.value;
+          break;
+      }
     });
     socket.addEventListener('close', (event) => {
       console.log('WebSocket连接已关闭');
@@ -113,14 +125,6 @@ let chatList = reactive({
   list: []
 })
 
-// 聊天内容列表
-const contentList = reactive([
-  {
-    id: 1,
-    content: '',
-    avatar: '',
-  }
-])
 const handleCateList = (item) => {
   let _chatList = [];
   switch (item.id) {
@@ -245,6 +249,16 @@ const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
 const handleChat = (value) => {
+  contentList.push({
+    id: 1,
+    content: value,
+    from: 1,
+  },{
+    id: 2,
+    content: "正在生成中...",
+    from: 2,
+  })
+  // completion stream
   CompletionStream(value)
 }
 </script>

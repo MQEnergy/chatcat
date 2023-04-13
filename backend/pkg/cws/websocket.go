@@ -3,13 +3,18 @@ package cws
 import (
 	"chatcat/backend/service"
 	gowebsocket "github.com/MQEnergy/go-websocket"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 )
 
 func Hub(hub *gowebsocket.Hub, a *service.App) {
 	// 日志注入
-	gowebsocket.Logger = a.Log
-
+	//gowebsocket.Logger = a.Log
+	gowebsocket.Logger = logrus.New()
+	gowebsocket.Logger.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: time.DateTime,
+	})
 	// ws连接
 	http.HandleFunc("/chat", func(writer http.ResponseWriter, request *http.Request) {
 		client, err := gowebsocket.WsServer(hub, writer, request, gowebsocket.Json)
@@ -25,22 +30,19 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 		data := request.FormValue("data")
 		writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 		if clientId == "" || data == "" {
-			writer.Write([]byte(`{"code": -1,"msg":"参数错误"}`))
+			writer.Write([]byte(`{"code": -1,"msg":"parameter error"}`))
 			return
 		}
 		hub.ClientBroadcast <- &gowebsocket.BroadcastChan{
 			Name: clientId,
 			Msg:  []byte(data),
 		}
-		a.LogInfof("客户端消息发送成功 client_id: %s msg: %s", clientId, data)
-		writer.Write([]byte(`{"code":0,"msg":"客户端消息发送成功"}`))
+		writer.Write([]byte(`{"code":0,"msg":"push success"}`))
 		return
 	})
 	a.LogInfo("websocket starting success port: 9991")
 
-	go func() {
-		if err := http.ListenAndServe(":9991", nil); err != nil {
-			a.LogInfof("ListenAndServe err:", err.Error())
-		}
-	}()
+	if err := http.ListenAndServe(":9991", nil); err != nil {
+		a.LogInfof("ListenAndServe err:", err.Error())
+	}
 }

@@ -19,6 +19,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	"net/url"
 	"runtime"
 )
 
@@ -91,16 +92,20 @@ func main() {
 func InitGoroutine() {
 	// start websocket :9991
 	hub := gowebsocket.NewHub()
-	cws.Hub(hub, app)
+	go cws.Hub(hub, app)
 	go hub.Run()
 	go func() {
 		for {
 			select {
+			// ws push
 			case pushInfo := <-app.WsPushChan:
 				payload, _ := json.Marshal(pushInfo)
-				pushUrl := fmt.Sprintf("%s?client_id=%s&data=%s", app.Cfg.App.PushUrl, app.ClientId, string(payload))
+				params := url.Values{}
+				params.Add("client_id", app.ClientId)
+				params.Add("data", string(payload))
+				pushUrl := fmt.Sprintf("%s?%s", app.Cfg.App.PushUrl, params.Encode())
 				res, err := chttp.Request("GET", pushUrl, "")
-				app.LogInfof("push: %v err: %v", res, err)
+				app.LogInfof("pushUrl: %s response: %v err: %v", res, pushUrl, err)
 			}
 		}
 	}()

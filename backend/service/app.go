@@ -42,7 +42,7 @@ func NewApp() *App {
 		Log:            logger,
 		DB:             db,
 		ChatRecordChan: make(chan bool),
-		WsPushChan:     make(chan PushResp),
+		WsPushChan:     make(chan PushResp, 1000),
 	}
 }
 

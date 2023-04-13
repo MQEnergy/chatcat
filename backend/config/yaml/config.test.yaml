@@ -15,8 +15,8 @@ app:
   homeUrl: "" # 应用主页
   serverUrl: "" # 服务器地址
   dbName: "chatcat.db" # db名字
-  wsUrl: "ws://localhost:9991/chat" # ws连接地址
-  pushUrl: "http://localhost:9991/push" # ws推送地址
+  wsUrl: "ws://127.0.0.1:9991/chat" # ws连接地址
+  pushUrl: "http://127.0.0.1:9991/push" # ws推送地址
 log:
   debug: true
   fileName: 'chatcat' # 日志文件名称

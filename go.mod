@@ -1,6 +1,6 @@
 module chatcat
 
-go 1.18
+go 1.20
 
 require (
 	github.com/MQEnergy/go-websocket v0.0.0-20221108142025-fd53dedea756

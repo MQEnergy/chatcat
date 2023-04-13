@@ -1,7 +1,7 @@
 <template>
   <a-space direction="horizontal" style="width: 100%;">
     <a-mention size="large" v-model="promptValue" :data="['翻译', '润色', '总结', '分析', '解释', '解释代码', '检查代码']"
-               prefix="/" placeholder="输入 / 或直接输入对话关键词"/>
+               prefix="/" placeholder="输入 / 或直接输入对话关键词" @keydown.enter="handleSend"/>
     <a-button size="large" type="primary" @click="handleSend">send</a-button>
   </a-space>
 </template>
@@ -20,7 +20,9 @@ watch(() => props.value, () => {
 })
 const emits = defineEmits(['ok'])
 const handleSend = () => {
-  emits('ok', promptValue.value)
+  if (promptValue.value.indexOf('/')  < 0) {
+    emits('ok', promptValue.value)
+  }
 }
 </script>
 

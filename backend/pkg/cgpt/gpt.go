@@ -1,7 +1,9 @@
 package cgpt
 
 import (
+	"chatcat/backend/pkg/clog"
 	"chatcat/backend/service"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/pkoukk/tiktoken-go"
@@ -98,7 +100,8 @@ func (g *GPT) WithMaxTokens(tokens int) *GPT {
 		if err != nil {
 			panic(err)
 		}
-		MaxTokens = maxTokens - tikToken
+		MaxTokens = maxTokens - tikToken*10
+		g.App.LogInfof("tikToken: %d maxTokens: %d leftToken: %d", tikToken, maxTokens, MaxTokens)
 	} else {
 		MaxTokens = tokens
 	}
@@ -213,25 +216,22 @@ func (g *GPT) CompletionStream() {
 		return
 	}
 	defer stream.Close()
-
 	for {
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			g.App.WsPushChan <- service.PushResp{
-				Code: 1,
-				Data: "Stream finished",
-			}
 			return
 		}
 		if err != nil {
 			g.App.WsPushChan <- service.PushResp{
 				Code: -1,
-				Data: fmt.Sprintf("Stream error: %v", err.Error()),
+				Data: fmt.Sprintf("Stream error: %s", err.Error()),
 			}
 			return
 		}
 		// ws 推送
-		g.App.LogInfof("CompletionStream: %v", response)
+		bytes, _ := json.Marshal(response)
+		g.App.Log.Infof("CompletionStream: %s", string(bytes))
+		clog.PrintInfo(fmt.Sprintf("CompletionStream text: %#v", response.Choices[0].Text))
 		g.App.WsPushChan <- service.PushResp{
 			Code: 0,
 			Data: response.Choices[0].Text,
@@ -255,20 +255,6 @@ func (g *GPT) ChatCompletionNoStream() (*openai.ChatCompletionResponse, error) {
 
 // CompletionNoStream
 // @Description: https://api.openai.com/v1/completions 为提供的提示和参数创建完成
-// Request
-//
-//	{
-//	 "model": "text-davinci-003",
-//	 "prompt": "Say this is a test",
-//	 "max_tokens": 7,
-//	 "temperature": 0,
-//	 "top_p": 1,
-//	 "n": 1,
-//	 "stream": false,
-//	 "logprobs": null,
-//	 "stop": "\n"
-//	}
-//
 // @receiver g
 // @param prompt
 // @author cx

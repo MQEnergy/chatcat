@@ -20,7 +20,7 @@ func Request(method, url, data string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("Content-Type", "application/json")
+	//req.Header.Set("Content-Type", "application/json")
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
