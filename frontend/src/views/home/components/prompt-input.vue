@@ -2,7 +2,7 @@
   <a-space class="prompt-container" direction="horizontal" style="width: 100%;">
     <a-mention size="large" v-model="promptValue" :data="promptPrefix"
                prefix="/" placeholder="输入 / 获取模板 或直接输入问题" @keydown.enter="handleSend" allow-clear/>
-    <a-button size="large" type="primary" @click="handleSend" :loading="sendLoading">send</a-button>
+    <a-button size="large" type="primary" @click="handleSend" :loading="sendLoading"><icon-send /></a-button>
   </a-space>
 </template>
 <script setup>

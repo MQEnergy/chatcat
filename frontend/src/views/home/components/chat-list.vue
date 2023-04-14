@@ -18,11 +18,11 @@
                   <a-link @click="handleExampleClick('帮我制定一个一周的健身计划')">帮我制定一个一周的健身计划</a-link>
                 </p>
                 <p>2.
-                  <a-link @click="handleExampleClick('为我撰写有关AI对人类发展有帮助的5个吸引眼球的文章标题')">为我撰写有关AI对人类发展有帮助的5个吸引眼球的文章标题
+                  <a-link @click="handleExampleClick('为我撰写有关AI对人类发展的5个吸引眼球的文章标题')">为我撰写有关AI对人类发展的5个吸引眼球的文章标题
                   </a-link>
                 </p>
                 <p>3.
-                  <a-link @click="handleExampleClick('给我一份制作红烧头的菜单')">给我一份制作红烧头的菜单</a-link>
+                  <a-link @click="handleExampleClick('给我一份制作红烧肉的食谱')">给我一份制作红烧肉的食谱</a-link>
                 </p>
               </div>
             </a-typography-paragraph>
