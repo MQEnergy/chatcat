@@ -200,7 +200,7 @@ func (g *GPT) ChatCompletionStream() {
 		if err != nil {
 			g.App.WsPushChan <- service.PushResp{
 				Code: -1,
-				Data: fmt.Sprintf("Stream error: %s", err.Error()),
+				Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
 			}
 			return
 		}
@@ -235,7 +235,7 @@ func (g *GPT) CompletionStream() {
 		if err != nil {
 			g.App.WsPushChan <- service.PushResp{
 				Code: -1,
-				Data: fmt.Sprintf("Stream error: %s", err.Error()),
+				Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
 			}
 			return
 		}

@@ -5,7 +5,6 @@ marked.setOptions({
   renderer: new marked.Renderer(),
   highlight: function (code, lang) {
     let language = hljs.getLanguage(lang) ? lang : 'plaintext';
-    console.log(language, lang)
     if (lang === 'vue') {
       language = 'xml';
     }

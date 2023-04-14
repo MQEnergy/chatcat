@@ -57,15 +57,16 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     height: auto;
-    min-height: 80px;
-    max-height: calc(100% - 124px);
+    min-height: calc(100vh - 140px);
+    max-height: calc(100% - 140px);
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
 }
 pre code {
     display: block;
-    background-color: #f7f7f7;
+    background-color: #f6f8fa !important;
     border-radius: 8px !important;
     overflow-x: auto;
+    border: none !important;
 }

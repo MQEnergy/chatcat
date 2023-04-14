@@ -44,6 +44,9 @@ import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
 import {ChatCompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
+import {Message} from "@arco-design/web-vue";
+import {useI18n} from "vue-i18n";
+const { t } = useI18n();
 
 const router = useRouter();
 const prompt = ref('');
@@ -53,6 +56,9 @@ let contentList = reactive([]);
 let tempContent = ref('');
 
 const initWs = () => {
+  if (window.go == undefined) {
+    return;
+  }
   GetWsUrl().then(res => {
     let wsUrl = res + "?group_id=ask"
     const socket = new WebSocket(wsUrl);
@@ -248,8 +254,11 @@ const handleCateList = (item) => {
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
-
 const handleChat = (value) => {
+  if (value == "") {
+    Message.warning("prompt is required")
+    return
+  }
   tempContent.value = '';
   contentList.push({
     id: 1,
@@ -260,9 +269,12 @@ const handleChat = (value) => {
     content: "正在生成中...",
     from: 2,
   })
-  //
   // chat completion stream 适用于：gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
-  ChatCompletionStream(value + ",用markdown格式回复我")
+  ChatCompletionStream(value + "," + t('common.markdown')).then(res => {
+    if (res.code == -1) {
+      contentList[contentList.length - 1].content = res.msg
+    }
+  })
   // completion stream 适用于：text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
   // CompletionStream(value)
 }

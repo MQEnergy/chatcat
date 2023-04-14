@@ -132,10 +132,14 @@ func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
 // @Description: 问答类型数据流
 // @receiver s
 // @param prompt
+// @return error
 // @author cx
-func (s *Service) CompletionStream(prompt string) {
+func (s *Service) CompletionStream(prompt string) *cresp.Response {
 	generalInfo := setting.New(s.App).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
+	if data.ApiKey == "" {
+		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
+	}
 	cgpt.New(data.ApiKey, s.App).
 		WithProxy(data.ProxyUrl).
 		WithModel(data.AskModel).
@@ -143,11 +147,21 @@ func (s *Service) CompletionStream(prompt string) {
 		WithMaxTokens(0).
 		WithCompletionRequest().
 		CompletionStream()
+	return cresp.Success("")
 }
 
-func (s *Service) ChatCompletionStream(prompt string) {
+// ChatCompletionStream
+// @Description: 对话类型数据流
+// @receiver s
+// @param prompt
+// @return error
+// @author cx
+func (s *Service) ChatCompletionStream(prompt string) *cresp.Response {
 	generalInfo := setting.New(s.App).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
+	if data.ApiKey == "" {
+		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
+	}
 	cgpt.New(data.ApiKey, s.App).
 		WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
@@ -161,8 +175,10 @@ func (s *Service) ChatCompletionStream(prompt string) {
 		WithMaxTokens(0).
 		WithChatCompletionRequest().
 		ChatCompletionStream()
+	return cresp.Success("")
 }
 
+// GetWsUrl ...
 func (s *Service) GetWsUrl() string {
 	return s.App.Cfg.App.WsUrl
 }
