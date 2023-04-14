@@ -54,6 +54,8 @@ type GPT struct {
 	ChatCompletionRequest openai.ChatCompletionRequest
 	CompletionRequest     openai.CompletionRequest
 	Token                 string
+	Done                  chan bool
+	ChatCompStream        *openai.ChatCompletionStream
 }
 
 func New(token string, app *service.App) *GPT {
@@ -62,6 +64,7 @@ func New(token string, app *service.App) *GPT {
 			App:    app,
 			Client: openai.NewClient(token),
 			Token:  token,
+			Done:   make(chan bool),
 		}
 	})
 	return gpt
@@ -183,41 +186,48 @@ func (g *GPT) WithCompletionRequest() *GPT {
 // @param prompt
 // @author cx
 func (g *GPT) ChatCompletionStream() {
+	var err error
 	if Stream == false {
 		panic("ChatCompletionStream should be set stream")
 	}
-	stream, err := g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
+	g.ChatCompStream, err = g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
 		return
 	}
-	defer stream.Close()
+	defer g.ChatCompStream.Close()
+	var done = make(chan bool)
+	//go func() {
+	//	time.Sleep(2 * time.Second)
+	//	done <- true
+	//}()
 	for {
-		response, err := stream.Recv()
-		// 中断推送
-		//bf := <-g.App.BreakOffChan
-		//fmt.Println(bf)
-		//if !bf {
-		//	return
-		//}
-		if errors.Is(err, io.EOF) {
-			g.App.WsPushChan <- service.PushResp{
-				Code: 1,
-				Data: "Chatcat Finished",
-			}
+		select {
+		case <-done:
+			fmt.Println("ChatCompletionStream OK")
 			return
-		}
-		if err != nil {
-			g.App.WsPushChan <- service.PushResp{
-				Code: -1,
-				Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
+		default:
+			response, err := g.ChatCompStream.Recv()
+			if errors.Is(err, io.EOF) {
+				g.App.WsPushChan <- service.PushResp{
+					Code: 1,
+					Data: "Chatcat Finished",
+				}
+				return
 			}
-			return
-		}
-		// ws 推送
-		clog.PrintInfo(fmt.Sprintf("ChatCompletionStream text: %#v", response.Choices[0].Delta.Content))
-		g.App.WsPushChan <- service.PushResp{
-			Code: 0,
-			Data: response.Choices[0].Delta.Content,
+			if err != nil {
+				g.App.WsPushChan <- service.PushResp{
+					Code: -1,
+					Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
+				}
+				return
+			}
+			// ws 推送
+			//fmt.Printf(response.Choices[0].Delta.Content)
+			//clog.PrintInfo(fmt.Sprintf("ChatCompletionStream text: %#v", response.Choices[0].Delta.Content))
+			g.App.WsPushChan <- service.PushResp{
+				Code: 0,
+				Data: response.Choices[0].Delta.Content,
+			}
 		}
 	}
 }

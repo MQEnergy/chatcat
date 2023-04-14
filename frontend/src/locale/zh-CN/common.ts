@@ -10,7 +10,7 @@ export default {
   'common.view': '查看',
   'common.name': '名称',
   'common.desc': '描述',
-  'common.markdown': '用markdown格式回复我',
+  'common.markdown': '用markdown格式回复,但是"用markdown格式回复"这几个字不要返回给我',
   'common.breakoff': '停止生成',
   'common.name.placeholder': '请输入名称',
   'common.desc.placeholder': '请输入描述',

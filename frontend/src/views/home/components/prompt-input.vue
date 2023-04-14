@@ -2,11 +2,25 @@
   <a-space class="prompt-container" direction="horizontal" style="width: 100%;">
     <a-mention size="large" v-model="promptValue" :data="promptPrefix"
                prefix="/" placeholder="输入 / 获取模板 或直接输入问题" @keydown.enter="handleSend" allow-clear/>
-    <a-button size="large" type="primary" @click="handleSend" :loading="sendLoading"><icon-send /></a-button>
+    <a-button class="prompt-btn" style="width: 60px;" size="large" type="primary" @click="handleSend" :loading="sendLoading">
+      <template #icon>
+        <icon-send size="18"/>
+      </template>
+    </a-button>
+    <!-- 停止对话stream -->
+    <div class="backoff-container" style="position: absolute; bottom: 50px; left: 0px; ">
+      <a-button size="medium" @click="handleBreakOffChat" v-if="sendLoading">
+        <template #icon>
+          <icon-record-stop/>
+        </template>
+        {{ $t('common.breakoff') }}
+      </a-button>
+    </div>
   </a-space>
 </template>
 <script setup>
 import {reactive, ref, watch} from "vue";
+import {BreakOffChatStream} from "../../../../wailsjs/go/chat/Service.js";
 
 const props = defineProps({
   value: {
@@ -43,14 +57,21 @@ const handleSend = () => {
   emits('ok', promptValue.value, sendLoading.value)
   promptValue.value = "";
 }
+const handleBreakOffChat = () => {
+  BreakOffChatStream()
+}
 </script>
 
 <style scoped>
+.prompt-container {
+  position: relative;
+}
+
 .prompt-container :deep(.arco-input-wrapper .arco-input) {
   height: 30px !important;
 }
 
-.prompt-container :deep(.arco-btn) {
+.prompt-container :deep(.prompt-btn) {
   height: 44px !important;
 }
 </style>

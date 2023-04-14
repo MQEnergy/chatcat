@@ -18,11 +18,16 @@
                   <a-link @click="handleExampleClick('帮我制定一个一周的健身计划')">帮我制定一个一周的健身计划</a-link>
                 </p>
                 <p>2.
-                  <a-link @click="handleExampleClick('为我撰写有关AI对人类发展的5个吸引眼球的文章标题')">为我撰写有关AI对人类发展的5个吸引眼球的文章标题
+                  <a-link @click="handleExampleClick('为我撰写有关AI对人类发展的5个吸引眼球的文章标题')">
+                    为我撰写有关AI对人类发展的5个吸引眼球的文章标题
                   </a-link>
                 </p>
                 <p>3.
                   <a-link @click="handleExampleClick('给我一份制作红烧肉的食谱')">给我一份制作红烧肉的食谱</a-link>
+                </p>
+                <p>4.
+                  <a-link @click="handleExampleClick('给我写一个python的http请求代码')">给我写一个python的http请求代码
+                  </a-link>
                 </p>
               </div>
             </a-typography-paragraph>
@@ -63,22 +68,25 @@
               </a-dropdown>
             </template>
           </a-card>
-          <a-button v-if="item.role === 'assistant' && sendLoading">
-            <template #icon>
-              <icon-record-stop/>
-            </template>
-            {{ $t('common.breakoff') }}
-          </a-button>
+          <!--          <div style="position: fixed; bottom: 0px; left: 20px; ">-->
+          <!--            <a-button @click="handleBreakOffChat" v-if="item.role === 'assistant' && sendLoading && index+1 === chatList.length">-->
+          <!--              <template #icon>-->
+          <!--                <icon-record-stop />-->
+          <!--              </template>-->
+          <!--              {{ $t('common.breakoff') }}-->
+          <!--            </a-button>-->
+          <!--          </div>-->
         </a-space>
       </a-space>
     </a-space>
+
   </div>
 </template>
 <script>
 </script>
 <script setup>
 import ChatGPTLogo from '@assets/images/chatgpt_black_logo.svg';
-import {onMounted, reactive, ref, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
 
@@ -104,11 +112,7 @@ watch(() => props.loading, () => {
 })
 // 渲染markdown
 const markedContent = (item) => {
-  if (item.role === 'assistant') {
-    return marked.parse(item.content);
-  } else {
-    return item.content
-  }
+  return marked.parse(item.content);
 }
 // const handleCopy = (e) => {
 //   const textContent = e.target.parentNode.parentNode.parentNode.parentNode.firstElementChild.querySelector('.hljs').textContent;

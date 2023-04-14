@@ -53,7 +53,7 @@ const prompt = ref('');
 
 let contentList = reactive([]);
 const tempContent = ref('');
-
+let deepList = reactive([]);
 // ----------------------------------------------------------------
 // 滚动位置
 const chatListRef = ref(null);
@@ -113,6 +113,7 @@ const initWs = () => {
             tempContent.value += data.data.data;
             contentList[contentList.length - 1].content = tempContent.value;
           } else {
+            deepList.push(contentList[contentList.length - 1]);
             sendLoading.value = false;
           }
           break;
@@ -265,13 +266,17 @@ const handleChat = (value, loading) => {
     content: value,
   }];
   contentList.push(...promptList)
-  let deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
-  deepList[0].content = value + "," + t('common.markdown');
+  let _deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
+  _deepList[0].content = value + "," + t('common.markdown');
   contentList.push({
     role: 'assistant',
     content: "正在生成中...",
   })
   // chat stream
+  deepList.push(_deepList[0])
+  // 只保留最后四个
+  deepList = deepList.slice(-4);
+  console.log("deepList: ", deepList)
   ChatCompletionStream(deepList).then(res => {
     if (res.code === -1) {
       contentList[contentList.length - 1].content = res.msg

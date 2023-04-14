@@ -20,6 +20,10 @@ func New(a *service.App) *Service {
 	}
 }
 
+var (
+	GPTPkg *cgpt.GPT
+)
+
 // GetChatCateList
 // @Description: get chat categories list
 // @receiver s
@@ -140,8 +144,8 @@ func (s *Service) CompletionStream(prompt string) *cresp.Response {
 	if data.ApiKey == "" {
 		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
 	}
-	cgpt.New(data.ApiKey, s.App).
-		WithProxy(data.ProxyUrl).
+	GPTPkg = cgpt.New(data.ApiKey, s.App)
+	GPTPkg.WithProxy(data.ProxyUrl).
 		WithModel(data.AskModel).
 		WithPrompt(prompt).
 		WithMaxTokens(0).
@@ -163,12 +167,15 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage) 
 	if data.ApiKey == "" {
 		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
 	}
-	cgpt.New(data.ApiKey, s.App).
-		WithProxy(data.ProxyUrl).
+	GPTPkg = cgpt.New(data.ApiKey, s.App)
+	gpt := GPTPkg.WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
 		WithMessages(messages).
-		WithMaxTokens(0).
-		WithChatCompletionRequest().
+		WithMaxTokens(0)
+	if cgpt.MaxTokens <= 0 {
+		return cresp.Fail("Chatcat Warm Reminder: Your token is running low, Please start a new conversation.")
+	}
+	gpt.WithChatCompletionRequest().
 		ChatCompletionStream()
 
 	return cresp.Success("")
@@ -184,5 +191,7 @@ func (s *Service) GetWsUrl() string {
 // @receiver s
 // @author cx
 func (s *Service) BreakOffChatStream() {
-	s.App.BreakOffChan <- true
+	if GPTPkg != nil {
+		GPTPkg.ChatCompStream.Close()
+	}
 }
