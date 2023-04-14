@@ -24,6 +24,7 @@ type App struct {
 	ChatRecordChan chan bool // 保存聊天记录的管道
 	ClientId       string
 	WsPushChan     chan PushResp // 推送内容通道
+	BreakOffChan   chan bool     // 中断推送 false:继续 true:中断
 }
 
 // NewApp creates a new App application struct
@@ -43,6 +44,7 @@ func NewApp() *App {
 		DB:             db,
 		ChatRecordChan: make(chan bool),
 		WsPushChan:     make(chan PushResp, 1000),
+		BreakOffChan:   make(chan bool),
 	}
 }
 

@@ -1,8 +1,8 @@
 <template>
   <a-space class="prompt-container" direction="horizontal" style="width: 100%;">
     <a-mention size="large" v-model="promptValue" :data="promptPrefix"
-               prefix="/" placeholder="输入 / 或直接输入对话关键词" @select="handleSelect" @keydown.enter="handleSend" allow-clear/>
-    <a-button size="large" type="primary" @click="handleSend">send</a-button>
+               prefix="/" placeholder="输入 / 获取模板 或直接输入问题" @keydown.enter="handleSend" allow-clear/>
+    <a-button size="large" type="primary" @click="handleSend" :loading="sendLoading">send</a-button>
   </a-space>
 </template>
 <script setup>
@@ -12,28 +12,35 @@ const props = defineProps({
   value: {
     type: String,
     default: ""
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 const promptValue = ref(props.value);
 const promptPrefix = reactive(['问答:', '翻译:', '改写:', '润色:', '总结:', '分析:', '解释:', '解释代码:', '检查代码:']);
+const sendLoading = ref(props.loading);
 
 watch(() => props.value, () => {
   promptValue.value = props.value;
 })
+watch(() => props.loading, () => {
+  sendLoading.value = props.loading;
+})
 const emits = defineEmits(['ok'])
-const handleSelect = (value) => {
-}
 const handleSend = () => {
-  if (promptValue.value === "/") {
+  if (promptValue.value == "" || promptValue.value === "/" || sendLoading.value == true) {
     return
   }
   const filter = promptPrefix.filter((item) => {
-    return promptValue.value == item
+    return promptValue.value == "/" + item && promptValue.value.length == item.length + 1
   });
   if (filter.length > 0) {
     return
   }
-  emits('ok', promptValue.value)
+  sendLoading.value = true;
+  emits('ok', promptValue.value, sendLoading.value)
   promptValue.value = "";
 }
 </script>

@@ -11,6 +11,7 @@ export default {
   'common.name': 'Name',
   'common.desc': 'Description',
   'common.markdown': 'Reply to me in markdown format',
+  'common.breakoff': 'Stop generation',
   'common.name.placeholder': 'Please input Name',
   'common.desc.placeholder': 'Please input Description',
   'common.themeColor': 'Theme Color',

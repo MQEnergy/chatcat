@@ -27,7 +27,21 @@ func MockSetting(db *gorm.DB) {
 
 // MockChatCate ...
 func MockChatCate(db *gorm.DB) {
-
+	db.Create(&[]model.ChatCate{
+		{
+			Name:   "未分类",
+			Letter: "N",
+			Color:  "#3370ff",
+		}, {
+			Name:   "对话",
+			Letter: "C",
+			Color:  "#14c9c9",
+		}, {
+			Name:   "问答",
+			Letter: "A",
+			Color:  "#ff7d00",
+		},
+	})
 }
 
 // MockTagList

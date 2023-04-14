@@ -5,6 +5,7 @@ type ChatCate struct {
 	BaseModel
 	Name   string `gorm:"column:name;type:text" json:"name"`
 	Letter string `gorm:"column:letter" json:"letter"` // 首字母 或者 首字
+	Color  string `gorm:"column:color" json:"color"`   // 颜色值
 	Desc   string `gorm:"column:desc;type:text" json:"desc"`
 }
 

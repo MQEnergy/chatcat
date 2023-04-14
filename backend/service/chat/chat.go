@@ -129,7 +129,7 @@ func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
 }
 
 // CompletionStream
-// @Description: 问答类型数据流
+// @Description: 问答类型数据流 适用于：text-davinci-003, text-davinci-002, text-curie-001, text-babbage-001, text-ada-001, davinci, curie, babbage, ada
 // @receiver s
 // @param prompt
 // @return error
@@ -147,16 +147,17 @@ func (s *Service) CompletionStream(prompt string) *cresp.Response {
 		WithMaxTokens(0).
 		WithCompletionRequest().
 		CompletionStream()
+
 	return cresp.Success("")
 }
 
 // ChatCompletionStream
-// @Description: 对话类型数据流
+// @Description: 对话类型数据流 主流 适用于：gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301
 // @receiver s
 // @param prompt
 // @return error
 // @author cx
-func (s *Service) ChatCompletionStream(prompt string) *cresp.Response {
+func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage) *cresp.Response {
 	generalInfo := setting.New(s.App).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
 	if data.ApiKey == "" {
@@ -165,20 +166,23 @@ func (s *Service) ChatCompletionStream(prompt string) *cresp.Response {
 	cgpt.New(data.ApiKey, s.App).
 		WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
-		WithPrompt(prompt).
-		WithMessages([]openai.ChatCompletionMessage{
-			{
-				Role:    openai.ChatMessageRoleUser,
-				Content: prompt,
-			},
-		}).
+		WithMessages(messages).
 		WithMaxTokens(0).
 		WithChatCompletionRequest().
 		ChatCompletionStream()
+
 	return cresp.Success("")
 }
 
 // GetWsUrl ...
 func (s *Service) GetWsUrl() string {
 	return s.App.Cfg.App.WsUrl
+}
+
+// BreakOffChatStream
+// @Description: break off chat stream
+// @receiver s
+// @author cx
+func (s *Service) BreakOffChatStream() {
+	s.App.BreakOffChan <- true
 }

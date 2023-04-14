@@ -93,18 +93,17 @@ func (g *GPT) WithTemperature(temperature float32) *GPT {
 }
 
 func (g *GPT) WithMaxTokens(tokens int) *GPT {
+	var tikToken int
 	if tokens == 0 {
 		modelTokens := getMaxTokensByModel()
-		prompt, ok := Prompt.(string)
-		if !ok {
-			panic("prompt must be a string")
-		}
-		tikToken, err := g.getTikTokenByEncoding(prompt)
-		if err != nil {
-			panic(err)
+		prompt, _ := Prompt.(string)
+		if prompt == "" {
+			tikToken = g.NumTokensFromMessages(Messages)
+		} else {
+			tikToken, _ = g.getTikTokenByEncoding(prompt)
 		}
 		MaxTokens = modelTokens - tikToken
-		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s prompt: %s", tikToken, modelTokens, MaxTokens, Model, prompt)
+		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s message: %v", tikToken, modelTokens, MaxTokens, Model, Messages)
 	} else {
 		MaxTokens = tokens
 	}
@@ -194,7 +193,17 @@ func (g *GPT) ChatCompletionStream() {
 	defer stream.Close()
 	for {
 		response, err := stream.Recv()
+		// 中断推送
+		//bf := <-g.App.BreakOffChan
+		//fmt.Println(bf)
+		//if !bf {
+		//	return
+		//}
 		if errors.Is(err, io.EOF) {
+			g.App.WsPushChan <- service.PushResp{
+				Code: 1,
+				Data: "Chatcat Finished",
+			}
 			return
 		}
 		if err != nil {
@@ -326,26 +335,51 @@ func getMaxTokensByModel() int {
 // @author cx
 func (g *GPT) getTikTokenByEncoding(prompt string) (int, error) {
 	encoding := g.getAvailableEncodingModel(Model)
-	g.App.LogInfo("encoding: ", encoding)
 	tkm, err := tiktoken.GetEncoding(encoding)
 	if err != nil {
 		return 0, err
 	}
 	token := tkm.Encode(prompt, nil, nil)
-	tokenNum := 0
-	switch Model {
-	case openai.GPT3Dot5Turbo, openai.GPT3Dot5Turbo0301:
-		for i := 0; i < len(prompt); i++ {
-			tokenNum += 4
-		}
-	case openai.GPT4, openai.GPT432K0314, openai.GPT40314, openai.GPT432K:
-		for i := 0; i < len(prompt); i++ {
-			tokenNum += 3
-		}
-	default:
-		tokenNum = len(token)
+	return len(token), nil
+}
+
+// NumTokensFromMessages
+// @Description: get number of tokens from messages and model
+// @receiver g
+// @param messages
+// @param model
+// @return numTokens
+// @author cx
+func (g *GPT) NumTokensFromMessages(messages []openai.ChatCompletionMessage) (numTokens int) {
+	tkm, err := tiktoken.EncodingForModel(Model)
+	if err != nil {
+		err = fmt.Errorf("EncodingForModel: %v", err)
+		fmt.Println(err)
+		return
 	}
-	return tokenNum, nil
+	var tokensPerMessage int
+	var tokensPerName int
+	if Model == openai.GPT3Dot5Turbo0301 || Model == openai.GPT3Dot5Turbo {
+		tokensPerMessage = 4
+		tokensPerName = -1
+	} else if Model == openai.GPT40314 || Model == openai.GPT4 {
+		tokensPerMessage = 3
+		tokensPerName = 1
+	} else {
+		fmt.Println("Warning: model not found. Using cl100k_base encoding.")
+		tokensPerMessage = 3
+		tokensPerName = 1
+	}
+	for _, message := range messages {
+		numTokens += tokensPerMessage
+		numTokens += len(tkm.Encode(message.Content, nil, nil))
+		numTokens += len(tkm.Encode(message.Role, nil, nil))
+		if message.Name != "" {
+			numTokens += tokensPerName
+		}
+	}
+	numTokens += 3
+	return numTokens
 }
 
 // getAvailableEncodingModel

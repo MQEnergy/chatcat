@@ -11,6 +11,7 @@ export default {
   'common.name': '名称',
   'common.desc': '描述',
   'common.markdown': '用markdown格式回复我',
+  'common.breakoff': '停止生成',
   'common.name.placeholder': '请输入名称',
   'common.desc.placeholder': '请输入描述',
   'common.themeColor': '主题色',
