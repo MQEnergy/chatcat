@@ -5,10 +5,13 @@ import (
 	"chatcat/backend/model"
 	"chatcat/backend/pkg/chelp"
 	"chatcat/backend/pkg/clog"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"time"
 )
 
 var (
@@ -29,8 +32,19 @@ func WithConnect(logger *logrus.Logger, conf *config.Conf) (*gorm.DB, error) {
 		err error
 	)
 	runtimeDir := chelp.GetRuntimeUserHomeDir()
-	databasePath = runtimeDir + "/" + conf.App.AppName + "/" + conf.App.DbName
+	databasePath = filepath.Join(runtimeDir, conf.App.AppName, conf.App.DbName)
 	if !chelp.IsPathExist(databasePath) {
+		// Create the folder and file
+		err := os.MkdirAll(filepath.Join(runtimeDir, conf.App.AppName), os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+		_, err = os.Create(databasePath)
+		if err != nil {
+			panic(err)
+		}
+
+		// Initialize the database
 		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 		if err != nil {
 			return nil, err
