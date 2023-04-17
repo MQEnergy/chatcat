@@ -132,6 +132,7 @@ onMounted(() => {
 // ----------------------------------------------------------------
 const handleCateList = (item) => {
   currCateId.value = item.id;
+  headerInfo.value.cateName = item.name;
   GetChatList(item.id, 1).then(res => {
     chatList.list = res.data.list;
   })

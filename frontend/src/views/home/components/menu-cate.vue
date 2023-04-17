@@ -59,7 +59,7 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {computed, defineEmits, onMounted, reactive, ref, toRefs, watch} from "vue";
+import {defineEmits, reactive, ref, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
 import CateAdd from "@views/home/components/cate-add.vue";
 import {SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
