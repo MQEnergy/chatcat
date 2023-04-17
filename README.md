@@ -2,8 +2,8 @@
 <img src="assets/chatcat.png" width="180" height="180" />
 </p>
 
-# chatcat
-ChatCat ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
+# Chatcat
+ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 
 The ChatGPT client aims to be the best assistant, providing support for learning and work, and allowing users to deeply understand the charm of artificial intelligence. In the process of using it, you will unconsciously progress and learn in the AI era.
 
@@ -17,9 +17,17 @@ We believe that as long as we continue to work hard and pursue, Chatcat will sur
 
 English | [中文文档](README-zh_CN.md)
 
+## Introduction
+1. Classification Management: Manage dialogue content lists by category.
+2. Prompt Word Management: Manage your own high-quality prompt words in a unified way for easy sharing and use.
+3. Common Configuration: Configure keys, set API models, set internationalization, and themes.
+4. Data Synchronization: Register online environments for sharing prompt words and dialogue content.
+5. Dialogue Management: Save dialogue content locally for easy management.
+6. Advanced Settings: Dynamic adjustment of GPT conversation parameters can be made, such as randomness, the number of attached historical messages, word reply limits, etc.
+
+## Screenshots
 <p align="center" style="text-align: center">
 <img src="screenshot/use.gif" />
-<img src="screenshot/home.jpg" />
 <img src="screenshot/setting_general.png" />
 <img src="screenshot/setting_prompt.png" />
 </p>
@@ -27,28 +35,51 @@ English | [中文文档](README-zh_CN.md)
 ## Technology Stack
 Vue3 + arco.design + golang + wails + sqlite
 
-## Instructions
-Install Wails
-```
-go install github.com/wailsapp/wails/v2/cmd/wails@latest
-```
-Note:
-The official Wails packaging cannot run on win7. To support win7, you need to download it from the following link and compile and install it locally.
-```
-https://github.com/MQEnergy/wails
-```
+## Local Development
+Install [wails](https://github.com/wailsapp/wails) from the official source for packaging.
 
-### Mac Packaging
+Note: The official wails packaging cannot run on `win7`. To support `win7`, download [MQEnergy/wails](https://github.com/MQEnergy/wails) and compile it locally:
+```shell
+cd wails/v2/cmd/wails
+go install .
+```
+Run the tests:
 ```shell
 # 
-wails build
+make dev
 ```
 
-### Windows Packaging
+## Installation Package
+### Mac Environment
+#### 1. Package according to the local environment
 ```shell
-# md64 refers to X86 architecture CPU, 64-bit version. X86_64 is also known as X86_64. Mainstream desktop PCs, laptops, servers (including virtual machines) are all using X86_64 CPUs.
-wails build -platform=windows/amd64
+# The ENV parameter can be set to test (for testing) or prod (for production), for example:
+make build ENV=prod
 
-# Arm64 refers to ARM architecture CPU, 64-bit version. Apple's new computers are using ARM architecture CPUs. Some routers and embedded devices use Arm64 CPUs. The CPU most commonly used in mobile phones and Android tablets is also ARM architecture.
-wails build -platform=windows/arm64
+# Package into dmg format
+make dmg
+```
+
+#### 2、Package installation packages for other environments.
+```shell
+# amd64
+make darwin/amd64 ENV=prod
+
+# arm64
+make darwin/arm64 ENV=prod
+```
+
+## Windows Environment
+
+Note: The installation packages below need to be packaged according to your computer architecture, otherwise the packaging may not be successful.
+
+```shell
+# amd64 is a 64-bit version of the X86 architecture CPU. It is also known as X86_64. It is widely used in mainstream desktop PCs, laptops, and servers (including virtual machines).
+make windows/amd64 ENV=prod
+
+# arm64 is a 64-bit version of the ARM architecture CPU.
+make windows/arm64 ENV=prod
+
+# win32
+make windows/386 ENV=prod
 ```

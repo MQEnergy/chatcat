@@ -26,7 +26,8 @@
             <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
             <!-- 对话输入框 -->
             <a-layout-footer class="prompt-input-container">
-              <prompt-input :value="prompt" @ok="handleChat" :loading="sendLoading"></prompt-input>
+              <prompt-input :value="prompt" @ok="handleChat" :checkoff="checkOffFlag"
+                            :loading="sendLoading"></prompt-input>
             </a-layout-footer>
           </a-layout>
         </a-layout-content>
@@ -95,6 +96,7 @@ let chatList = reactive({
   list: []
 })
 const sendLoading = ref(false)
+const checkOffFlag = ref(false)
 // ws
 const initWs = () => {
   GetWsUrl().then(res => {
@@ -110,11 +112,13 @@ const initWs = () => {
           break;
         case 10010:
           if (data.data.code === 0) {
+            checkOffFlag.value = true;
             tempContent.value += data.data.data;
             contentList[contentList.length - 1].content = tempContent.value;
           } else {
             deepList.push(contentList[contentList.length - 1]);
             sendLoading.value = false;
+            checkOffFlag.value = false;
           }
           break;
       }
@@ -261,6 +265,7 @@ const handlePromptToChat = (row) => {
 const handleChat = (value, loading) => {
   tempContent.value = '';
   sendLoading.value = loading;
+
   let promptList = [{
     role: 'user',
     content: value,
@@ -276,12 +281,11 @@ const handleChat = (value, loading) => {
   deepList.push(_deepList[0])
   // 只保留最后四个
   deepList = deepList.slice(-4);
-  console.log("deepList: ", deepList)
   ChatCompletionStream(deepList).then(res => {
     if (res.code === -1) {
       contentList[contentList.length - 1].content = res.msg
     }
-  })
+  });
 }
 // ----------------------------------------------------------------
 </script>

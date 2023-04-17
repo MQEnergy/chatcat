@@ -13,12 +13,6 @@
     <a-list-item v-for="(item, index) in list" :key="index">
       <a-list-item-meta style="position: relative;">
         <template #title>
-<!--          <a-typography-paragraph-->
-<!--              editable-->
-<!--              v-model:editText="item.name"-->
-<!--          >-->
-<!--            {{ item.name }}-->
-<!--          </a-typography-paragraph>-->
           <a-input style="position: absolute; left: -8px; top: -5px;"
                    @press-enter="handleCheck(item, index)"
                    v-if="index == editIdx" v-model="item.name"
