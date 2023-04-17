@@ -55,8 +55,8 @@ func main() {
 		Title:             app.Cfg.App.AppName + " " + app.Cfg.App.Version,
 		Width:             app.Cfg.App.Width,
 		Height:            app.Cfg.App.Height,
-		MinWidth:          app.Cfg.App.Width,       // 最小宽度
-		MinHeight:         app.Cfg.App.Height,      // 最小高度
+		MinWidth:          app.Cfg.App.MinWidth,    // 最小宽度
+		MinHeight:         app.Cfg.App.MinHeight,   // 最小高度
 		MaxWidth:          app.Cfg.App.Width * 10,  // 最大宽度
 		MaxHeight:         app.Cfg.App.Height * 10, // 最大高度
 		DisableResize:     false,                   // 调整窗口尺寸

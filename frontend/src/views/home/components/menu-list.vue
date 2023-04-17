@@ -1,7 +1,7 @@
 <template>
   <div class="menu-search-container" style="">
     <a-space>
-      <a-input-search :style="{width:'100%'}" placeholder="请输入提示词搜索"/>
+      <a-input-search :style="{width:'100%'}" :placeholder="$t('common.keyword.query')"/>
       <a-button @click="handleAddChat">
         <template #icon>
           <icon-plus/>
@@ -50,18 +50,13 @@ let props = defineProps({
 })
 let {list} = toRefs(props)
 const editIdx = ref(null)
+const emits = defineEmits(['add:chat']);
+
 const handleAddChat = () => {
-  editIdx.value = 0
-  const checkList = list.value.filter((item, index) => {
-    return item.id == 0
-  });
-  if (checkList.length > 0) {
-    Message.warning("您还有未编辑的聊天")
-    return false
-  }
+  emits('add:chat');
   list.value.unshift({
     id: 0,
-    name: '',
+    name: '新的聊天',
     sort: 50
   })
 }

@@ -27,6 +27,8 @@ type (
 		BtnCancelText   string `yaml:"btnCancelText" default:"取消"`
 		Width           int    `yaml:"width" default:"1024"`
 		Height          int    `yaml:"height" default:"768"`
+		MinWidth        int    `yaml:"minWidth" default:"1000"`
+		MinHeight       int    `yaml:"minHeight" default:"700"`
 		UpgradeUrl      string `yaml:"upgradeUrl" default:""`
 		HomeUrl         string `yaml:"homeUrl" default:""`
 		ServerUrl       string `yaml:"serverUrl" default:""`

@@ -11,6 +11,8 @@ app:
   btnCancelText: "取消"
   width: 1227
   height: 866
+  minWidth: 1000
+  minHeight: 700
   upgradeUrl: "" # 更新地址
   homeUrl: "" # 应用主页
   serverUrl: "" # 服务器地址

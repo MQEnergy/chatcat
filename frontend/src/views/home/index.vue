@@ -8,7 +8,7 @@
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3)">
-          <menu-list :list="chatList.list"></menu-list>
+          <menu-list :list="chatList.list" @add:chat="addNewChat"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
@@ -52,7 +52,13 @@ const {t} = useI18n();
 const router = useRouter();
 const prompt = ref('');
 
-let contentList = reactive([]);
+let contentList = reactive([{
+  role: 'user',
+  content: "asdasdad",
+}, {
+  role: 'assistant',
+  content: "asdasdad",
+}]);
 const tempContent = ref('');
 let deepList = reactive([]);
 // ----------------------------------------------------------------
@@ -114,9 +120,14 @@ const initWs = () => {
           if (data.data.code === 0) {
             checkOffFlag.value = true;
             tempContent.value += data.data.data;
-            contentList[contentList.length - 1].content = tempContent.value;
+            if (contentList.length > 0) {
+              console.info(tempContent.value);
+              contentList[contentList.length - 1].content = tempContent.value;
+            }
           } else {
-            deepList.push(contentList[contentList.length - 1]);
+            if (contentList.length > 0) {
+              deepList.push(contentList[contentList.length - 1]);
+            }
             sendLoading.value = false;
             checkOffFlag.value = false;
           }
@@ -261,11 +272,17 @@ const handleCateList = (item) => {
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
+// 创建新聊天
+const addNewChat = () => {
+  contentList.splice(0, contentList.length);
+}
 
+// 对话
 const handleChat = (value, loading) => {
   tempContent.value = '';
   sendLoading.value = loading;
 
+  value = value.trim();
   let promptList = [{
     role: 'user',
     content: value,
