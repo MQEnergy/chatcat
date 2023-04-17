@@ -14,6 +14,7 @@ type Chat struct {
 	BaseModel
 	CateId uint   `gorm:"column:cate_id;type:int unsigned" json:"cate_id"`
 	Name   string `gorm:"column:name;type:text" json:"name"`
+	Sort   int    `gorm:"column:sort" json:"sort"`
 }
 
 // ChatRecord chat对话记录表

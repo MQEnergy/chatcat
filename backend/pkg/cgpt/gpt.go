@@ -185,26 +185,19 @@ func (g *GPT) WithCompletionRequest() *GPT {
 // @receiver g
 // @param prompt
 // @author cx
-func (g *GPT) ChatCompletionStream() {
+func (g *GPT) ChatCompletionStream(clientId string) {
 	var err error
 	if Stream == false {
 		panic("ChatCompletionStream should be set stream")
 	}
+	g.App.ClientId = clientId
 	g.ChatCompStream, err = g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
 		return
 	}
 	defer g.ChatCompStream.Close()
-	var done = make(chan bool)
-	//go func() {
-	//	time.Sleep(2 * time.Second)
-	//	done <- true
-	//}()
 	for {
 		select {
-		case <-done:
-			fmt.Println("ChatCompletionStream OK")
-			return
 		default:
 			response, err := g.ChatCompStream.Recv()
 			if errors.Is(err, io.EOF) {

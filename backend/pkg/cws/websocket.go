@@ -17,11 +17,10 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 	})
 	// ws连接
 	http.HandleFunc("/chat", func(writer http.ResponseWriter, request *http.Request) {
-		client, err := gowebsocket.WsServer(hub, writer, request, gowebsocket.Json)
+		_, err := gowebsocket.WsServer(hub, writer, request, gowebsocket.Json)
 		if err != nil {
 			return
 		}
-		a.ClientId = client.ClientId
 	})
 
 	// 推送单客户端

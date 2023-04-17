@@ -64,18 +64,11 @@
                 <template #content>
                   <a-doption>{{ $t('common.share') }}</a-doption>
                   <a-doption>{{ $t('common.save') }}</a-doption>
+                  <a-doption>{{ $t('common.del') }}</a-doption>
                 </template>
               </a-dropdown>
             </template>
           </a-card>
-          <!--          <div style="position: fixed; bottom: 0px; left: 20px; ">-->
-          <!--            <a-button @click="handleBreakOffChat" v-if="item.role === 'assistant' && sendLoading && index+1 === chatList.length">-->
-          <!--              <template #icon>-->
-          <!--                <icon-record-stop />-->
-          <!--              </template>-->
-          <!--              {{ $t('common.breakoff') }}-->
-          <!--            </a-button>-->
-          <!--          </div>-->
         </a-space>
       </a-space>
     </a-space>

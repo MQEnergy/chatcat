@@ -1,7 +1,18 @@
 <template>
   <a-space direction="vertical" size="medium" style="margin-top: 50px;">
     <!-- cate list -->
-    <a-tooltip :content="item.cateName" position="right" v-for="(item, index) in cateList">
+    <a-tooltip content="未分类" position="right">
+      <div :style="{position: 'relative', width: '100%'}">
+        <a-avatar class="avatar flash" shape="square" :size="36"
+                  :style="{backgroundColor: '#999'}"
+                  @click="handleCateClick({id: 0, name: '未分类'}, 0)">
+          W
+        </a-avatar>
+        <!-- selected cate -->
+        <div :class="{'avatar-selected': currCateId === 0}"></div>
+      </div>
+    </a-tooltip>
+    <a-tooltip :content="item.name" position="right" v-for="(item, index) in cateList">
       <div :style="{position: 'relative', width: '100%'}">
         <a-avatar class="avatar flash" :key="index" shape="square" :size="36"
                   :style="{backgroundColor: item.color}"
@@ -9,7 +20,7 @@
           {{ item.letter }}
         </a-avatar>
         <!-- selected cate -->
-        <div :class="{'avatar-selected': currCateId == item.id}"></div>
+        <div :class="{'avatar-selected': currCateId === item.id}"></div>
       </div>
     </a-tooltip>
   </a-space>
@@ -48,9 +59,10 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {defineEmits, reactive, ref, watch} from "vue";
+import {computed, defineEmits, onMounted, reactive, ref, toRefs, watch} from "vue";
 import {Message} from "@arco-design/web-vue";
 import CateAdd from "@views/home/components/cate-add.vue";
+import {SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
 
 const props = defineProps({
   list: {
@@ -63,9 +75,10 @@ const router = useRouter()
 const isShow = ref(false)
 const visible = ref(false)
 let cateList = reactive(props.list)
-const currCateId = ref(null)
+const currCateId = ref(0)
+
 watch(() => props.list, () => {
-  cateList = props.list
+  cateList.value = props.list
 })
 // handleMenuClick 点击菜单
 const handleMenuClick = (e) => {
@@ -86,7 +99,7 @@ const handleMenuIconHover = (e) => {
 }
 const handleCateClick = (row, index) => {
   currCateId.value = row.id
-  emits('select', row)
+  emits('select', row);
 }
 const handleAddCate = () => {
   visible.value = true;
@@ -98,14 +111,22 @@ const handleCateCancel = () => {
   visible.value = false;
 }
 const handleCateOk = (form) => {
-  visible.value = false;
-  cateList.push({
-    id: 0,
-    cateName: form.name,
-    letter: 'Q',
-    color: '#3370ff'
+  SetChatCateData({
+    name: form.name,
+    desc: form.desc,
+  }).then((res) => {
+    if (res.code !== 0) {
+      Message.error(res.msg);
+      return;
+    }
+    cateList.push({
+      id: res.data.id,
+      name: form.name,
+      letter: res.data.letter,
+      color: res.data.color
+    })
+    visible.value = false;
   })
-  console.log("form", form);
 }
 </script>
 

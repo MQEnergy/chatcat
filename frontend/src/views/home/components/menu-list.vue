@@ -41,30 +41,50 @@
 <script setup>
 import {defineProps, ref, toRefs} from "vue";
 import {Message} from "@arco-design/web-vue";
+import {DeleteChat, EditChat, SetChatData} from "../../../../wailsjs/go/chat/Service.js";
 
 let props = defineProps({
   list: {
     type: Array,
     default: []
+  },
+  cateid: {
+    type: Number,
+    default: 0
   }
 })
-let {list} = toRefs(props)
+let {list, cateid} = toRefs(props)
 const editIdx = ref(null)
 const emits = defineEmits(['add:chat']);
-
 const handleAddChat = () => {
-  emits('add:chat');
-  list.value.unshift({
-    id: 0,
+  SetChatData({
+    cate_id: props.cateid,
     name: '新的聊天',
-    sort: 50
+    sort: 50,
+  }).then((res) => {
+    if (res.code !== 0) {
+      Message.error(res.msg);
+      return;
+    }
+    emits('add:chat', res.data);
+    list.value.unshift({
+      id: res.data.id,
+      name: res.data.name,
+      sort: res.data.sort
+    })
   })
 }
 const handleEdit = (row, index) => {
-  editIdx.value = index
+  editIdx.value = index;
 }
 const handleDelete = (row, index) => {
-  list.value.splice(index, 1)
+  DeleteChat(row.id).then((res) => {
+    if (res.code !== 0) {
+      Message.error(res.msg)
+      return;
+    }
+    list.value.splice(index, 1)
+  })
 }
 const handleClose = (row, index) => {
   editIdx.value = null
@@ -76,9 +96,14 @@ const handleCheck = (row, index) => {
   if (row.name.trim() === "") {
     return
   }
-  editIdx.value = null
-  list.value[index].id = index + 1;
-  list.value[index].name = row.name;
+  EditChat(row.id, row.name).then(res => {
+    if (res.code !== 0) {
+      Message.error(res.msg);
+      return;
+    }
+    editIdx.value = null
+    list.value[index].name = row.name;
+  });
 }
 </script>
 

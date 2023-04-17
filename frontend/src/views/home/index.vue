@@ -8,7 +8,7 @@
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3)">
-          <menu-list :list="chatList.list" @add:chat="addNewChat"></menu-list>
+          <menu-list :list="chatList.list" :cateid="currCateId" @add:chat="addNewChat"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
@@ -44,25 +44,20 @@ import ContentHeader from "@views/home/components/content-header.vue";
 import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
-import {onMounted, reactive, ref, toRaw} from "vue";
-import {ChatCompletionStream, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
+import {onMounted, reactive, ref, toRaw, watch} from "vue";
+import {ChatCompletionStream, GetChatCateList, GetChatList, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 
 const {t} = useI18n();
 const router = useRouter();
 const prompt = ref('');
 
-let contentList = reactive([{
-  role: 'user',
-  content: "asdasdad",
-}, {
-  role: 'assistant',
-  content: "asdasdad",
-}]);
+let contentList = reactive([]);
 const tempContent = ref('');
 let deepList = reactive([]);
+const currCateId = ref(0);
 // ----------------------------------------------------------------
-// 滚动位置
+// 滚动位置 Todo
 const chatListRef = ref(null);
 const chatListHeight = ref(0);
 // ----------------------------------------------------------------
@@ -75,34 +70,19 @@ const headerInfo = ref({
   tokenNum: '193'
 })
 // 分类列表
-const cateList = reactive([
-  {
-    id: 1,
-    cateName: '前端',
-    letter: 'Q',
-    color: '#3370ff'
-  }, {
-    id: 2,
-    cateName: '后端',
-    letter: 'H',
-    color: '#14c9c9'
-  }, {
-    id: 3,
-    cateName: '设计',
-    letter: 'S',
-    color: '#ff7d00'
-  }, {
-    id: 4,
-    cateName: '服务器',
-    letter: 'F',
-    color: '#ffc72e'
-  }
-])
+let cateList = reactive([])
+const initCateList = () => {
+  GetChatCateList().then(res => {
+    cateList.splice(0, contentList.length);
+    cateList.push(...res.data.list);
+  })
+}
 let chatList = reactive({
   list: []
 })
 const sendLoading = ref(false)
 const checkOffFlag = ref(false)
+const clientId = ref("")
 // ws
 const initWs = () => {
   GetWsUrl().then(res => {
@@ -114,6 +94,7 @@ const initWs = () => {
       const data = JSON.parse(event.data);
       switch (data.code) {
         case 0:
+          clientId.value = data.data.client_id;
           console.log(`ws连接成功：${event.data}`);
           break;
         case 10010:
@@ -121,7 +102,6 @@ const initWs = () => {
             checkOffFlag.value = true;
             tempContent.value += data.data.data;
             if (contentList.length > 0) {
-              console.info(tempContent.value);
               contentList[contentList.length - 1].content = tempContent.value;
             }
           } else {
@@ -147,133 +127,20 @@ onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
   initWs();
+  initCateList();
 })
 // ----------------------------------------------------------------
 const handleCateList = (item) => {
-  let _chatList = [];
-  switch (item.id) {
-    case 1:
-      _chatList = [{
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }, {
-        id: 1,
-        name: '这是chat对话语句1',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句2',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句3',
-        sort: 50
-      }]
-      break;
-    case 2:
-      _chatList = [{
-        id: 1,
-        name: '这是chat对话语句4',
-        sort: 50
-      }, {
-        id: 2,
-        name: '这是chat对话语句5',
-        sort: 50
-      }, {
-        id: 3,
-        name: '这是chat对话语句6',
-        sort: 50
-      }]
-      break;
-  }
-  chatList.list = _chatList
+  currCateId.value = item.id;
+  GetChatList(item.id, 1).then(res => {
+    chatList.list = res.data.list;
+  })
 }
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
 // 创建新聊天
-const addNewChat = () => {
+const addNewChat = (row) => {
   contentList.splice(0, contentList.length);
 }
 
@@ -298,7 +165,7 @@ const handleChat = (value, loading) => {
   deepList.push(_deepList[0])
   // 只保留最后四个
   deepList = deepList.slice(-4);
-  ChatCompletionStream(deepList).then(res => {
+  ChatCompletionStream(deepList, clientId.value).then(res => {
     if (res.code === -1) {
       contentList[contentList.length - 1].content = res.msg
     }

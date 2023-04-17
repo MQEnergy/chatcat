@@ -7,7 +7,9 @@ import (
 	"chatcat/backend/pkg/cresp"
 	"chatcat/backend/service"
 	"chatcat/backend/service/setting"
+	"github.com/mozillazg/go-pinyin"
 	"github.com/sashabaranov/go-openai"
+	"strings"
 )
 
 type Service struct {
@@ -92,10 +94,17 @@ func (s *Service) SetChatCateData(data model.ChatCate) *cresp.Response {
 	if err := s.App.DB.First(&chatCateInfo, "name = ?", data.Name).Error; err == nil {
 		return cresp.Fail("chat cate is already existed")
 	}
-	if err := s.App.DB.Save(data).Error; err != nil {
+	if data.Name == "" {
+		return cresp.Fail("cate name is required")
+	}
+	// 获取letter
+	lazyPinyin := pinyin.LazyPinyin(data.Name, pinyin.NewArgs())
+	data.Letter = strings.ToUpper(lazyPinyin[0][0:1])
+	data.Color = "#3370ff" // Todo
+	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat cate save failed")
 	}
-	return cresp.Success(chatCateInfo)
+	return cresp.Success(data)
 }
 
 // SetChatData
@@ -106,13 +115,16 @@ func (s *Service) SetChatCateData(data model.ChatCate) *cresp.Response {
 // @author cx
 func (s *Service) SetChatData(data model.Chat) *cresp.Response {
 	var chatData model.Chat
-	if err := s.App.DB.First(&chatData, "name = ?", data.Name).Error; err == nil {
+	if err := s.App.DB.First(&chatData, "name = ? and cate_id = ?", data.Name, data.CateId).Error; err == nil {
 		return cresp.Fail("chat is already existed")
 	}
-	if err := s.App.DB.Save(data).Error; err != nil {
+	if data.Name == "" {
+		return cresp.Fail("chat name is required")
+	}
+	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat save failed")
 	}
-	return cresp.Success(chatData)
+	return cresp.Success(data)
 }
 
 // SetChatRecordData
@@ -130,6 +142,42 @@ func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
 		return cresp.Fail("chat record save failed")
 	}
 	return cresp.Success(chatRecordInfo)
+}
+
+// DeleteChat
+// @Description: delete chat record
+// @receiver s
+// @param id
+// @return *cresp.Response
+// @author cx
+func (s *Service) DeleteChat(id uint) *cresp.Response {
+	var chatData model.Chat
+	if err := s.App.DB.First(&chatData, "id = ?", id).Error; err != nil {
+		return cresp.Fail("record is already deleted")
+	}
+	if err := s.App.DB.Delete(&chatData, "id = ?", id).Error; err != nil {
+		return cresp.Fail("delete record failed")
+	}
+	return cresp.Success(chatData)
+}
+
+// EditChat
+// @Description: edit chat record
+// @receiver s
+// @param id
+// @param name
+// @return *cresp.Response
+// @author cx
+func (s *Service) EditChat(id uint, name string) *cresp.Response {
+	var chatData model.Chat
+	if err := s.App.DB.First(&chatData, "id = ?", id).Error; err != nil {
+		return cresp.Fail("record is not existed")
+	}
+	if err := s.App.DB.Model(&model.Chat{}).
+		Where("id = ?", id).Update("name", name).Error; err != nil {
+		return cresp.Fail("update chat record failed")
+	}
+	return cresp.Success(chatData)
 }
 
 // CompletionStream
@@ -161,7 +209,7 @@ func (s *Service) CompletionStream(prompt string) *cresp.Response {
 // @param prompt
 // @return error
 // @author cx
-func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage) *cresp.Response {
+func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage, clientId string) *cresp.Response {
 	generalInfo := setting.New(s.App).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
 	if data.ApiKey == "" {
@@ -176,7 +224,7 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage) 
 		return cresp.Fail("Chatcat Warm Reminder: Your token is running low, Please start a new conversation.")
 	}
 	gpt.WithChatCompletionRequest().
-		ChatCompletionStream()
+		ChatCompletionStream(clientId)
 
 	return cresp.Success("")
 }
