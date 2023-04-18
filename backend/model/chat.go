@@ -24,5 +24,5 @@ type ChatRecord struct {
 	ChatId  uint   `gorm:"column:chat_id;type:int unsigned" json:"chat_id"`
 	Name    string `gorm:"column:name;type:text" json:"name"`
 	Content string `gorm:"column:content;type:text" json:"content"`
-	Type    string `gorm:"column:type;type:int" json:"type"` // 类型：1：我方 2：chat方
+	Role    string `gorm:"column:role;type:text" json:"role"` // 角色类型 system user assistant
 }

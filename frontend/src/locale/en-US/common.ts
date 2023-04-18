@@ -11,6 +11,7 @@ export default {
   'common.name': 'Name',
   'common.desc': 'Description',
   'common.keyword.query': 'Please input keyword to query',
+  'common.generate.start': 'Being generated...',
   'common.markdown': 'Reply to me in markdown format',
   'common.breakoff': 'Stop generation',
   'common.name.placeholder': 'Please input Name',

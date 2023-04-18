@@ -102,7 +102,7 @@ func InitGoroutine() {
 				payload, _ := json.Marshal(pushInfo)
 				params := url.Values{}
 				params.Add("client_id", app.ClientId)
-				params.Add("group_id", "ask")
+				params.Add("group_id", "chat")
 				params.Add("data", string(payload))
 				pushUrl := fmt.Sprintf("%s?%s", app.Cfg.App.PushUrl, params.Encode())
 				chttp.Request("GET", pushUrl, "")

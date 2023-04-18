@@ -79,42 +79,121 @@
 </script>
 <script setup>
 import ChatGPTLogo from '@assets/images/chatgpt_black_logo.svg';
-import {reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch, toRaw} from "vue";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
+import {ChatCompletionStream, GetChatRecordList, GetWsUrl} from "../../../../wailsjs/go/chat/Service.js";
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n();
 const props = defineProps({
-  list: {
-    type: Array,
-    default: []
+  id: {
+    type: Number,
+    default: 0
   },
-  loading: {
-    type: Boolean,
-    default: false
-  }
 });
-let chatList = reactive(props.list)
-const sendLoading = ref(props.loading);
-const emits = defineEmits(['add:chat']);
 
-watch(() => props.list, () => {
-  chatList = props.list
+let chatList = reactive([]);
+let reqPromptList = reactive([]);
+const clientId = ref("")
+const tempContent = ref('');
+
+const emits = defineEmits(['add:chat', 'finish']);
+
+// ----------------------------------------------------------------
+// 初始化ws
+const initWs = () => {
+  GetWsUrl().then(res => {
+    let wsUrl = res + "?group_id=chat"
+    const socket = new WebSocket(wsUrl);
+    socket.addEventListener('open', (event) => {
+    });
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      switch (data.code) {
+        case 0:
+          clientId.value = data.data.client_id;
+          console.log(`ws connected：${event.data}`);
+          break;
+        case 10010:
+          if (data.data.code === 0) {
+            emits('finish', true);
+            tempContent.value += data.data.data;
+            if (chatList.length > 0) {
+              chatList[chatList.length - 1].content = tempContent.value;
+            }
+          } else {
+            if (chatList.length > 0) {
+              reqPromptList.push(chatList[chatList.length - 1]);
+            }
+            emits('finish', false);
+          }
+          break;
+      }
+    });
+    socket.addEventListener('close', (event) => {
+      console.log('websocket closed');
+    });
+    socket.addEventListener('error', (event) => {
+      console.error('websocker error');
+    });
+  })
+};
+onMounted(() => {
+  initWs();
 })
-watch(() => props.loading, () => {
-  sendLoading.value = props.loading
+const addNewChat = () => {
+  chatList.splice(0, chatList.length);
+}
+// 对话
+const handleChat = (value) => {
+  value = value.trim();
+  let promptList = [{
+    role: 'user',
+    content: value,
+  }];
+  tempContent.value = "";
+  chatList.push(...promptList)
+  let _deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
+  _deepList[0].content = value + "," + t('common.markdown');
+  chatList.push({
+    role: 'assistant',
+    content: t('common.generate.start'),
+  })
+  reqPromptList.push(_deepList[0])
+  reqPromptList = reqPromptList.slice(-4);
+  ChatCompletionStream(reqPromptList, clientId.value).then(res => {
+    if (res.code === -1) {
+      chatList[chatList.length - 1].content = res.msg
+    }
+  });
+}
+// ----------------------------------------------------------------
+defineExpose({
+  handleChat,
+  addNewChat
 })
-// 渲染markdown
+// 初始化对话列表
+const initChatList = (id, page) => {
+  GetChatRecordList(id, page).then(res => {
+    console.log('handleSelectChat', id, res.data.list);
+    if (res.code === 0) {
+      chatList.push(...res.data.list);
+    }
+  });
+}
+watch(() => props.id, () => {
+  initChatList(props.id, 1)
+})
 const markedContent = (item) => {
   return marked.parse(item.content);
 }
 // const handleCopy = (e) => {
 //   const textContent = e.target.parentNode.parentNode.parentNode.parentNode.firstElementChild.querySelector('.hljs').textContent;
 // }
-
 const handleExampleClick = (content) => {
   emits('add:chat', content, true)
 }
-
 const handleSelect = (e) => {
   console.log(e)
 }

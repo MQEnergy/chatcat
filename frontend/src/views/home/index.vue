@@ -7,8 +7,8 @@
           <menu-cate :list="cateList" @select="handleCateList"></menu-cate>
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
-        <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3)">
-          <menu-list :list="chatList.list" :cateid="currCateId" @add:chat="addNewChat"></menu-list>
+        <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3);">
+          <menu-list :cateid="currCateId" @add:chat="addNewChat" @select:chat="handleSelectChat"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
@@ -19,8 +19,8 @@
             </a-layout-header>
             <!-- 内容区域 -->
             <a-layout-content class="absolute-div scrollbar">
-              <chat-list class="chat-list-container" ref="chatListRef" :list="contentList"
-                         :loading="sendLoading" @add:chat="handleChat"></chat-list>
+              <chat-list class="chat-list-container" ref="chatListRef" :id="chatId"
+                         @add:chat="handleChat" @finish="handleFinished"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
             <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
@@ -44,17 +44,13 @@ import ContentHeader from "@views/home/components/content-header.vue";
 import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
-import {onMounted, reactive, ref, toRaw, watch} from "vue";
-import {ChatCompletionStream, GetChatCateList, GetChatList, GetWsUrl} from "../../../wailsjs/go/chat/Service.js";
+import {onMounted, reactive, ref} from "vue";
+import {GetChatCateList} from "../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 
 const {t} = useI18n();
 const router = useRouter();
 const prompt = ref('');
-
-let contentList = reactive([]);
-const tempContent = ref('');
-let deepList = reactive([]);
 const currCateId = ref(0);
 // ----------------------------------------------------------------
 // 滚动位置 Todo
@@ -69,108 +65,46 @@ const headerInfo = ref({
   msgNum: '16',
   tokenNum: '193'
 })
-// 分类列表
-let cateList = reactive([])
-const initCateList = () => {
-  GetChatCateList().then(res => {
-    cateList.splice(0, contentList.length);
-    cateList.push(...res.data.list);
-  })
-}
-let chatList = reactive({
-  list: []
-})
 const sendLoading = ref(false)
 const checkOffFlag = ref(false)
-const clientId = ref("")
-// ws
-const initWs = () => {
-  GetWsUrl().then(res => {
-    let wsUrl = res + "?group_id=ask"
-    const socket = new WebSocket(wsUrl);
-    socket.addEventListener('open', (event) => {
-    });
-    socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      switch (data.code) {
-        case 0:
-          clientId.value = data.data.client_id;
-          console.log(`ws连接成功：${event.data}`);
-          break;
-        case 10010:
-          if (data.data.code === 0) {
-            checkOffFlag.value = true;
-            tempContent.value += data.data.data;
-            if (contentList.length > 0) {
-              contentList[contentList.length - 1].content = tempContent.value;
-            }
-          } else {
-            if (contentList.length > 0) {
-              deepList.push(contentList[contentList.length - 1]);
-            }
-            sendLoading.value = false;
-            checkOffFlag.value = false;
-          }
-          break;
-      }
-    });
-    socket.addEventListener('close', (event) => {
-      console.log('WebSocket连接已关闭');
-    });
-    socket.addEventListener('error', (event) => {
-      console.error('WebSocket连接出错');
-    });
+let cateList = reactive([])
+const chatId = ref(0)
+
+const handleFinished = (value) => {
+  sendLoading.value = value;
+  checkOffFlag.value = value;
+}
+// 初始化分类列表
+const initCateList = () => {
+  GetChatCateList().then(res => {
+    cateList.splice(0, cateList.length);
+    cateList.push(...res.data.list);
   })
 }
 // ----------------------------------------------------------------
 onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
-  initWs();
   initCateList();
 })
 // ----------------------------------------------------------------
 const handleCateList = (item) => {
   currCateId.value = item.id;
   headerInfo.value.cateName = item.name;
-  GetChatList(item.id, 1).then(res => {
-    chatList.list = res.data.list;
-  })
 }
 const handlePromptToChat = (row) => {
   prompt.value = row.prompt
 }
-// 创建新聊天
-const addNewChat = (row) => {
-  contentList.splice(0, contentList.length);
+const addNewChat = () => {
+  chatListRef.value.addNewChat();
 }
-
-// 对话
 const handleChat = (value, loading) => {
-  tempContent.value = '';
   sendLoading.value = loading;
-
-  value = value.trim();
-  let promptList = [{
-    role: 'user',
-    content: value,
-  }];
-  contentList.push(...promptList)
-  let _deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
-  _deepList[0].content = value + "," + t('common.markdown');
-  contentList.push({
-    role: 'assistant',
-    content: "正在生成中...",
-  })
-  // chat stream
-  deepList.push(_deepList[0])
-  // 只保留最后四个
-  deepList = deepList.slice(-4);
-  ChatCompletionStream(deepList, clientId.value).then(res => {
-    if (res.code === -1) {
-      contentList[contentList.length - 1].content = res.msg
-    }
-  });
+  checkOffFlag.value = false;
+  chatListRef.value.handleChat(value)
+}
+const handleSelectChat = (row) => {
+  chatId.value = row.id;
 }
 // ----------------------------------------------------------------
 </script>
