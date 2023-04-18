@@ -8,7 +8,7 @@
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3);">
-          <menu-list :cateid="currCateId" @add:chat="addNewChat" @select:chat="handleSelectChat"
+          <menu-list :cateid="currCateId" @new:chat="addNewChat" @select:chat="handleSelectChat"
                      @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->

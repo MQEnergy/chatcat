@@ -58,7 +58,7 @@ const editIdx = ref(null);
 const currIdx = ref(0);
 const loading = ref(false);
 const curPage = ref(1);
-const emits = defineEmits(['add:chat', 'select:chat', 'header:info']);
+const emits = defineEmits(['new:chat', 'select:chat', 'header:info']);
 
 const initChatList = (cateid, page) => {
   GetChatList(cateid, page).then(res => {
@@ -90,7 +90,7 @@ const handleAddChat = () => {
       Message.error(res.msg);
       return;
     }
-    emits('add:chat', res.data);
+    emits('new:chat', res.data);
     chatList.unshift({
       id: res.data.id,
       name: res.data.name,

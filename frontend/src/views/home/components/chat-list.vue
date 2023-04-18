@@ -128,25 +128,33 @@ const initWs = () => {
     socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       switch (data.code) {
-        case 0:
+        case 0: // connect
           clientId.value = data.data.client_id;
           console.log(`ws connected：${event.data}`);
           break;
-        case 10010:
-          if (data.data.code === 0) {
-            emits('finish', true);
-            tempContent.value += data.data.data;
-            if (chatList.length > 0) {
+        case 10010: // message
+          switch (data.data.code) {
+            case 0: // streaming
+              emits('finish', true);
+              tempContent.value += data.data.data;
+              if (chatList.length > 0) {
+                chatList[chatList.length - 1].content = tempContent.value;
+              }
+              break;
+            case -1: // stream error
+              tempContent.value += data.data.data;
               chatList[chatList.length - 1].content = tempContent.value;
-            }
-          } else {
-            if (chatList.length > 0) {
-              reqPromptList.push(chatList[chatList.length - 1]);
-            }
-            emits('finish', false);
-            tokenNumFromMessage(settingInfo.value, chatList);
+              emits('finish', false);
+              break;
+            case 1: // stream finished
+              if (chatList.length > 0) {
+                reqPromptList.push(chatList[chatList.length - 1]);
+              }
+              console.log("reqPromptList", reqPromptList);
+              emits('finish', false);
+              tokenNumFromMessage(settingInfo.value, reqPromptList);
+              break;
           }
-          break;
       }
     });
     socket.addEventListener('close', (event) => {
@@ -197,7 +205,6 @@ const initChatList = (id, page) => {
     }
   });
 }
-
 defineExpose({
   handleChat,
   addNewChat,

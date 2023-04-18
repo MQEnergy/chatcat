@@ -104,6 +104,7 @@ const handleCancelDrawer = () => {
   visible.value = false;
 }
 const handleModelChange = (e) => {
+  form.value.ask_model = e;
   handleGeneralSave()
 }
 const handleChangeLocale = (e) => {
