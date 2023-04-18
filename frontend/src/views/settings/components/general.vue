@@ -3,7 +3,8 @@
     <a-card :title="$t('settings.general')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <a-space direction="vertical" size="medium">
         <a-typography-text>{{ $t('settings.general.keyTips') }}</a-typography-text>
-        <a-input-password :style="{width:'460px'}" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" allow-clear>
+        <a-input-password v-model="form.api_key" :style="{width:'460px'}" @blur="handleGeneralSave"
+                          placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" allow-clear>
           <template #prepend>
             {{ $t('settings.general.apiKey') }}
           </template>
@@ -13,20 +14,16 @@
         </a-alert>
         <a-space>
           {{ $t('settings.general.apiModel') }}:
-          <a-select :style="{width:'383px'}" :placeholder="$t('settings.general.apiModel.placeholder')">
-            <a-option>gpt-3.5-turbo</a-option>
-            <a-option>gpt-3.5-turbo-0301</a-option>
-            <a-option>gpt-4</a-option>
-            <a-option>gpt-4-0314</a-option>
-            <a-option>gpt-4-32k</a-option>
-            <a-option>gpt-4-32k-0314</a-option>
+          <a-select v-model="form.chat_model" :style="{width:'383px'}" @change="handleModelChange"
+                    :placeholder="$t('settings.general.apiModel.placeholder')">
+            <a-option v-for="(item, index) in modelList" :key="index">{{ item }}</a-option>
           </a-select>
         </a-space>
       </a-space>
     </a-card>
     <a-card :title="$t('settings.language')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
-      <a-select v-model="currentLocale" :field-names="fieldNames" :style="{width:'460px'}"
-                allow-search @change="changeLocale">
+      <a-select v-model="form.language" :field-names="fieldNames" :style="{width:'460px'}"
+                allow-search @change="handleChangeLocale">
         <a-option style="width: 100%;" v-for="(item, index) in locales" :value="item.value" :key="index">
           {{ item.label }}
           <template #extra>
@@ -36,14 +33,14 @@
       </a-select>
     </a-card>
     <a-card :title="$t('settings.theme')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
-      <a-radio-group @change="handleCheckTheme">
+      <a-radio-group v-model="form.theme" @change="handleCheckTheme">
         <template v-for="(item, index) in themeList" :key="index">
           <a-radio :value="item.id">
             <template #radio="{ checked }">
               <a-space
                   align="start"
                   class="custom-radio-card"
-                  :class="{ 'custom-radio-card-checked': item.checked }"
+                  :class="{ 'custom-radio-card-checked': form.theme === item.id }"
               >
                 <div className="custom-radio-card-mask">
                   <div className="custom-radio-card-mask-dot"/>
@@ -65,19 +62,33 @@
 </template>
 
 <script setup>
-import {computed, ref} from 'vue';
+import {computed, onMounted, reactive, ref} from 'vue';
 import GeneralDrawer from "@views/settings/components/general-drawer.vue";
 import {LOCALE_OPTIONS} from "@/locale";
 import useLocale from "@/hooks/locale";
 import {useI18n} from "vue-i18n";
+import {GetGeneralInfo, SetGeneralData} from "../../../../wailsjs/go/setting/Service.js";
 
-const {t} = useI18n();
+const {t, locale} = useI18n();
 const fieldNames = {value: 'city', label: 'text'}
 const themeList = computed(() => [
-  {id: 1, name: t('settings.theme.system'), checked: true},
-  {id: 2, name: t('settings.theme.toLight'), checked: false},
-  {id: 3, name: t('settings.theme.toDark'), checked: false},
+  {id: 1, name: t('settings.theme.system')},
+  {id: 2, name: t('settings.theme.toLight')},
+  {id: 3, name: t('settings.theme.toDark')},
 ])
+const modelList = reactive(['gpt-3.5-turbo', 'gpt-3.5-turbo-0301', 'gpt-4', 'gpt-4-0314', 'gpt-4-32k', 'gpt-4-32k-0314'])
+const form = ref({
+  api_key: '',
+  chat_model: '',
+  ask_model: '',
+  language: locale.value,
+  theme: 1,
+  proxy_url: '',
+  account: '',
+  access_token: '',
+  is_sync: 1,
+  sync_time: 0,
+})
 const locales = [...LOCALE_OPTIONS]
 const visible = ref(false);
 const {changeLocale, currentLocale} = useLocale();
@@ -86,17 +97,34 @@ const handleNotice = () => {
   visible.value = true;
 }
 const handleCheckTheme = (e) => {
-  themeList.value.forEach((item) => {
-    if (item.id === e) {
-      item.checked =true;
-    } else {
-      item.checked = false;
-    }
-  })
+  form.value.theme = e;
+  handleGeneralSave();
 }
 const handleCancelDrawer = () => {
   visible.value = false;
 }
+const handleModelChange = (e) => {
+  handleGeneralSave()
+}
+const handleChangeLocale = (e) => {
+  handleGeneralSave();
+  changeLocale(e);
+}
+const handleGeneralSave = (e) => {
+  SetGeneralData(form.value).then(res => {
+    console.log(res)
+  })
+}
+const initGeneralInfo = (e) => {
+  GetGeneralInfo().then(res => {
+    if (res.code === 0) {
+      form.value = res.data;
+    }
+  })
+}
+onMounted(() => {
+  initGeneralInfo();
+})
 </script>
 
 <style scoped>

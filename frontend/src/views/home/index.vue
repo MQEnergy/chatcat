@@ -8,7 +8,8 @@
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3);">
-          <menu-list :cateid="currCateId" @add:chat="addNewChat" @select:chat="handleSelectChat"></menu-list>
+          <menu-list :cateid="currCateId" @add:chat="addNewChat" @select:chat="handleSelectChat"
+                     @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
         <a-layout-content style="position: relative; width: 100%; height: 100vh;">
@@ -61,9 +62,9 @@ const chatListHeight = ref(0);
 const headerInfo = ref({
   cateName: '未分类',
   chatName: '新的聊天',
-  modelName: 'GPT3.5',
+  modelName: 'model',
   msgNum: 0,
-  tokenNum:  0
+  tokenNum: 0
 })
 const sendLoading = ref(false)
 const checkOffFlag = ref(false)
@@ -74,13 +75,16 @@ const handleFinished = (value) => {
   checkOffFlag.value = value;
 }
 const handleHeaderInfo = (data) => {
-  if (data.modelName) {
+  if (data.modelName !== undefined) {
     headerInfo.value.modelName = data.modelName;
   }
-  if (data.tokenNum) {
+  if (data.chatName !== undefined) {
+    headerInfo.value.chatName = data.chatName;
+  }
+  if (data.tokenNum !== undefined) {
     headerInfo.value.tokenNum = data.tokenNum;
   }
-  if (data.msgNum) {
+  if (data.msgNum !== undefined) {
     headerInfo.value.msgNum = data.msgNum;
   }
 }
@@ -114,6 +118,7 @@ const handleChat = (value, loading) => {
   chatListRef.value.handleChat(value)
 }
 const handleSelectChat = (row) => {
+  headerInfo.value.chatName = row.name;
   chatListRef.value.initChatList(row.id, 1);
 }
 // ----------------------------------------------------------------

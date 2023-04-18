@@ -24,7 +24,7 @@ func New(a *service.App) *Service {
 func (s *Service) GetGeneralInfo() *cresp.Response {
 	var settingInfo model.Setting
 	if err := s.App.DB.First(&settingInfo).Error; err != nil {
-		return cresp.Success("")
+		return cresp.Fail(err.Error())
 	}
 	return cresp.Success(settingInfo)
 }
@@ -36,8 +36,8 @@ func (s *Service) GetGeneralInfo() *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) SetGeneralData(data model.Setting) *cresp.Response {
-	if err := s.App.DB.Save(&data).Error; err != nil {
+	if err := s.App.DB.Model(&model.Setting{}).Where("id = 1").Updates(&data).Error; err != nil {
 		return cresp.Fail("save failed err:" + err.Error())
 	}
-	return cresp.Success("")
+	return cresp.Success(data)
 }

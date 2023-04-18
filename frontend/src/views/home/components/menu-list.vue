@@ -58,12 +58,19 @@ const editIdx = ref(null);
 const currIdx = ref(0);
 const loading = ref(false);
 const curPage = ref(1);
-const emits = defineEmits(['add:chat', 'select:chat']);
+const emits = defineEmits(['add:chat', 'select:chat', 'header:info']);
 
 const initChatList = (cateid, page) => {
   GetChatList(cateid, page).then(res => {
     chatList.splice(0, chatList.length);
     chatList.push(...res.data.list);
+    let chatName = '';
+    if (res.data.list.length > 0) {
+      chatName = res.data.list[0].name;
+    }
+    emits('header:info', {
+      chatName: chatName
+    })
   })
 }
 watch(() => props.cateid, () => {
@@ -73,9 +80,10 @@ onMounted(() => {
   initChatList(props.cateid, curPage.value);
 })
 const handleAddChat = () => {
+  let num = chatList.length + 1
   SetChatData({
     cate_id: props.cateid,
-    name: '新的聊天',
+    name: '新的聊天' + num,
     sort: 50,
   }).then((res) => {
     if (res.code !== 0) {
