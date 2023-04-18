@@ -19,8 +19,8 @@
             </a-layout-header>
             <!-- 内容区域 -->
             <a-layout-content class="absolute-div scrollbar">
-              <chat-list class="chat-list-container" ref="chatListRef" :id="chatId"
-                         @add:chat="handleChat" @finish="handleFinished"></chat-list>
+              <chat-list class="chat-list-container" ref="chatListRef" @add:chat="handleChat"
+                         @finish="handleFinished" @header:info="handleHeaderInfo"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
             <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
@@ -59,20 +59,30 @@ const chatListHeight = ref(0);
 // ----------------------------------------------------------------
 // 头部显示
 const headerInfo = ref({
-  cateName: '这是分类名称',
-  chatName: '这是对话语句',
+  cateName: '未分类',
+  chatName: '新的聊天',
   modelName: 'GPT3.5',
-  msgNum: '16',
-  tokenNum: '193'
+  msgNum: 0,
+  tokenNum:  0
 })
 const sendLoading = ref(false)
 const checkOffFlag = ref(false)
 let cateList = reactive([])
-const chatId = ref(0)
 
 const handleFinished = (value) => {
   sendLoading.value = value;
   checkOffFlag.value = value;
+}
+const handleHeaderInfo = (data) => {
+  if (data.modelName) {
+    headerInfo.value.modelName = data.modelName;
+  }
+  if (data.tokenNum) {
+    headerInfo.value.tokenNum = data.tokenNum;
+  }
+  if (data.msgNum) {
+    headerInfo.value.msgNum = data.msgNum;
+  }
 }
 // 初始化分类列表
 const initCateList = () => {
@@ -104,7 +114,7 @@ const handleChat = (value, loading) => {
   chatListRef.value.handleChat(value)
 }
 const handleSelectChat = (row) => {
-  chatId.value = row.id;
+  chatListRef.value.initChatList(row.id, 1);
 }
 // ----------------------------------------------------------------
 </script>

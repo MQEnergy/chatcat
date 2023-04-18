@@ -2,6 +2,7 @@ package cws
 
 import (
 	"chatcat/backend/service"
+	"fmt"
 	gowebsocket "github.com/MQEnergy/go-websocket"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -56,9 +57,9 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 		writer.Write([]byte(`{"code":0,"msg":"push group success"}`))
 		return
 	})
-	a.LogInfo("websocket starting success port: 9991")
+	a.LogInfof("websocket starting success port: %d", a.Cfg.App.WsPort)
 
-	if err := http.ListenAndServe(":9991", nil); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", a.Cfg.App.WsPort), nil); err != nil {
 		a.LogInfof("ListenAndServe err:", err.Error())
 	}
 }

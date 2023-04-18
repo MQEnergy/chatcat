@@ -34,6 +34,7 @@ type (
 		ServerUrl       string `yaml:"serverUrl" default:""`
 		DbName          string `yaml:"dbName" default:""`
 		WsUrl           string `yaml:"wsUrl" default:""`
+		WsPort          int    `yaml:"wsPort" default:"9991"`
 		PushUrl         string `yaml:"pushUrl" default:""`
 	}
 	Log struct {

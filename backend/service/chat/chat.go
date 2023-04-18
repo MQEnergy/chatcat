@@ -243,3 +243,24 @@ func (s *Service) BreakOffChatStream() {
 		GPTPkg.ChatCompStream.Close()
 	}
 }
+
+// GetTokensNumFromMessages
+// @Description: get token number from messages
+// @receiver s
+// @param messages
+// @return *cresp.Response
+// @author cx
+func (s *Service) GetTokensNumFromMessages(data model.Setting, messages []openai.ChatCompletionMessage) *cresp.Response {
+	if data.ApiKey == "" {
+		return cresp.Success(0)
+	}
+	gpt := cgpt.New(data.ApiKey, s.App).
+		WithProxy(data.ProxyUrl).
+		WithModel(data.ChatModel).
+		WithMessages(messages).
+		WithMaxTokens(0)
+	if cgpt.MaxTokens <= 0 {
+		return cresp.Success(0)
+	}
+	return cresp.Success(gpt.TikToken)
+}

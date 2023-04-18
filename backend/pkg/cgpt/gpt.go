@@ -53,7 +53,8 @@ type GPT struct {
 	Client                *openai.Client
 	ChatCompletionRequest openai.ChatCompletionRequest
 	CompletionRequest     openai.CompletionRequest
-	Token                 string
+	Token                 string // apiKey
+	TikToken              int    // 消耗的token数量
 	Done                  chan bool
 	ChatCompStream        *openai.ChatCompletionStream
 }
@@ -105,10 +106,12 @@ func (g *GPT) WithMaxTokens(tokens int) *GPT {
 		} else {
 			tikToken, _ = g.getTikTokenByEncoding(prompt)
 		}
+		g.TikToken = tikToken
 		MaxTokens = modelTokens - tikToken
 		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s message: %v", tikToken, modelTokens, MaxTokens, Model, Messages)
 	} else {
 		MaxTokens = tokens
+		g.TikToken = tokens
 	}
 	return g
 }

@@ -79,27 +79,44 @@
 </script>
 <script setup>
 import ChatGPTLogo from '@assets/images/chatgpt_black_logo.svg';
-import {onMounted, reactive, ref, watch, toRaw} from "vue";
+import {onMounted, reactive, ref, toRaw} from "vue";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
-import {ChatCompletionStream, GetChatRecordList, GetWsUrl} from "../../../../wailsjs/go/chat/Service.js";
+import {
+  ChatCompletionStream,
+  GetChatRecordList,
+  GetTokensNumFromMessages,
+  GetWsUrl
+} from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
+import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
 
 const {t} = useI18n();
-const props = defineProps({
-  id: {
-    type: Number,
-    default: 0
-  },
-});
-
 let chatList = reactive([]);
 let reqPromptList = reactive([]);
 const clientId = ref("")
 const tempContent = ref('');
+const settingInfo = ref(null);
 
-const emits = defineEmits(['add:chat', 'finish']);
+const emits = defineEmits(['add:chat', 'finish', 'header:info']);
 
+// ----------------------------------------------------------------
+const initSettingInfo = () => {
+  GetGeneralInfo().then(res => {
+    settingInfo.value = res.data;
+    emits('header:info', {
+      modelName: res.data.chat_model,
+    })
+  })
+}
+const tokenNumFromMessage = (settings, list) => {
+  GetTokensNumFromMessages(settings, list).then(res => {
+    emits('header:info', {
+      tokenNum: res.data,
+      msgNum: list.length
+    })
+  })
+}
 // ----------------------------------------------------------------
 // 初始化ws
 const initWs = () => {
@@ -127,6 +144,7 @@ const initWs = () => {
               reqPromptList.push(chatList[chatList.length - 1]);
             }
             emits('finish', false);
+            tokenNumFromMessage(settingInfo.value, chatList);
           }
           break;
       }
@@ -140,6 +158,7 @@ const initWs = () => {
   })
 };
 onMounted(() => {
+  initSettingInfo();
   initWs();
 })
 const addNewChat = () => {
@@ -169,21 +188,20 @@ const handleChat = (value) => {
   });
 }
 // ----------------------------------------------------------------
-defineExpose({
-  handleChat,
-  addNewChat
-})
 // 初始化对话列表
 const initChatList = (id, page) => {
+  addNewChat()
   GetChatRecordList(id, page).then(res => {
-    console.log('handleSelectChat', id, res.data.list);
     if (res.code === 0) {
       chatList.push(...res.data.list);
     }
   });
 }
-watch(() => props.id, () => {
-  initChatList(props.id, 1)
+
+defineExpose({
+  handleChat,
+  addNewChat,
+  initChatList
 })
 const markedContent = (item) => {
   return marked.parse(item.content);
