@@ -27,6 +27,7 @@ export default {
   'settings.theme.toDark': '暗黑模式',
   'settings.screen.toFull': '点击切换全屏模式',
   'settings.screen.toExit': '点击退出全屏模式',
+  'settings.advanced': '高级设置',
   // 数据同步
   'settings.datasync': '数据同步',
   'settings.datasync.linkAccount': '关联账号',

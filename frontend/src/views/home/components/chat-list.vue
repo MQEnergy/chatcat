@@ -14,20 +14,8 @@
               <div style="font-size: 18px; font-weight: bold;">你好！ 今天我能为您做点什么？</div>
               <div style="line-height: 30px;">
                 <p style="font-weight: bold;">您可以这么问：</p>
-                <p>1.
-                  <a-link @click="handleExampleClick('帮我制定一个一周的健身计划')">帮我制定一个一周的健身计划</a-link>
-                </p>
-                <p>2.
-                  <a-link @click="handleExampleClick('为我撰写有关AI对人类发展的5个吸引眼球的文章标题')">
-                    为我撰写有关AI对人类发展的5个吸引眼球的文章标题
-                  </a-link>
-                </p>
-                <p>3.
-                  <a-link @click="handleExampleClick('给我一份制作红烧肉的食谱')">给我一份制作红烧肉的食谱</a-link>
-                </p>
-                <p>4.
-                  <a-link @click="handleExampleClick('给我写一个python的http请求代码')">给我写一个python的http请求代码
-                  </a-link>
+                <p v-for="(item, index) in exampleList" :key="index">
+                  {{ index + 1 }}.<a-link @click="handleExampleClick(item)">{{ item }}</a-link>
                 </p>
               </div>
             </a-typography-paragraph>
@@ -62,8 +50,8 @@
               <a-dropdown @select="handleSelect" position="bl">
                 <IconMore/>
                 <template #content>
-                  <a-doption>{{ $t('common.share') }}</a-doption>
-                  <a-doption>{{ $t('common.save') }}</a-doption>
+<!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
+                  <a-doption>{{ $t('common.edit') }}</a-doption>
                   <a-doption>{{ $t('common.del') }}</a-doption>
                 </template>
               </a-dropdown>
@@ -97,7 +85,7 @@ let reqPromptList = reactive([]);
 const clientId = ref("")
 const tempContent = ref('');
 const settingInfo = ref(null);
-
+const exampleList = reactive(['帮我制定一个一周的健身计划', '为我撰写有关AI对人类发展的5个吸引眼球的文章标题', '给我一份制作红烧肉的食谱', '给我写一个python的http请求代码'])
 const emits = defineEmits(['add:chat', 'finish', 'header:info']);
 
 // ----------------------------------------------------------------
@@ -150,7 +138,6 @@ const initWs = () => {
               if (chatList.length > 0) {
                 reqPromptList.push(chatList[chatList.length - 1]);
               }
-              console.log("reqPromptList", reqPromptList);
               emits('finish', false);
               tokenNumFromMessage(settingInfo.value, reqPromptList);
               break;

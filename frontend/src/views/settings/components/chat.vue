@@ -50,8 +50,9 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import ChatDrawer from "@views/settings/components/chat-drawer.vue";
+import {GetChatCateList} from "../../../../wailsjs/go/chat/Service.js";
 
 const visible = ref(false);
 const drawerSeen = ref(false);
@@ -102,12 +103,20 @@ const cateList = reactive([
   },
 ]);
 let chatList = reactive([])
+const currPage = ref(1);
+
+const initChatCateList = (page) => {
+  GetChatCateList(page).then(res => {
+    cateList.push(...res.data.list);
+  })
+}
+onMounted(() => {
+  initChatCateList(currPage.value);
+})
+
 const handleCancel = (e) => {
   visible.value = e;
   drawerSeen.value = e;
-}
-const handleAddCate = () => {
-  visible.value = true;
 }
 const handlePromptClick = () => {
   chatList = [{

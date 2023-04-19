@@ -37,7 +37,7 @@
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
-      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden">
+      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden;">
         <a-layout-content>
           <general v-if="tabValue === '1'"></general>
           <datasync v-if="tabValue === '2'"></datasync>
@@ -156,7 +156,8 @@ export default defineComponent({
   font-weight: 400;
   font-size: 14px;
   background: var(--color-bg-3);
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   padding: 24px;
 }
 </style>

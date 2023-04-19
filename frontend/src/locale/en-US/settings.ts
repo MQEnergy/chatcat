@@ -27,6 +27,7 @@ export default {
   'settings.theme.toDark': 'Dark mode',
   'settings.screen.toFull': 'Click to switch to full screen mode',
   'settings.screen.toExit': 'Click to exit the full screen mode',
+  'settings.advanced': 'Advanced',
   // data sync
   'settings.datasync': 'Data Sync',
   'settings.datasync.linkAccount': 'Linked account',
