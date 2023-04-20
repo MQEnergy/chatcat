@@ -3,9 +3,9 @@
     <a-space direction="vertical" :size="20">
       <a-space class="chat-space-container" align="start" :size="10">
         <a-avatar
-            :style="{backgroundColor: '#fff', overflow: 'hidden', textAlign: 'center'}"
+            class="chat-avatar"
             :size="32">
-          <img alt="avatar" style="height: 30px; width: 30px" :src="ChatGPTLogo"/>
+          <img alt="avatar" style="height: 28px; width: 28px" :src="ChatGPTLogo"/>
         </a-avatar>
         <!-- 聊天框 -->
         <a-space direction="vertical">
@@ -27,11 +27,12 @@
       <a-space class="chat-space-container" align="start" :size="10" v-for="(item, index) in chatList" :key="index">
         <!-- 头像 -->
         <a-avatar
-            :style="{backgroundColor: item.role === 'assistant' ? '' : '#165DFF', overflow: 'hidden'}"
+            class="chat-avatar"
+            :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#165DFF', overflow: 'hidden'}"
             :size="32">
           <img v-if="item.role === 'assistant'"
                alt="avatar"
-               style="height: 30px; width: 30px"
+               style="height: 28px; width: 28px"
                :src="ChatGPTLogo"
           />
           <template v-else>
@@ -41,8 +42,8 @@
         <!-- 聊天框 -->
         <a-space direction="vertical">
           <a-card hoverable class="chat-card-item" :style="{
-                borderColor: item.role === 'assistant' ? '' : '#c7d7fa',
-                backgroundColor: item.role === 'assistant' ? '#fff': '#e8f3ff'
+                borderColor: item.role === 'assistant' ? '' : '',
+                backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
             <a-typography-paragraph copyable>
               <div class="chat-div" v-html="markedContent(item)"></div>
@@ -249,5 +250,14 @@ const handleSelect = (e) => {
   position: absolute;
   bottom: 8px;
   right: 40px;
+}
+
+.chat-avatar {
+  background-color: #fff;
+  overflow: hidden;
+  text-align: center;
+}
+.chat-avatar img {
+  padding-top: 1px;
 }
 </style>
