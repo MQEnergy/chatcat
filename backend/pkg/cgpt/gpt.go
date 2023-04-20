@@ -357,9 +357,10 @@ func (g *GPT) getTikTokenByEncoding(prompt string) (int, error) {
 // @return numTokens
 // @author cx
 func (g *GPT) NumTokensFromMessages(messages []openai.ChatCompletionMessage) (numTokens int) {
-	tkm, err := tiktoken.EncodingForModel(Model)
+	encoding := g.getAvailableEncodingModel(Model)
+	tkm, err := tiktoken.GetEncoding(encoding)
 	if err != nil {
-		fmt.Println(fmt.Errorf("EncodingForModel: %v", err))
+		fmt.Println(fmt.Errorf("1EncodingForModel: %v", err))
 		return
 	}
 	var tokensPerMessage int

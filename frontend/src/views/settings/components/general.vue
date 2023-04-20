@@ -115,7 +115,7 @@ const advancedList = reactive([
     marks: {0: '0', 2: '2'},
   }, {
     title: '单次回复限制 (max_tokens)',
-    desc: '单次交互所用的最大 Token 数',
+    desc: '单次交互所用的最大Token数，设置为0表示按照当前模型允许的最大token数量自动计算',
     value: 2000,
     min: 20,
     max: 9999,
