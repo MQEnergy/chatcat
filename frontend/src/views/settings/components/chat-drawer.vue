@@ -11,7 +11,7 @@
     </template>
     <div>
       <a-row :gutter="[10, 10]">
-        <a-col :span="12" v-for="(item, index) in props.chats" :key="index">
+        <a-col :span="12" v-for="(item, index) in chatList" :key="index">
           <a-card :title="item.name" class="prompt-card">
             <template #extra>
               <a-dropdown @select="handleSelect($event, item)">
@@ -49,22 +49,25 @@
 <script setup>
 import {useRouter} from "vue-router";
 import {Message} from "@arco-design/web-vue";
+import {GetChatList} from "../../../../wailsjs/go/chat/Service.js";
+import {reactive, ref} from "vue";
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
-  },
-  chats: {
-    type: Array,
-    default: []
   }
 });
 const router = useRouter();
+const currPage = ref(1);
+let chatList = reactive([])
 
 const emits = defineEmits(['cancel']);
 const handleOk = () => {
   emits('cancel', false);
+}
+const handleDelete = (row, index) => {
+
 }
 const handleSelect = (e, row) => {
   switch (e) {
@@ -75,6 +78,7 @@ const handleSelect = (e, row) => {
       Message.info("Edit")
       break;
     case 3:
+      handleDelete(row)
       Message.info("Delete")
       break;
     case 4:
@@ -82,9 +86,15 @@ const handleSelect = (e, row) => {
       break;
   }
 }
-const handleDelete = (row, index) => {
-
+const initDrawChatList = (cateid, page) => {
+  GetChatList(cateid, page).then(res => {
+    chatList.splice(0, chatList.length);
+    chatList.push(...res.data.list);
+  })
 }
+defineExpose({
+  initDrawChatList
+})
 </script>
 
 <style scoped>

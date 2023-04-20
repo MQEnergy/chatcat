@@ -99,8 +99,11 @@ func (s *Service) SetChatCateData(data model.ChatCate) *cresp.Response {
 	}
 	// 获取letter
 	lazyPinyin := pinyin.LazyPinyin(data.Name, pinyin.NewArgs())
-	data.Letter = strings.ToUpper(lazyPinyin[0][0:1])
-	data.Color = "#3370ff" // Todo
+	if len(lazyPinyin) > 0 {
+		data.Letter = strings.ToUpper(lazyPinyin[0][0:1])
+	} else {
+		data.Letter = data.Name[0:1]
+	}
 	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat cate save failed")
 	}

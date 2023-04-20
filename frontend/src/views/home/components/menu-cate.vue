@@ -1,5 +1,5 @@
 <template>
-  <a-space direction="vertical" size="medium" style="margin-top: 50px;">
+  <a-space class="menu-space-container scrollbar" direction="vertical" size="medium" style="">
     <!-- cate list -->
     <a-tooltip content="未分类" position="right">
       <div :style="{position: 'relative', width: '100%'}">
@@ -111,10 +111,7 @@ const handleCateCancel = () => {
   visible.value = false;
 }
 const handleCateOk = (form) => {
-  SetChatCateData({
-    name: form.name,
-    desc: form.desc,
-  }).then((res) => {
+  SetChatCateData(form).then((res) => {
     if (res.code !== 0) {
       Message.error(res.msg);
       return;
@@ -123,7 +120,7 @@ const handleCateOk = (form) => {
       id: res.data.id,
       name: form.name,
       letter: res.data.letter,
-      color: res.data.color
+      color: form.color
     })
     visible.value = false;
   })
@@ -131,6 +128,14 @@ const handleCateOk = (form) => {
 </script>
 
 <style scoped>
+.menu-space-container {
+  width: 100%;
+  margin-top: 50px;
+  height: calc(100vh - 230px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
 .menu-cate-container :deep(.arco-menu-vertical .arco-menu-inner) {
   padding: 8px !important;
 }
@@ -163,7 +168,7 @@ const handleCateOk = (form) => {
 
 .avatar-selected {
   position: absolute;
-  left: -20px;
+  left: 0px;
   top: 0;
   height: 35px;
   border-top-right-radius: 4px;

@@ -4,6 +4,33 @@
       <!-- chat list -->
       <div class="chat-list scrollbar">
         <a-row :gutter="[20, 20]">
+          <a-col :span="8">
+            <a-card hoverable :style="{ borderRadius: '8px' }">
+              <div :style="{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }">
+                  <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
+                    <a-avatar :style="{ marginRight: '8px', backgroundColor: '#999' }" :size="28">
+                      W
+                    </a-avatar>
+                    <a-typography-text>未分类</a-typography-text>
+                  </span>
+                <a-dropdown @select="handleSelect($event, {id:0})">
+                  <a-link style="color: #000">
+                    <icon-more size="large"/>
+                  </a-link>
+                  <template #content>
+                    <a-doption :value="1">
+                      <icon-copy/>
+                      {{ $t('common.view') }}
+                    </a-doption>
+                  </template>
+                </a-dropdown>
+              </div>
+            </a-card>
+          </a-col>
           <a-col :span="8" v-for="(item, index) in cateList" :key="index">
             <a-card hoverable :style="{ borderRadius: '8px' }">
               <div :style="{
@@ -12,8 +39,8 @@
                   justifyContent: 'space-between',
                 }">
                   <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
-                    <a-avatar :style="{ marginRight: '8px', backgroundColor: '#165DFF' }" :size="28">
-                      A
+                    <a-avatar :style="{ marginRight: '8px', backgroundColor: item.color }" :size="28">
+                      {{ item.letter }}
                     </a-avatar>
                     <a-typography-text>{{ item.name }}</a-typography-text>
                   </span>
@@ -42,9 +69,12 @@
         </a-row>
       </div>
     </a-card>
+    <div style="width: 400px; margin: 0 auto;">
+      <a-pagination :total="50"/>
+    </div>
   </div>
   <!-- chat drawer -->
-  <chat-drawer :visible="drawerSeen" :chats="chatList" @cancel="handleCancel"></chat-drawer>
+  <chat-drawer ref="chatRecordListRef" :visible="drawerSeen" @cancel="handleCancel"></chat-drawer>
 </template>
 
 <script setup>
@@ -55,8 +85,8 @@ import {GetChatCateList} from "../../../../wailsjs/go/chat/Service.js";
 const visible = ref(false);
 const drawerSeen = ref(false);
 const cateList = reactive([]);
-let chatList = reactive([])
 const currPage = ref(1);
+const chatRecordListRef = ref(null);
 
 const initChatCateList = (page) => {
   GetChatCateList(page).then(res => {
@@ -71,37 +101,17 @@ const handleCancel = (e) => {
   visible.value = e;
   drawerSeen.value = e;
 }
-const handlePromptClick = () => {
-  chatList = [{
-    id: 1,
-    name: '这是chat对话语句1',
-    sort: 50
-  }, {
-    id: 2,
-    name: '这是chat对话语句2',
-    sort: 50
-  }, {
-    id: 3,
-    name: '这是chat对话语句3',
-    sort: 50
-  }, {
-    id: 1,
-    name: '这是chat对话语句1',
-    sort: 50
-  }, {
-    id: 2,
-    name: '这是chat对话语句2',
-    sort: 50
-  }];
+const handlePromptClick = (row) => {
   drawerSeen.value = true;
+  chatRecordListRef.value.initDrawChatList(row.id, 1);
 }
 const handleSelect = (e, row) => {
   switch (e) {
     case 1:
-      handlePromptClick()
+      handlePromptClick(row)
       break;
     case 2:
-      handlePromptClick()
+      handlePromptClick(row)
       break;
   }
 }

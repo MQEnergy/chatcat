@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="props.visible"
+  <a-modal :width="530" v-model:visible="props.visible"
            :title="$t('home.menuCate.settings.addCate')"
            :cancel-text="$t('common.reset')"
            :ok-text="$t('common.submit')"
@@ -10,7 +10,7 @@
       <a-form-item field="name" :label="$t('common.name')"
                    :rules="[
                        {required:true, message:$t('home.menuCate.settings.addCate.errTip1')},
-                       {maxLength:5, message:$t('home.menuCate.settings.addCate.errTip2')}
+                       {maxLength:10, message:$t('home.menuCate.settings.addCate.errTip2')}
                    ]"
                    :validate-trigger="['change','input']">
         <a-input v-model="form.name" :placeholder="$t('common.name.placeholder')" allow-clear/>
@@ -19,6 +19,15 @@
         <a-tag checkable v-for="(item, index) in tagList" :key="index"
                color="arcoblue" :checked="tagCheckIdx === index"
                @check="handleCheckTag(item, index)">{{ item.name }}
+        </a-tag>
+      </a-space>
+      <a-space class="color-space-div" wrap style="cursor: pointer; margin-bottom: 10px;">
+        <a-tag v-for="(item, index) of colorList" :key="index" :checked="item.checked"
+               @click="handleColorCheck(item, index)" :color="item.value"
+               :style="{width: '30px', position: 'relative'}">
+          <div v-if="item.checked" class="selected">
+            <icon-check :size="14"/>
+          </div>
         </a-tag>
       </a-space>
       <a-form-item field="desc" :label="$t('common.desc')">
@@ -39,7 +48,8 @@ const props = defineProps({
 });
 const form = reactive({
   name: '',
-  desc: ''
+  desc: '',
+  color: '#3370ff',
 });
 const emits = defineEmits(["cancel", "ok"])
 const formRef = ref(null)
@@ -62,6 +72,21 @@ const tagList = reactive([
     name: '论文',
   },
 ])
+let colorList = reactive([
+  {value: '#f9801c', checked: false},
+  {value: '#3271fd', checked: false},
+  {value: '#1fcabc', checked: false},
+  {value: '#53b851', checked: false},
+  {value: '#f6a646', checked: false},
+  {value: '#f96c16', checked: false},
+  {value: '#0b73f5', checked: false},
+  {value: '#8189f5', checked: false},
+  {value: '#26818a', checked: false},
+  {value: '#1e80ff', checked: false},
+  {value: '#2848f9', checked: false},
+  {value: '#c73d3d', checked: false},
+  {value: '#a932f7', checked: false},
+]);
 const handleCancel = () => {
   formRef.value.resetFields();
   emits("cancel", false)
@@ -76,14 +101,33 @@ const handleBeforeOk = (done) => {
   }
 }
 const handleOk = () => {
+  console.log(form)
   emits("ok", form)
 }
 const handleCheckTag = (row, idx) => {
   tagCheckIdx.value = idx;
   form.name = row.name;
 }
+const handleColorCheck = (row, idx) => {
+  colorList.forEach((item) => {
+    item.checked = false;
+  })
+  form.color = row.value;
+  colorList[idx].checked = !colorList[idx].checked;
+}
 </script>
 
 <style scoped>
+.color-space-div {
+  position: relative;
+}
 
+.color-space-div .selected {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
 </style>
