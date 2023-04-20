@@ -73,8 +73,8 @@
               </a-list-item-meta>
               <template #actions>
                 <div :style="{ width: '160px', marginLeft: '20px' }">
-                  <a-slider :min="item.min" :max="item.max" v-if="item.type === 1" :marks="item.marks" step="0.1"
-                            :default-value="item.value"/>
+                  <a-slider :min="item.min" :max="item.max" v-if="item.type === 1" :marks="item.marks" :step="item.step"
+                            :default-value="item.value" @change="handleSliderChange($event, item)"/>
                   <a-input v-else v-model="item.value"></a-input>
                 </div>
               </template>
@@ -95,17 +95,19 @@ import {LOCALE_OPTIONS} from "@/locale";
 import useLocale from "@/hooks/locale";
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo, SetGeneralData} from "../../../../wailsjs/go/setting/Service.js";
+import {Message} from "@arco-design/web-vue";
 
 const {t, locale} = useI18n();
 const fieldNames = {value: 'city', label: 'text'}
 const themeList = computed(() => [
-  {id: 1, name: t('settings.theme.system')},
   {id: 2, name: t('settings.theme.toLight')},
   {id: 3, name: t('settings.theme.toDark')},
+  {id: 1, name: t('settings.theme.system')},
 ])
 const advancedList = reactive([
   {
     title: '随机性 (temperature)',
+    tag: 'temperature',
     desc: '值越大恢复越随机，介于0-2之间，大于1的值可能会导致乱码',
     value: 0.7,
     min: 0,
@@ -115,6 +117,7 @@ const advancedList = reactive([
     marks: {0: '0', 2: '2'},
   }, {
     title: '单次回复限制 (max_tokens)',
+    tag: 'max_tokens',
     desc: '单次交互所用的最大Token数，设置为0表示按照当前模型允许的最大token数量自动计算',
     value: 0,
     min: 20,
@@ -124,6 +127,7 @@ const advancedList = reactive([
     marks: {20: '20'}
   }, {
     title: '对话新鲜度 (presence_penalty)',
+    tag: 'presence_penalty',
     desc: '正值会根据到目前为止是否出现在文本中来惩罚新标记，从而增加模型谈论新主题的可能性。介于-2.0 和 2.0之间',
     value: 0,
     min: -2,
@@ -133,18 +137,22 @@ const advancedList = reactive([
     marks: {'-2': '-2', 2: '2'},
   }, {
     title: '对话重复性 (frequency_penalty)',
+    tag: 'frequency_penalty',
     desc: '正值会根据新标记在文本中的现有频率对其进行惩罚，从而降低模型逐字重复同一行的可能性。介于-2.0 和 2.0之间',
     value: 0,
     min: -2,
     max: 2,
+    step: 0.1,
     type: 1,
     marks: {'-2': '-2', 2: '2'},
   }, {
     title: '返回数量 (N)',
+    tag: 'n',
     desc: 'API会生成多少个可能的文本选项供用户选择，它会很快消耗你的令牌配额。请谨慎使用 默认1',
     value: 1,
     min: 1,
     max: 10,
+    step: 1,
     type: 1,
     marks: {1: '1', 10: '10'},
   },
@@ -161,6 +169,11 @@ const form = ref({
   access_token: '',
   is_sync: 1,
   sync_time: 0,
+  temperature: "0.7",
+  max_tokens: 0,
+  presence_penalty: "0",
+  frequency_penalty: "0",
+  n: 1,
 })
 const locales = [...LOCALE_OPTIONS]
 const visible = ref(false);
@@ -171,6 +184,24 @@ const handleNotice = () => {
 }
 const handleCheckTheme = (e) => {
   form.value.theme = e;
+  switch (e) {
+    case 1:
+      const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+      darkThemeMq.addListener(e => {
+        console.log(e)
+        if (e.matches) {
+          document.body.setAttribute('arco-theme', 'dark');
+        } else {
+          document.body.removeAttribute('arco-theme');
+        }
+      });
+    case 2:
+      document.body.removeAttribute('arco-theme');
+      break;
+    case 3:
+      document.body.setAttribute('arco-theme', 'dark');
+      break;
+  }
   handleGeneralSave();
 }
 const handleCancelDrawer = () => {
@@ -189,6 +220,26 @@ const handleGeneralSave = (e) => {
     console.log(res)
   })
 }
+const handleSliderChange = (e, row) => {
+  switch (row.tag) {
+    case 'temperature':
+      form.value.temperature = e.toString();
+      break;
+    case 'max_tokens':
+      form.value.max_tokens = e;
+      break;
+    case 'presence_penalty':
+      form.value.presence_penalty = e.toString();
+      break;
+    case 'frequency_penalty':
+      form.value.frequency_penalty = e.toString();
+      break;
+    case 'n':
+      form.value.n = e;
+      break;
+  }
+  handleGeneralSave(e)
+}
 const initGeneralInfo = (e) => {
   GetGeneralInfo().then(res => {
     if (res.code === 0) {
@@ -197,7 +248,11 @@ const initGeneralInfo = (e) => {
   })
 }
 onMounted(() => {
-  initGeneralInfo();
+  if (window.go === undefined) {
+    Message.error(t('common.panic'));
+  } else {
+    initGeneralInfo();
+  }
 })
 </script>
 

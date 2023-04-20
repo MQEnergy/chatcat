@@ -16,10 +16,10 @@
                     <a-avatar :style="{ marginRight: '8px', backgroundColor: '#999' }" :size="28">
                       W
                     </a-avatar>
-                    <a-typography-text>未分类</a-typography-text>
+                    <a-typography-text>{{ $t('common.nocate') }}</a-typography-text>
                   </span>
                   <a-dropdown @select="handleSelect($event, {id:0})">
-                    <a-link style="color: #000">
+                    <a-link :style="{color: 'var(--color-text-2)'}">
                       <icon-more size="large"/>
                     </a-link>
                     <template #content>
@@ -46,7 +46,7 @@
                     <a-typography-text>{{ item.name }}</a-typography-text>
                   </span>
                   <a-dropdown @select="handleSelect($event, item)">
-                    <a-link style="color: #000">
+                    <a-link :style="{color: 'var(--color-text-2)'}">
                       <icon-more size="large"/>
                     </a-link>
                     <template #content>
@@ -71,7 +71,7 @@
         </a-spin>
       </div>
     </a-card>
-    <div class="footer-pagination">
+    <div class="footer-pagination" v-if="total > 0">
       <a-pagination :total="total" :page-size="21" show-total @change="handlePageChange"/>
     </div>
   </div>
@@ -80,12 +80,19 @@
   <!-- cate edit drawer -->
   <cate-add ref="cateAddRef" :visible="cateSeen" :form-data="formData" @cancel="handleCancel"
             @ok="handleCateOk"></cate-add>
+  <!--  delete -->
+  <a-modal :width="360" v-model:visible="delSeen" @ok="handleDelOk" :ok-loading="delLoading" @cancel="handleDelCancel">
+    <template #title>
+      {{ $t('common.notice') }}
+    </template>
+    <div>{{ $t('common.chat.confirmDel') }}</div>
+  </a-modal>
 </template>
 
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import ChatDrawer from "@views/settings/components/chat-drawer.vue";
-import {GetChatCateList, UpdateChatCateData} from "../../../../wailsjs/go/chat/Service.js";
+import {DelChatCate, GetChatCateList, UpdateChatCateData} from "../../../../wailsjs/go/chat/Service.js";
 import CateAdd from "../../home/components/cate-add.vue";
 import {Message} from "@arco-design/web-vue";
 
@@ -95,6 +102,9 @@ const formData = ref(null);
 const cateList = reactive([]);
 const currPage = ref(1);
 const total = ref(0);
+const delSeen = ref(false);
+const delData = ref(null);
+const delLoading = ref(false);
 
 const chatRecordListRef = ref(null);
 const cateAddRef = ref(null);
@@ -112,7 +122,9 @@ const initChatCateList = (page) => {
   })
 }
 onMounted(() => {
-  initChatCateList(currPage.value);
+  if (window.go !== undefined) {
+    initChatCateList(currPage.value);
+  }
 })
 
 const handleCancel = (e) => {
@@ -136,7 +148,10 @@ const handlePromptClick = (row) => {
 const handleCateAdd = (row) => {
   cateSeen.value = true;
   formData.value = row;
-  // cateAddRef.value.setFormData(row);
+}
+const handleCateDel = (row) => {
+  delData.value = row;
+  delSeen.value = true;
 }
 const handleSelect = (e, row) => {
   switch (e) {
@@ -146,13 +161,28 @@ const handleSelect = (e, row) => {
     case 2: // edit
       handleCateAdd(row);
       break;
+    case 3: // del
+      handleCateDel(row);
+      break;
   }
-}
-const handleDelete = (row, index) => {
-
 }
 const handlePageChange = (e) => {
   initChatCateList(e);
+}
+const handleDelOk = () => {
+  delLoading.value = true;
+  DelChatCate(delData.value.id).then(res => {
+    if (res.code !== 0) {
+      Message.error(res.msg)
+      return;
+    }
+    initChatCateList(currPage.value);
+  }).finally(() => {
+    delLoading.value = false;
+  })
+}
+const handleDelCancel = () => {
+  delSeen.value = false;
 }
 </script>
 

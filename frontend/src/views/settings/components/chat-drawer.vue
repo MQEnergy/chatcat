@@ -19,10 +19,10 @@
                   <icon-more size="large"/>
                 </a-link>
                 <template #content>
-                  <a-doption :value="1">
-                    <icon-send/>
-                    {{ $t('common.chat') }}
-                  </a-doption>
+                  <!--                  <a-doption :value="1">-->
+                  <!--                    <icon-send/>-->
+                  <!--                    {{ $t('common.chat') }}-->
+                  <!--                  </a-doption>-->
                   <a-doption :value="2">
                     <icon-edit/>
                     {{ $t('common.edit') }}
@@ -42,6 +42,10 @@
           </a-card>
         </a-col>
       </a-row>
+      <a-empty :style="{marginTop: '40px'}" v-if="chatList.length == 0"></a-empty>
+      <div class="footer-pagination" v-if="total > 0">
+        <a-pagination :total="total" :page-size="21" show-total @change="handlePageChange"/>
+      </div>
     </div>
   </a-drawer>
 </template>
@@ -60,7 +64,10 @@ const props = defineProps({
 });
 const router = useRouter();
 const currPage = ref(1);
+const total = ref(0);
 let chatList = reactive([])
+const cateId = ref(null);
+const loading = ref(false);
 
 const emits = defineEmits(['cancel']);
 const handleOk = () => {
@@ -86,10 +93,21 @@ const handleSelect = (e, row) => {
       break;
   }
 }
+
+const handlePageChange = (e) => {
+  GetChatList(cateId.value, e);
+}
 const initDrawChatList = (cateid, page) => {
+  loading.value = true;
+  cateId.value = cateid;
   GetChatList(cateid, page).then(res => {
-    chatList.splice(0, chatList.length);
-    chatList.push(...res.data.list);
+    if (res.code === 0) {
+      chatList.splice(0, chatList.length);
+      chatList.push(...res.data.list);
+      total.value = res.data.total;
+    }
+  }).finally(() => {
+    loading.value = false;
   })
 }
 defineExpose({
@@ -104,5 +122,12 @@ defineExpose({
 
 .prompt-card :deep(.arco-card-header) {
   border: none;
+}
+
+.footer-pagination {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

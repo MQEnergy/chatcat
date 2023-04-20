@@ -3,19 +3,20 @@
     <a-space direction="vertical" :size="20">
       <a-space class="chat-space-container" align="start" :size="10">
         <a-avatar
-            :style="{backgroundColor: '#fff', overflow: 'hidden'}"
+            :style="{backgroundColor: '#fff', overflow: 'hidden', textAlign: 'center'}"
             :size="32">
           <img alt="avatar" style="height: 30px; width: 30px" :src="ChatGPTLogo"/>
         </a-avatar>
         <!-- 聊天框 -->
         <a-space direction="vertical">
-          <a-card hoverable class="chat-card-item" :style="{ backgroundColor: '#fff' }">
+          <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
             <a-typography-paragraph :style="{ marginTop: '1em' }">
-              <div style="font-size: 18px; font-weight: bold;">你好！ 今天我能为您做点什么？</div>
+              <div style="font-size: 18px; font-weight: bold;">{{ $t('common.example.tips') }}</div>
               <div style="line-height: 30px;">
-                <p style="font-weight: bold;">您可以这么问：</p>
+                <p style="font-weight: bold;">{{ $t('common.example.tips1') }}</p>
                 <p v-for="(item, index) in exampleList" :key="index">
-                  {{ index + 1 }}.<a-link @click="handleExampleClick(item)">{{ item }}</a-link>
+                  {{ index + 1 }}.
+                  <a-link @click="handleExampleClick(item)">{{ item }}</a-link>
                 </p>
               </div>
             </a-typography-paragraph>
@@ -26,7 +27,7 @@
       <a-space class="chat-space-container" align="start" :size="10" v-for="(item, index) in chatList" :key="index">
         <!-- 头像 -->
         <a-avatar
-            :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#165DFF', overflow: 'hidden'}"
+            :style="{backgroundColor: item.role === 'assistant' ? '' : '#165DFF', overflow: 'hidden'}"
             :size="32">
           <img v-if="item.role === 'assistant'"
                alt="avatar"
@@ -50,7 +51,7 @@
               <a-dropdown @select="handleSelect" position="bl">
                 <IconMore/>
                 <template #content>
-<!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
+                  <!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
                   <a-doption>{{ $t('common.edit') }}</a-doption>
                   <a-doption>{{ $t('common.del') }}</a-doption>
                 </template>
@@ -78,6 +79,7 @@ import {
 } from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
+import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
 let chatList = reactive([]);
@@ -106,7 +108,7 @@ const tokenNumFromMessage = (settings, list) => {
   })
 }
 // ----------------------------------------------------------------
-// 初始化ws
+// init ws
 const initWs = () => {
   GetWsUrl().then(res => {
     let wsUrl = res + "?group_id=chat"
@@ -153,8 +155,10 @@ const initWs = () => {
   })
 };
 onMounted(() => {
-  initSettingInfo();
-  initWs();
+  if (window.go !== undefined) {
+    initSettingInfo();
+    initWs();
+  }
 })
 const addNewChat = () => {
   chatList.splice(0, chatList.length);

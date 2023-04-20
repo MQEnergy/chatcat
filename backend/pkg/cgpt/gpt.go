@@ -96,6 +96,19 @@ func (g *GPT) WithTemperature(temperature float32) *GPT {
 	return g
 }
 
+func (g *GPT) WithPresencePenalty(presencePenalty float32) *GPT {
+	PresencePenalty = presencePenalty
+	return g
+}
+func (g *GPT) WithFrequencyPenalty(frequencyPenalty float32) *GPT {
+	PresencePenalty = frequencyPenalty
+	return g
+}
+func (g *GPT) WithN(n int) *GPT {
+	N = n
+	return g
+}
+
 func (g *GPT) WithMaxTokens(tokens int) *GPT {
 	var tikToken int
 	if tokens == 0 {

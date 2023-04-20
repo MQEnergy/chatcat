@@ -48,6 +48,7 @@ import {useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
 import {GetChatCateList} from "../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
+import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
 const router = useRouter();
@@ -99,7 +100,11 @@ const initCateList = () => {
 onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
   prompt.value = promptValue;
-  initCateList();
+  if (window.go === undefined) {
+    Message.error(t('common.panic'))
+  } else {
+    initCateList();
+  }
 })
 // ----------------------------------------------------------------
 const handleCateList = (item) => {

@@ -19,7 +19,6 @@
             <a-input size="medium" class="menu-input-item"
                      @press-enter="handleCheck(item, index)"
                      v-model="item.name"
-                     placeholder="请输入对话关键词"
                      allow-clear/>
           </div>
           <div v-else class="menu-text-item">{{ item.name }}</div>
@@ -46,6 +45,9 @@
 import {defineProps, onMounted, reactive, ref, watch} from "vue";
 import {DeleteChat, EditChat, GetChatList, SetChatData} from "../../../../wailsjs/go/chat/Service.js";
 import {Message} from "@arco-design/web-vue";
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n();
 
 let props = defineProps({
   cateid: {
@@ -77,13 +79,15 @@ watch(() => props.cateid, () => {
   initChatList(props.cateid, curPage.value);
 })
 onMounted(() => {
-  initChatList(props.cateid, curPage.value);
+  if (window.go !== undefined) {
+    initChatList(props.cateid, curPage.value);
+  }
 })
 const handleAddChat = () => {
   let num = chatList.length + 1
   SetChatData({
     cate_id: props.cateid,
-    name: '新的聊天' + num,
+    name: t('common.newchat') + num,
     sort: 50,
   }).then((res) => {
     if (res.code !== 0) {
@@ -175,7 +179,7 @@ const handleSelectChat = (row, index) => {
 }
 
 .selected {
-  background: #fff;
+  background: var(--color-bg-4);
   /*box-sizing: border-box;*/
   /*border: 1px solid rgb(22, 93, 255) !important;*/
 }

@@ -7,6 +7,7 @@ import (
 	"chatcat/backend/pkg/cresp"
 	"chatcat/backend/service"
 	"chatcat/backend/service/setting"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/mozillazg/go-pinyin"
 	"github.com/sashabaranov/go-openai"
 	"strings"
@@ -42,6 +43,24 @@ func (s *Service) GetChatCateList(page int) *cresp.Response {
 		return cresp.Fail("GetChatCateList error:" + err.Error())
 	}
 	return cresp.Success(pagination)
+}
+
+// DelChatCate
+// @Description: delete chat category
+// @receiver s
+// @param id
+// @return *cresp.Response
+// @author cx
+func (s *Service) DelChatCate(id int) *cresp.Response {
+	var chatCateInfo model.ChatCate
+	if err := s.App.DB.First(&chatCateInfo, id).Error; err != nil {
+		return cresp.Fail(err.Error())
+	}
+	if err := s.App.DB.Delete(&chatCateInfo).Error; err != nil {
+		return cresp.Fail(err.Error())
+	}
+
+	return cresp.Success("")
 }
 
 // GetChatList
@@ -248,8 +267,12 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage, 
 	GPTPkg = cgpt.New(data.ApiKey, s.App)
 	gpt := GPTPkg.WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
+		WithTemperature(gconv.Float32(data.Temperature)).
+		WithPresencePenalty(gconv.Float32(data.PresencePenalty)).
+		WithFrequencyPenalty(gconv.Float32(data.FrequencyPenalty)).
+		WithN(data.N).
 		WithMessages(messages).
-		WithMaxTokens(0)
+		WithMaxTokens(data.MaxTokens)
 	if cgpt.MaxTokens <= 0 {
 		return cresp.Fail("Chatcat Warm Reminder: Your token is running low, Please start a new conversation.")
 	}

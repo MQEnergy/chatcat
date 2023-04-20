@@ -1,53 +1,55 @@
 <template>
-  <div class="mask-container"></div>
-  <div class="settings-container">
-    <div class="close-container">
-      <icon-close-circle-fill @click="handleClose" size="40"/>
-    </div>
-    <a-layout class="layout-container">
-      <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px', height: '236px' }">
-        <a-menu
-            :default-selected-keys="tabName"
-            :style="{ width: '170px' }"
-            @menu-item-click="onClickMenuItem"
-        >
-          <a-menu-item key="1">
-            <icon-settings/>
-            {{ $t('settings.general') }}
-          </a-menu-item>
-          <a-menu-item key="2">
-            <icon-sync/>
-            {{ $t('settings.datasync') }}
-          </a-menu-item>
-          <a-menu-item key="3">
-            <icon-select-all/>
-            {{ $t('settings.chat') }}
-          </a-menu-item>
-          <a-menu-item key="4">
-            <icon-select-all/>
-            {{ $t('settings.prompt') }}
-          </a-menu-item>
-          <a-menu-item key="5">
-            <icon-tool/>
-            {{ $t('settings.contact') }}
-          </a-menu-item>
-<!--          <a-menu-item key="6">-->
-<!--            <icon-download/>-->
-<!--            {{ $t('settings.releaseNotes') }}-->
-<!--          </a-menu-item>-->
-        </a-menu>
-      </a-layout-sider>
-      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden; height: 94vh;">
-        <a-layout-content>
-          <general v-if="tabValue === '1'"></general>
-          <datasync v-if="tabValue === '2'"></datasync>
-          <chat v-if="tabValue === '3'"></chat>
-          <prompt v-if="tabValue === '4'"></prompt>
-          <contact v-if="tabValue === '5'"></contact>
-          <release-notes v-if="tabValue === '6'"></release-notes>
-        </a-layout-content>
+  <div class="bg">
+    <div class="mask-container"></div>
+    <div class="settings-container">
+      <div class="close-container">
+        <icon-close-circle-fill @click="handleClose" :style="{color: 'var(--color-text-5)'}" size="40"/>
+      </div>
+      <a-layout class="layout-container">
+        <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px', height: '236px', border: '1px solid var(--color-border-2)' }">
+          <a-menu
+              :default-selected-keys="tabName"
+              :style="{ width: '170px' }"
+              @menu-item-click="onClickMenuItem"
+          >
+            <a-menu-item key="1">
+              <icon-settings/>
+              {{ $t('settings.general') }}
+            </a-menu-item>
+            <a-menu-item key="2">
+              <icon-sync/>
+              {{ $t('settings.datasync') }}
+            </a-menu-item>
+            <a-menu-item key="3">
+              <icon-select-all/>
+              {{ $t('settings.chat') }}
+            </a-menu-item>
+            <a-menu-item key="4">
+              <icon-select-all/>
+              {{ $t('settings.prompt') }}
+            </a-menu-item>
+            <a-menu-item key="5">
+              <icon-tool/>
+              {{ $t('settings.contact') }}
+            </a-menu-item>
+            <!--          <a-menu-item key="6">-->
+            <!--            <icon-download/>-->
+            <!--            {{ $t('settings.releaseNotes') }}-->
+            <!--          </a-menu-item>-->
+          </a-menu>
+        </a-layout-sider>
+        <a-layout class="layout-content-container">
+          <a-layout-content>
+            <general v-if="tabValue === '1'"></general>
+            <datasync v-if="tabValue === '2'"></datasync>
+            <chat v-if="tabValue === '3'"></chat>
+            <prompt v-if="tabValue === '4'"></prompt>
+            <contact v-if="tabValue === '5'"></contact>
+            <!--          <release-notes v-if="tabValue === '6'"></release-notes>-->
+          </a-layout-content>
+        </a-layout>
       </a-layout>
-    </a-layout>
+    </div>
   </div>
 </template>
 
@@ -89,11 +91,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.bg {
+  background: var(--color-bg-5);
+}
+
 .settings-container {
   width: 85%;
   height: 93vh;
   margin: 0 auto;
   position: relative;
+}
+
+.settings-container :deep(.arco-card) {
+  background: var(--color-bg-3);
 }
 
 .mask-container {
@@ -114,6 +124,17 @@ export default defineComponent({
 
 .layout-container {
   height: 93vh;
+}
+
+.layout-content-container {
+  padding: 0 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 94vh;
+}
+
+.layout-content-container :deep(.arco-layout-content) {
+  border: 1px solid var(--color-border-2);
 }
 
 .layout-container :deep(.arco-layout-sider) .logo {

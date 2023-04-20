@@ -8,7 +8,7 @@
       </template>
       <template #extra>
         <a-dropdown @select="handleSelect($event, item)">
-          <a-link style="color: #000">
+          <a-link :style="{color: 'var(--color-text-2)'}">
             <icon-more size="large"/>
           </a-link>
           <template #content>
