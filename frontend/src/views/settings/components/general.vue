@@ -254,7 +254,7 @@ onMounted(() => {
 }
 
 .general-div {
-  height: 700px;
+  height: 80vh;
 }
 
 .general-container :deep(.arco-card-body) {

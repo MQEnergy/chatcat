@@ -110,6 +110,33 @@ func (s *Service) SetChatCateData(data model.ChatCate) *cresp.Response {
 	return cresp.Success(data)
 }
 
+// UpdateChatCateData
+// @Description: update chat cate data
+// @receiver s
+// @param data
+// @return *cresp.Response
+// @author cx
+func (s *Service) UpdateChatCateData(data model.ChatCate) *cresp.Response {
+	var chatCateInfo model.ChatCate
+	if err := s.App.DB.First(&chatCateInfo, "id = ?", data.ID).Error; err != nil {
+		return cresp.Fail("chat cate is not existed")
+	}
+	if data.Name == "" {
+		return cresp.Fail("cate name is required")
+	}
+	// 获取letter
+	lazyPinyin := pinyin.LazyPinyin(data.Name, pinyin.NewArgs())
+	if len(lazyPinyin) > 0 {
+		data.Letter = strings.ToUpper(lazyPinyin[0][0:1])
+	} else {
+		data.Letter = data.Name[0:1]
+	}
+	if err := s.App.DB.Save(&data).Error; err != nil {
+		return cresp.Fail("chat cate save failed")
+	}
+	return cresp.Success(data)
+}
+
 // SetChatData
 // @Description: set chat data
 // @receiver s

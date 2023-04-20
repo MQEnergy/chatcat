@@ -29,9 +29,9 @@
     <a-space direction="vertical" :size="20">
       <a-tooltip :content="$t('home.menuCate.settings.addCate')" position="right">
         <a-avatar :size="36"
-                  :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
+                  :style="{ backgroundColor: '#ff7c00', cursor: 'pointer' }"
                   @click="handleAddCate">
-          <icon-plus/>
+          <icon-plus />
         </a-avatar>
       </a-tooltip>
       <a-avatar :size="36"
@@ -116,7 +116,7 @@ const handleCateOk = (form) => {
       Message.error(res.msg);
       return;
     }
-    cateList.push({
+    cateList.unshift({
       id: res.data.id,
       name: form.name,
       letter: res.data.letter,

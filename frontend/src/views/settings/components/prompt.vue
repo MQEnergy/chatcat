@@ -51,9 +51,12 @@ const handleAddCate = () => {
   padding: 0px 10px 10px;
 }
 .prompt-list {
-  height: 700px;
+  height: 84vh;
   padding-top: 20px;
   overflow-x: hidden;
   overflow-y: scroll;
+}
+.prompt-list :deep(.arco-row) {
+  margin-bottom: 40px !important;
 }
 </style>

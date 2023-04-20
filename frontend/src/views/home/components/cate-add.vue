@@ -38,21 +38,33 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {reactive, ref, watch} from "vue";
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
+  },
+  formData: {
+    type: Object,
+    default: null
   }
 });
 const form = reactive({
+  id: null,
   name: '',
   desc: '',
   color: '#3370ff',
 });
 const emits = defineEmits(["cancel", "ok"])
 const formRef = ref(null)
+watch(() => props.formData, () => {
+  form.id = props.formData.id;
+  form.name = props.formData.name;
+  form.desc = props.formData.desc;
+  form.color = props.formData.color;
+  console.log("form", form)
+})
 const tagCheckIdx = ref(null)
 const tagList = reactive([
   {
@@ -115,6 +127,7 @@ const handleColorCheck = (row, idx) => {
   form.color = row.value;
   colorList[idx].checked = !colorList[idx].checked;
 }
+
 </script>
 
 <style scoped>

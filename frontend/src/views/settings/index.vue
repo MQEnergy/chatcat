@@ -5,7 +5,7 @@
       <icon-close-circle-fill @click="handleClose" size="40"/>
     </div>
     <a-layout class="layout-container">
-      <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px' }">
+      <a-layout-sider collapsible hide-trigger :collapsed="false" :style="{ width: '170px', height: '236px' }">
         <a-menu
             :default-selected-keys="tabName"
             :style="{ width: '170px' }"
@@ -31,13 +31,13 @@
             <icon-tool/>
             {{ $t('settings.contact') }}
           </a-menu-item>
-          <a-menu-item key="6">
-            <icon-download/>
-            {{ $t('settings.releaseNotes') }}
-          </a-menu-item>
+<!--          <a-menu-item key="6">-->
+<!--            <icon-download/>-->
+<!--            {{ $t('settings.releaseNotes') }}-->
+<!--          </a-menu-item>-->
         </a-menu>
       </a-layout-sider>
-      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden;">
+      <a-layout style="padding: 0 16px; border-radius: 8px; overflow: hidden; height: 94vh;">
         <a-layout-content>
           <general v-if="tabValue === '1'"></general>
           <datasync v-if="tabValue === '2'"></datasync>
@@ -91,7 +91,7 @@ export default defineComponent({
 <style scoped>
 .settings-container {
   width: 85%;
-  height: 90%;
+  height: 93vh;
   margin: 0 auto;
   position: relative;
 }
@@ -113,7 +113,7 @@ export default defineComponent({
 }
 
 .layout-container {
-  height: 100vh;
+  height: 93vh;
 }
 
 .layout-container :deep(.arco-layout-sider) .logo {
