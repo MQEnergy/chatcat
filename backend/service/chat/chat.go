@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/mozillazg/go-pinyin"
 	"github.com/sashabaranov/go-openai"
+	"gorm.io/gorm"
 	"strings"
 )
 
@@ -43,24 +44,6 @@ func (s *Service) GetChatCateList(page int) *cresp.Response {
 		return cresp.Fail("GetChatCateList error:" + err.Error())
 	}
 	return cresp.Success(pagination)
-}
-
-// DelChatCate
-// @Description: delete chat category
-// @receiver s
-// @param id
-// @return *cresp.Response
-// @author cx
-func (s *Service) DelChatCate(id int) *cresp.Response {
-	var chatCateInfo model.ChatCate
-	if err := s.App.DB.First(&chatCateInfo, id).Error; err != nil {
-		return cresp.Fail(err.Error())
-	}
-	if err := s.App.DB.Delete(&chatCateInfo).Error; err != nil {
-		return cresp.Fail(err.Error())
-	}
-
-	return cresp.Success("")
 }
 
 // GetChatList
@@ -156,6 +139,31 @@ func (s *Service) UpdateChatCateData(data model.ChatCate) *cresp.Response {
 	return cresp.Success(data)
 }
 
+// DeleteChatCate
+// @Description: delete chat cate
+// @receiver s
+// @param cateid
+// @return *cresp.Response
+// @author cx
+func (s *Service) DeleteChatCate(cateid int) *cresp.Response {
+	var chatCateInfo model.ChatCate
+	if err := s.App.DB.First(&chatCateInfo, cateid).Error; err != nil {
+		return cresp.Fail("chat cate is not existed")
+	}
+	if err := s.App.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&chatCateInfo, cateid).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&model.Chat{}, "cate_id = ?", cateid).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return cresp.Fail("chat cate delete failed err:" + err.Error())
+	}
+	return cresp.Success("")
+}
+
 // SetChatData
 // @Description: set chat data
 // @receiver s
@@ -194,7 +202,7 @@ func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
 }
 
 // DeleteChat
-// @Description: delete chat record
+// @Description: delete chat
 // @receiver s
 // @param id
 // @return *cresp.Response
@@ -204,10 +212,31 @@ func (s *Service) DeleteChat(id uint) *cresp.Response {
 	if err := s.App.DB.First(&chatData, "id = ?", id).Error; err != nil {
 		return cresp.Fail("record is already deleted")
 	}
-	if err := s.App.DB.Delete(&chatData, "id = ?", id).Error; err != nil {
+	if err := s.App.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&chatData, id).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&model.ChatRecord{}, "chat_id = ?", id).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return cresp.Fail("chat delete failed err:" + err.Error())
+	}
+	return cresp.Success("")
+}
+
+// DeleteChatRecords
+// @Description: delete chat records
+// @receiver s
+// @param chatid
+// @return *cresp.Response
+// @author cx
+func (s *Service) DeleteChatRecords(chatid int) *cresp.Response {
+	if err := s.App.DB.Delete(&model.ChatRecord{}, "chat_id = ?", chatid).Error; err != nil {
 		return cresp.Fail("delete record failed")
 	}
-	return cresp.Success(chatData)
+	return cresp.Success("")
 }
 
 // EditChat

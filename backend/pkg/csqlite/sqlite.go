@@ -31,6 +31,10 @@ func WithConnect(logger *logrus.Logger, conf *config.Conf) (*gorm.DB, error) {
 	runtimeDir := chelp.GetRuntimeUserHomeDir()
 	databasePath = runtimeDir + "/" + conf.App.AppName + "/" + conf.App.DbName
 	if !chelp.IsPathExist(databasePath) {
+		_, err := chelp.MakeFileOrPath(databasePath)
+		if err != nil {
+			return nil, err
+		}
 		db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
 		if err != nil {
 			return nil, err

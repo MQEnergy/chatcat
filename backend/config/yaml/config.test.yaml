@@ -24,3 +24,6 @@ log:
   debug: true
   fileName: 'chatcat' # 日志文件名称
   dirPath: 'runtime/logs' # 日志默认存放目录
+github:
+  owner: 'MQEnergy'
+  repo: 'chatcat'

@@ -97,7 +97,7 @@ export default defineComponent({
 
 .settings-container {
   width: 85%;
-  height: 93vh;
+  height: 94vh;
   margin: 0 auto;
   position: relative;
 }

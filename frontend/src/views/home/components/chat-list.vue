@@ -184,6 +184,7 @@ const handleChat = (value) => {
   ChatCompletionStream(reqPromptList, clientId.value).then(res => {
     if (res.code === -1) {
       chatList[chatList.length - 1].content = res.msg
+      emits('finish', false);
     }
   });
 }
@@ -257,6 +258,7 @@ const handleSelect = (e) => {
   overflow: hidden;
   text-align: center;
 }
+
 .chat-avatar img {
   padding-top: 1px;
 }

@@ -11,8 +11,9 @@ var ConfEnv string = "test"
 
 type (
 	Conf struct {
-		App App `yaml:"app"`
-		Log Log `yaml:"log"`
+		App    App    `yaml:"app"`
+		Log    Log    `yaml:"log"`
+		Github Github `yaml:"github"`
 	}
 	App struct {
 		Mode            string `yaml:"mode" default:"debug"`
@@ -41,6 +42,10 @@ type (
 		Debug    bool   `yaml:"debug" default:"true"`
 		FileName string `yaml:"fileName" default:"syncstock"`
 		DirPath  string `yaml:"dirPath" default:"runtime/logs"`
+	}
+	Github struct {
+		Owner string `yaml:"owner" default:""`
+		Repo  string `yaml:"repo" default:""`
 	}
 )
 

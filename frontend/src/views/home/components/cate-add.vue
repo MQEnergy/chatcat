@@ -113,7 +113,6 @@ const handleBeforeOk = (done) => {
   }
 }
 const handleOk = () => {
-  console.log(form)
   emits("ok", form)
 }
 const handleCheckTag = (row, idx) => {

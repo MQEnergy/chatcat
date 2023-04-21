@@ -64,6 +64,14 @@
         <!-- advanced -->
         <a-card class="card-container" :title="$t('settings.advanced')" :bordered="false"
                 :header-style="{borderColor: 'var(--color-fill-2)', paddingLeft: '0px'}">
+          <template #extra>
+            <a-button type="outline" @click="handleGeneralSave">
+              <template #icon>
+                <icon-save />
+              </template>
+              {{ $t('common.save') }}
+            </a-button>
+          </template>
           <a-list>
             <a-list-item v-for="(item, index) in advancedList" :key="index">
               <a-list-item-meta
@@ -238,7 +246,7 @@ const handleSliderChange = (e, row) => {
       form.value.n = e;
       break;
   }
-  handleGeneralSave(e)
+  // handleGeneralSave(e)
 }
 const initGeneralInfo = (e) => {
   GetGeneralInfo().then(res => {

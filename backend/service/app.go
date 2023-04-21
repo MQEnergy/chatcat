@@ -39,6 +39,7 @@ func NewApp() *App {
 		panic(err)
 	}
 	return &App{
+		Ctx:            context.Background(),
 		Cfg:            conf,
 		Log:            logger,
 		DB:             db,

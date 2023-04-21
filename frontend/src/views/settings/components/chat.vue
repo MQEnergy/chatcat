@@ -3,72 +3,65 @@
     <a-card :title="$t('settings.chat')" :bordered="false" :header-style="{borderColor: 'var(--color-fill-2)'}">
       <!-- chat list -->
       <div class="chat-list scrollbar">
-        <a-spin :loading="loading" :style="{height: '80vh', width: '100%'}">
-          <a-row :gutter="[20, 20]">
-            <a-col :span="8">
-              <a-card hoverable :style="{ borderRadius: '8px' }">
-                <div :style="{
+        <a-spin v-if="loading" tip="loading..." :style="{height: '80vh', width: '100%', textAlign: 'center'}"/>
+        <a-row :gutter="[20, 20]">
+          <a-col :span="8">
+            <a-card hoverable :style="{ borderRadius: '8px', cursor: 'pointer' }">
+              <div :style="{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }">
-                  <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
+                  <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129', width: '80%' }"
+                        @click="handlePromptClick({id:0})">
                     <a-avatar :style="{ marginRight: '8px', backgroundColor: '#999' }" :size="28">
                       W
                     </a-avatar>
                     <a-typography-text>{{ $t('common.nocate') }}</a-typography-text>
                   </span>
-                  <a-dropdown @select="handleSelect($event, {id:0})">
-                    <a-link :style="{color: 'var(--color-text-2)'}">
-                      <icon-more size="large"/>
-                    </a-link>
-                    <template #content>
-                      <a-doption :value="1">
-                        <icon-copy/>
-                        {{ $t('common.view') }}
-                      </a-doption>
-                    </template>
-                  </a-dropdown>
-                </div>
-              </a-card>
-            </a-col>
-            <a-col :span="8" v-for="(item, index) in cateList" :key="index">
-              <a-card hoverable :style="{ borderRadius: '8px' }">
-                <div :style="{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }">
-                  <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129' }">
+                <a-dropdown @select="handleSelect($event, {id:0})">
+                  <a-link :style="{color: 'var(--color-text-2)'}">
+                    <icon-more size="large"/>
+                  </a-link>
+                  <template #content>
+                    <a-doption :value="1">
+                      <icon-copy/>
+                      {{ $t('common.view') }}
+                    </a-doption>
+                  </template>
+                </a-dropdown>
+              </div>
+            </a-card>
+          </a-col>
+          <a-col :span="8" v-for="(item, index) in cateList" :key="index">
+            <a-card hoverable :style="{ borderRadius: '8px', cursor: 'pointer' }">
+              <div :style="{ display: 'flex', alignItems: 'center', justifyContent: 'space-between'}">
+                  <span :style="{ display: 'flex', alignItems: 'center', color: '#1D2129', width: '80%' }"
+                        @click="handlePromptClick(item)">
                     <a-avatar :style="{ marginRight: '8px', backgroundColor: item.color }" :size="28">
                       {{ item.letter }}
                     </a-avatar>
                     <a-typography-text>{{ item.name }}</a-typography-text>
                   </span>
-                  <a-dropdown @select="handleSelect($event, item)">
-                    <a-link :style="{color: 'var(--color-text-2)'}">
-                      <icon-more size="large"/>
-                    </a-link>
-                    <template #content>
-                      <a-doption :value="1">
-                        <icon-copy/>
-                        {{ $t('common.view') }}
-                      </a-doption>
-                      <a-doption :value="2">
-                        <icon-edit/>
-                        {{ $t('common.edit') }}
-                      </a-doption>
-                      <a-doption :value="3">
-                        <icon-delete/>
-                        {{ $t('common.del') }}
-                      </a-doption>
-                    </template>
-                  </a-dropdown>
-                </div>
-              </a-card>
-            </a-col>
-          </a-row>
-        </a-spin>
+                <a-dropdown @select="handleSelect($event, item)">
+                  <a-link :style="{color: 'var(--color-text-2)'}">
+                    <icon-more size="large"/>
+                  </a-link>
+                  <template #content>
+                    <a-doption :value="1">
+                      <icon-edit/>
+                      {{ $t('common.edit') }}
+                    </a-doption>
+                    <a-doption :value="2">
+                      <icon-delete/>
+                      {{ $t('common.del') }}
+                    </a-doption>
+                  </template>
+                </a-dropdown>
+              </div>
+            </a-card>
+          </a-col>
+        </a-row>
       </div>
     </a-card>
     <div class="footer-pagination" v-if="total > 0">
@@ -92,7 +85,7 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import ChatDrawer from "@views/settings/components/chat-drawer.vue";
-import {DelChatCate, GetChatCateList, UpdateChatCateData} from "../../../../wailsjs/go/chat/Service.js";
+import {DeleteChatCate, GetChatCateList, UpdateChatCateData} from "../../../../wailsjs/go/chat/Service.js";
 import CateAdd from "../../home/components/cate-add.vue";
 import {Message} from "@arco-design/web-vue";
 
@@ -155,13 +148,10 @@ const handleCateDel = (row) => {
 }
 const handleSelect = (e, row) => {
   switch (e) {
-    case 1: // view
-      handlePromptClick(row);
-      break;
-    case 2: // edit
+    case 1: // edit
       handleCateAdd(row);
       break;
-    case 3: // del
+    case 2: // del
       handleCateDel(row);
       break;
   }
@@ -171,7 +161,7 @@ const handlePageChange = (e) => {
 }
 const handleDelOk = () => {
   delLoading.value = true;
-  DelChatCate(delData.value.id).then(res => {
+  DeleteChatCate(delData.value.id).then(res => {
     if (res.code !== 0) {
       Message.error(res.msg)
       return;
@@ -196,7 +186,6 @@ const handleDelCancel = () => {
 .chat-list {
   width: 100%;
   height: 80vh;
-  padding-top: 10px;
   overflow-y: scroll;
   overflow-x: hidden;
 }

@@ -10,19 +10,17 @@
       {{ $t('settings.chat.drawerTitle') }}
     </template>
     <div>
+      <a-spin v-if="loading" tip="loading..." :style="{height: '85vh', width: '100%', textAlign: 'center'}"  />
+
       <a-row :gutter="[10, 10]">
         <a-col :span="12" v-for="(item, index) in chatList" :key="index">
           <a-card :title="item.name" class="prompt-card">
             <template #extra>
               <a-dropdown @select="handleSelect($event, item)">
-                <a-link style="color: #000">
+                <a-link :style="{color: 'var(--color-text-2)'}">
                   <icon-more size="large"/>
                 </a-link>
                 <template #content>
-                  <!--                  <a-doption :value="1">-->
-                  <!--                    <icon-send/>-->
-                  <!--                    {{ $t('common.chat') }}-->
-                  <!--                  </a-doption>-->
                   <a-doption :value="2">
                     <icon-edit/>
                     {{ $t('common.edit') }}
@@ -38,15 +36,23 @@
                 </template>
               </a-dropdown>
             </template>
-            {{ item.desc }}
+            <a-card-meta>
+              <template #avatar>
+                {{ dayjs.unix(item.created_at).format('YYYY-MM-DD HH:mm:ss') }}
+              </template>
+            </a-card-meta>
           </a-card>
         </a-col>
       </a-row>
       <a-empty :style="{marginTop: '40px'}" v-if="chatList.length == 0"></a-empty>
-      <div class="footer-pagination" v-if="total > 0">
-        <a-pagination :total="total" :page-size="21" show-total @change="handlePageChange"/>
-      </div>
+
     </div>
+    <template #footer>
+      <a-space align="start">
+        <a-pagination v-if="total > 0" :total="total" :page-size="21" show-total @change="handlePageChange"/>
+        <a-button type='primary' @click="handleOk">确定</a-button>
+      </a-space>
+    </template>
   </a-drawer>
 </template>
 
@@ -55,6 +61,7 @@ import {useRouter} from "vue-router";
 import {Message} from "@arco-design/web-vue";
 import {GetChatList} from "../../../../wailsjs/go/chat/Service.js";
 import {reactive, ref} from "vue";
+import dayjs from 'dayjs';
 
 const props = defineProps({
   visible: {
@@ -95,7 +102,7 @@ const handleSelect = (e, row) => {
 }
 
 const handlePageChange = (e) => {
-  GetChatList(cateId.value, e);
+  initDrawChatList(cateId.value, e);
 }
 const initDrawChatList = (cateid, page) => {
   loading.value = true;

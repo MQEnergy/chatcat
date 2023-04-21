@@ -36,7 +36,7 @@
           {{ $t('settings.contact.desc') }}
           <div :style="{color: 'var(--color-neutral-6)', fontSize: '12px'}">{{ $t('settings.contact.desc.tips') }}</div>
         </template>
-        <a-textarea v-model="form.desc" :placeholder="$t('settings.contact.desc.placeholder')" :max-length="200"
+        <a-textarea style="height: 200px;" v-model="form.desc" :placeholder="$t('settings.contact.desc.placeholder')" :max-length="200"
                     show-word-limit allow-clear/>
       </a-form-item>
       <a-form-item>
