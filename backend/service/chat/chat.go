@@ -46,6 +46,17 @@ func (s *Service) GetChatCateList(page int) *cresp.Response {
 	return cresp.Success(pagination)
 }
 
+// GetAllCateList
+// @Description: get all categories
+// @receiver s
+// @return *cresp.Response
+// @author cx
+func (s *Service) GetAllCateList() *cresp.Response {
+	var chatCateList = make([]model.ChatCate, 0)
+	s.App.DB.Find(&chatCateList)
+	return cresp.Success(chatCateList)
+}
+
 // GetChatList
 // @Description: get chat list
 // @receiver s
@@ -256,6 +267,25 @@ func (s *Service) EditChat(id uint, name string) *cresp.Response {
 		return cresp.Fail("update chat record failed")
 	}
 	return cresp.Success(chatData)
+}
+
+// MoveChatToCate
+// @Description: move chat to another category
+// @receiver s
+// @param cateid
+// @param chatid
+// @return *cresp.Response
+// @author cx
+func (s *Service) MoveChatToCate(cateid, chatid uint) *cresp.Response {
+	var chatInfo model.Chat
+	if err := s.App.DB.First(&chatInfo, chatid).Error; err != nil {
+		return cresp.Fail("record is not existed")
+	}
+	chatInfo.CateId = cateid
+	if err := s.App.DB.Save(&chatInfo).Error; err != nil {
+		return cresp.Fail("save chat record failed")
+	}
+	return cresp.Success("")
 }
 
 // CompletionStream

@@ -113,3 +113,7 @@ tr:nth-child(even) {
     animation-iteration-count: 1;
 }
 
+.hljs {
+    background: var(--color-bg-1) !important;
+    position: relative;
+}

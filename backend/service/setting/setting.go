@@ -90,7 +90,7 @@ func (s *Service) GetFeedBackUrl(data model.FeedbackReq) *cresp.Response {
 }
 
 // GetGithubReleaseList
-// @Description: get github release list
+// @Description: get GitHub release list
 // @receiver s
 // @author cx
 func (s *Service) GetGithubReleaseList() *cresp.Response {

@@ -19,17 +19,6 @@
                     </a-avatar>
                     <a-typography-text>{{ $t('common.nocate') }}</a-typography-text>
                   </span>
-                <a-dropdown @select="handleSelect($event, {id:0})">
-                  <a-link :style="{color: 'var(--color-text-2)'}">
-                    <icon-more size="large"/>
-                  </a-link>
-                  <template #content>
-                    <a-doption :value="1">
-                      <icon-copy/>
-                      {{ $t('common.view') }}
-                    </a-doption>
-                  </template>
-                </a-dropdown>
               </div>
             </a-card>
           </a-col>

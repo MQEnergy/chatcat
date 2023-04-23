@@ -69,6 +69,8 @@ export default {
   // 对话管理
   'settings.chat': '对话管理',
   'settings.chat.drawerTitle': '对话列表',
+  'settings.chat.catmove': '移动分组',
+  'settings.chat.label.catename': '分组',
   // 联系我们
   'settings.contact': '联系我们',
   'settings.contact.star': '给个star',

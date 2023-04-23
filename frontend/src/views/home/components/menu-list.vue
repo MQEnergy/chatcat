@@ -93,6 +93,7 @@ const initChatList = (cateid, page, type) => {
     }
   }).finally(() => {
     loading.value = false;
+    bottom.value = true;
   })
 }
 const fetchData = () => {
@@ -140,7 +141,8 @@ const handleDelete = (row, index) => {
       Message.error(res.msg)
       return;
     }
-    chatList.splice(index, 1)
+    initChatList(props.cateid, 1, 1);
+    // chatList.splice(index, 1)
   })
 }
 const handleClose = (row, index) => {

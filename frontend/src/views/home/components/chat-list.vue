@@ -5,7 +5,7 @@
         <a-avatar
             class="chat-avatar"
             :size="32">
-          <img alt="avatar" style="height: 28px; width: 28px" :src="ChatGPTLogo"/>
+          <img alt="avatar" :src="ChatGPTLogo"/>
         </a-avatar>
         <!-- 聊天框 -->
         <a-space direction="vertical">
@@ -32,7 +32,6 @@
             :size="32">
           <img v-if="item.role === 'assistant'"
                alt="avatar"
-               style="height: 28px; width: 28px"
                :src="ChatGPTLogo"
           />
           <template v-else>
@@ -46,7 +45,7 @@
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
             <a-typography-paragraph copyable>
-              <div class="chat-div" v-html="markedContent(item)"></div>
+              <div class="chat-div" v-html="item.content"></div>
             </a-typography-paragraph>
             <template #actions>
               <a-dropdown @select="handleSelect" position="bl">
@@ -62,7 +61,6 @@
         </a-space>
       </a-space>
     </a-space>
-
   </div>
 </template>
 <script>
@@ -80,6 +78,7 @@ import {
 } from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
+import {copyText} from "@plugins/copy/copy.js";
 
 const {t} = useI18n();
 let chatList = reactive([]);
@@ -128,7 +127,7 @@ const initWs = () => {
               emits('finish', true);
               tempContent.value += data.data.data;
               if (chatList.length > 0) {
-                chatList[chatList.length - 1].content = tempContent.value;
+                chatList[chatList.length - 1].content = marked.parse(tempContent.value);
               }
               break;
             case -1: // stream error
@@ -161,6 +160,7 @@ onMounted(() => {
     initSettingInfo();
     initWs();
   }
+  copyText('.hljs');
 })
 const addNewChat = () => {
   chatList.splice(0, chatList.length);
@@ -175,7 +175,7 @@ const handleChat = (value) => {
   tempContent.value = "";
   chatList.push(...promptList)
   let _deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
-  _deepList[0].content = value + "," + t('common.markdown');
+  _deepList[0].content = value + "," + t('common.reply');
   chatList.push({
     role: 'assistant',
     content: t('common.generate.start'),
@@ -187,6 +187,8 @@ const handleChat = (value) => {
       chatList[chatList.length - 1].content = res.msg
       emits('finish', false);
     }
+  }).finally(() => {
+    copyText('.hljs');
   });
 }
 // ----------------------------------------------------------------
@@ -204,9 +206,6 @@ defineExpose({
   addNewChat,
   initChatList
 })
-const markedContent = (item) => {
-  return marked.parse(item.content);
-}
 // const handleCopy = (e) => {
 //   const textContent = e.target.parentNode.parentNode.parentNode.parentNode.firstElementChild.querySelector('.hljs').textContent;
 // }
@@ -261,6 +260,16 @@ const handleSelect = (e) => {
 }
 
 .chat-avatar img {
-  padding-top: 1px;
+  height: 26px;
+  width: 26px;
+  padding-top: 0.2rem;
+}
+
+.chat-container :deep(.hljs-btn-copy) {
+  z-index: 90;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  background: var(--color-bg-2);
 }
 </style>

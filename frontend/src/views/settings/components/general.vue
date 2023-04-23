@@ -239,6 +239,10 @@ const handleChangeLocale = (e) => {
 const handleGeneralSave = (e) => {
   SetGeneralData(form.value).then(res => {
     console.log(res)
+    if (res.code === 0) {
+      Message.clear();
+      Message.success("Saved successfully")
+    }
   })
 }
 const handleSliderChange = (e, row) => {
@@ -259,7 +263,6 @@ const handleSliderChange = (e, row) => {
       form.value.n = e;
       break;
   }
-  // handleGeneralSave(e)
 }
 const initGeneralInfo = (e) => {
   GetGeneralInfo().then(res => {

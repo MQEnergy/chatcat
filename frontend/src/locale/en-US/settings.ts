@@ -69,6 +69,7 @@ export default {
   // chat management
   'settings.chat': 'Chat',
   'settings.chat.drawerTitle': 'Chat list',
+  'settings.chat.catmove': 'Cate move',
   // contact us
   'settings.contact': 'Contact',
   'settings.contact.star': 'Give me a star.',

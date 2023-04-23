@@ -29,6 +29,10 @@
                     <icon-drive-file/>
                     {{ $t('common.view') }}
                   </a-doption>
+                  <a-doption :value="3">
+                    <icon-swap/>
+                    {{ $t('common.move') }}
+                  </a-doption>
                 </template>
               </a-dropdown>
             </template>
@@ -50,21 +54,24 @@
       </a-space>
     </template>
   </a-drawer>
-  <!--  delete -->
+  <!-- delete -->
   <a-modal :width="360" v-model:visible="delSeen" @ok="handleDelOk" :ok-loading="delLoading" @cancel="handleDelCancel">
     <template #title>
       {{ $t('common.notice') }}
     </template>
     <div>{{ $t('common.chat.confirmDel') }}</div>
   </a-modal>
+  <!-- move drawer -->
+  <chat-move :visible="moveSeen" :form-data="moveData" @cancel="handleChatCancel" @ok="handleChatOk"></chat-move>
 </template>
 
 <script setup>
 import {useRouter} from "vue-router";
 import {Message} from "@arco-design/web-vue";
-import {DeleteChat, GetChatList} from "../../../../wailsjs/go/chat/Service.js";
+import {DeleteChat, GetChatList, MoveChatToCate} from "../../../../wailsjs/go/chat/Service.js";
 import {reactive, ref} from "vue";
 import dayjs from 'dayjs';
+import ChatMove from "@views/settings/components/chat-move.vue";
 
 const props = defineProps({
   visible: {
@@ -81,7 +88,8 @@ const loading = ref(false);
 const delLoading = ref(false);
 const delSeen = ref(false);
 const delData = ref(null);
-
+const moveSeen = ref(false);
+const moveData = ref(null);
 const emits = defineEmits(['cancel']);
 const handleOk = () => {
   emits('cancel', false);
@@ -109,6 +117,10 @@ const handleSelect = (e, row) => {
     case 2:
       router.push('/index?chatid=' + row.id);
       break;
+    case 3:
+      moveData.value = row;
+      moveSeen.value = true;
+      break;
   }
 }
 const initDrawChatList = (cateid, page) => {
@@ -127,6 +139,20 @@ const initDrawChatList = (cateid, page) => {
 }
 const handlePageChange = (e) => {
   initDrawChatList(cateId.value, e);
+}
+const handleChatCancel = (e) => {
+  moveSeen.value = false;
+}
+const handleChatOk = (e) => {
+  console.log(e)
+  MoveChatToCate(e.cate_id, e.id).then((res) => {
+    if (res.code !== 0) {
+      Message.error(res.msg);
+      return;
+    }
+    moveSeen.value = false;
+    initDrawChatList(cateId.value, currPage.value);
+  })
 }
 defineExpose({
   initDrawChatList
