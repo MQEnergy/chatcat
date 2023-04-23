@@ -2,7 +2,6 @@ package csqlite
 
 import (
 	"chatcat/backend/model"
-	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
