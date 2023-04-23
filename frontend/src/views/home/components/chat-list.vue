@@ -80,7 +80,6 @@ import {
 } from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
-import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
 let chatList = reactive([]);

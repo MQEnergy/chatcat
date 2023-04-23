@@ -21,15 +21,11 @@
                   <icon-more size="large"/>
                 </a-link>
                 <template #content>
-                  <a-doption :value="2">
-                    <icon-edit/>
-                    {{ $t('common.edit') }}
-                  </a-doption>
-                  <a-doption :value="3">
+                  <a-doption :value="1">
                     <icon-delete/>
                     {{ $t('common.del') }}
                   </a-doption>
-                  <a-doption :value="4">
+                  <a-doption :value="2">
                     <icon-drive-file/>
                     {{ $t('common.view') }}
                   </a-doption>
@@ -49,7 +45,7 @@
     </div>
     <template #footer>
       <a-space align="start">
-        <a-pagination v-if="total > 0" :total="total" :page-size="21" show-total @change="handlePageChange"/>
+        <a-pagination v-if="total > 0" :total="total" :page-size="20" show-total @change="handlePageChange"/>
         <a-button type='primary' @click="handleOk">确定</a-button>
       </a-space>
     </template>
@@ -107,17 +103,11 @@ const handleDelCancel = () => {
 const handleSelect = (e, row) => {
   switch (e) {
     case 1:
-      router.push('/index?chatid=' + row.id)
-      break
-    case 2:
-      Message.info("Edit")
-      break;
-    case 3:
       delData.value = row;
       delSeen.value = true;
       break;
-    case 4:
-      Message.info("View")
+    case 2:
+      router.push('/index?chatid=' + row.id);
       break;
   }
 }

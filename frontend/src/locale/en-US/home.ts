@@ -6,5 +6,5 @@ export default {
   "home.menuCate.settings.chat": "Chat",
   "home.menuCate.settings.addCate": "Add Group",
   "home.menuCate.settings.addCate.errTip1": "Group is required",
-  "home.menuCate.settings.addCate.errTip2": "must be less than 5 characters",
+  "home.menuCate.settings.addCate.errTip2": "must be less than 10 characters",
 }

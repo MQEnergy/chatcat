@@ -13,8 +13,8 @@ app:
   height: 866
   minWidth: 1000
   minHeight: 700
-  upgradeUrl: "" # 更新地址
-  homeUrl: "" # 应用主页
+  upgradeUrl: "https://github.com/MQEnergy/chatcat/archive/refs/tags/" # 更新地址
+  homeUrl: "https://chatcat.chat" # 应用主页
   serverUrl: "" # 服务器地址
   dbName: "chatcat.db" # db名字
   wsPort: 9991 # ws端口

@@ -44,4 +44,6 @@ export default {
   'common.newchat': 'New chat',
   'common.nocate': 'Uncategorized',
   'common.panic': 'Please close the software and reopen it',
+  'common.upgrade.notice': 'Upgrade Notice',
+  'common.upgrade.btn': 'Download',
 };

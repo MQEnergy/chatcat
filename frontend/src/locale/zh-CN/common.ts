@@ -44,4 +44,6 @@ export default {
   'common.newchat': '新的聊天',
   'common.nocate': '未分类',
   'common.panic': '请关闭软件重新打开',
+  'common.upgrade.notice': '更新提醒',
+  'common.upgrade.btn': '下载更新',
 };

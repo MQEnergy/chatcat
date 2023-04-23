@@ -9,6 +9,7 @@ import (
 	"chatcat/backend/service/chat"
 	"chatcat/backend/service/prompt"
 	"chatcat/backend/service/setting"
+	"chatcat/backend/service/version"
 	"embed"
 	"encoding/json"
 	"errors"
@@ -20,7 +21,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"net/url"
+	"os"
 	"runtime"
+	"time"
 )
 
 //go:embed all:frontend/dist
@@ -81,6 +84,7 @@ func main() {
 			chat.New(app),
 			prompt.New(app),
 			setting.New(app),
+			version.New(app),
 		},
 	}); err != nil {
 		app.LogErrorf("Error: %s", err.Error())
@@ -106,8 +110,14 @@ func InitGoroutine() {
 				params.Add("data", string(payload))
 				pushUrl := fmt.Sprintf("%s?%s", app.Cfg.App.PushUrl, params.Encode())
 				chttp.Request("GET", pushUrl, "")
-				//res, err := chttp.Request("GET", pushUrl, "")
-				//app.LogInfof("pushUrl: %s response: %v err: %v", res, pushUrl, err)
+			//res, err := chttp.Request("GET", pushUrl, "")
+			//app.LogInfof("pushUrl: %s response: %v err: %v", res, pushUrl, err)
+			case exitSignal := <-app.ExitSignalChan:
+				if exitSignal {
+					app.LogInfof("ExitSignalChan received：%s", exitSignal)
+					time.Sleep(time.Second * 1)
+					os.Exit(0)
+				}
 			}
 		}
 	}()

@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.3.3
 	github.com/google/go-github/v51 v51.0.0
 	github.com/hashicorp/go-uuid v1.0.3
+	github.com/hashicorp/go-version v1.6.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/pkoukk/tiktoken-go v0.1.0

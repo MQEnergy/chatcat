@@ -1,14 +1,13 @@
 <template>
   <a-space class="menu-space-container scrollbar" direction="vertical" size="medium" style="">
     <!-- cate list -->
-    <a-tooltip content="未分类" position="right">
+    <a-tooltip :content="$t('common.nocate')" position="right">
       <div :style="{position: 'relative', width: '100%'}">
         <a-avatar class="avatar flash" shape="square" :size="36"
                   :style="{backgroundColor: '#999'}"
-                  @click="handleCateClick({id: 0, name: '未分类'}, 0)">
+                  @click="handleCateClick({id: 0, name: $t('common.nocate')}, 0)">
           W
         </a-avatar>
-        <!-- selected cate -->
         <div :class="{'avatar-selected': currCateId === 0}"></div>
       </div>
     </a-tooltip>
@@ -19,7 +18,6 @@
                   @click="handleCateClick(item, index)">
           {{ item.letter }}
         </a-avatar>
-        <!-- selected cate -->
         <div :class="{'avatar-selected': currCateId === item.id}"></div>
       </div>
     </a-tooltip>
@@ -29,24 +27,24 @@
     <a-space direction="vertical" :size="20">
       <a-tooltip :content="$t('home.menuCate.settings.addCate')" position="right">
         <a-avatar :size="36"
-                  :style="{ backgroundColor: '#ff7c00', cursor: 'pointer' }"
+                  :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
                   @click="handleAddCate">
-          <icon-plus />
+          <icon-plus/>
         </a-avatar>
       </a-tooltip>
-      <a-avatar :size="36"
-                :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
-                @click="handleUserProfile">
-        <icon-robot/>
-      </a-avatar>
+      <!--      <a-avatar :size="36"-->
+      <!--                :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"-->
+      <!--                @click="handleUserProfile">-->
+      <!--        <icon-robot/>-->
+      <!--      </a-avatar>-->
       <div style="position: relative; cursor: pointer;">
         <icon-menu @click="handleMenuIconHover" size="26"/>
         <div v-if="isShow" class="menu-div">
           <a-menu theme="dark" @menu-item-click="handleMenuClick">
-            <a-menu-item key="0_1">{{ $t('home.menuCate.settings.prompt') }}</a-menu-item>
-            <a-menu-item key="0_2">{{ $t('home.menuCate.settings.upgrade') }}</a-menu-item>
             <a-menu-item key="0_3">{{ $t('home.menuCate.settings.sysSettings') }}</a-menu-item>
             <a-menu-item key="0_4">{{ $t('home.menuCate.settings.chat') }}</a-menu-item>
+            <a-menu-item key="0_1">{{ $t('home.menuCate.settings.prompt') }}</a-menu-item>
+            <a-menu-item key="0_2">{{ $t('home.menuCate.settings.upgrade') }}</a-menu-item>
           </a-menu>
         </div>
       </div>
@@ -59,35 +57,33 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {defineEmits, reactive, ref, watch} from "vue";
-import {Message} from "@arco-design/web-vue";
+import {defineEmits, h, onMounted, reactive, ref} from "vue";
+import {Button, Message, Notification, Progress, TypographyParagraph} from '@arco-design/web-vue';
 import CateAdd from "@views/home/components/cate-add.vue";
-import {SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
+import {GetChatCateList, SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
+import {useI18n} from "vue-i18n";
+import {UpgradeService} from "../../../plugins/upgrade/index.js";
+import marked from "@plugins/markdown/marked.js";
+import "highlight.js/styles/default.css";
 
-const props = defineProps({
-  list: {
-    type: Array,
-    default: []
-  }
-})
 const emits = defineEmits(["select"])
 const router = useRouter()
+const {t} = useI18n()
+
 const isShow = ref(false)
 const visible = ref(false)
-let cateList = reactive(props.list)
+const cateList = reactive([])
 const currCateId = ref(0)
+const currPage = ref(1);
 
-watch(() => props.list, () => {
-  cateList.value = props.list
-})
-// handleMenuClick 点击菜单
 const handleMenuClick = (e) => {
   switch (e) {
     case '0_1':
       router.push('/settings/index?tab=4');
       break
     case '0_2':
-      Message.info("检查更新中");
+      Message.info("Checking update");
+      handleUpgrade()
       break
     case '0_3':
       router.push('/settings/index?tab=1');
@@ -97,6 +93,93 @@ const handleMenuClick = (e) => {
       break
   }
 }
+const handleUpgrade = () => {
+  const percentRef = ref(0)
+  const loadingRef = ref(false)
+  const upgradeService = new UpgradeService();
+  const handleUpgradeNotification = (newVersion, releaseNotes) => {
+    const id = `${Date.now()}`;
+    releaseNotes = marked.parse(releaseNotes);
+    const UpdateFooter = {
+      render() {
+        return h('div', [
+          h(Progress, {
+            percent: percentRef.value,
+            style: {
+              display: !loadingRef.value ? 'none' : 'block',
+              marginBottom: '16px',
+            },
+          }),
+          h(Button, {
+            type: 'primary',
+            size: 'small',
+            loading: loadingRef.value,
+            onClick: async () => {
+              let percent = percentRef.value = 0
+              loadingRef.value = true;
+              const ticker = setInterval(() => {
+                percent += 10;
+                if (percent < 95 && percent >= 90) {
+                  clearInterval(ticker);
+                }
+                percentRef.value = percent / 100;
+              }, 100);
+
+              upgradeService.downloadApp().then(() => {
+                percentRef.value = 1;
+                setTimeout(() => {
+                  loadingRef.value = false;
+                }, 500);
+                upgradeService.installApp()
+              })
+            }
+          }, t('common.upgrade.btn'))
+        ])
+      }
+    }
+    Notification.info({
+      id,
+      showIcon: false,
+      title: `${newVersion}` + t('common.upgrade.notice'),
+      content: h(TypographyParagraph, {
+        style: {marginTop: '10px', height: '200px', overflowY: 'scroll'},
+        innerHTML: releaseNotes
+      }),
+      closable: true,
+      duration: 0,
+      position: "bottomRight",
+      footer: () => h(UpdateFooter),
+    })
+  }
+// 检查更新
+  upgradeService.checkUpdate().then(() => {
+    if (upgradeService.isUpdate) {
+      const newVersion = upgradeService.lastVersionInfo.version
+      const releaseNotes = upgradeService.lastVersionInfo.versionDes
+      Notification.clear()
+      setTimeout(() => {
+        handleUpgradeNotification(newVersion, releaseNotes)
+      }, 1000)
+      setInterval(() => {
+        Notification.clear()
+        handleUpgradeNotification(newVersion, releaseNotes)
+      }, 1000 * 60 * 10)
+    }
+  })
+}
+const initCateList = (page) => {
+  GetChatCateList(page).then(res => {
+    cateList.splice(0, cateList.length);
+    cateList.push(...res.data.list);
+  })
+}
+onMounted(() => {
+  if (window.go === undefined) {
+    Message.error(t('common.panic'))
+  } else {
+    initCateList(currPage.value);
+  }
+})
 const handleMenuIconHover = (e) => {
   isShow.value = !isShow.value
 }
@@ -107,9 +190,9 @@ const handleCateClick = (row, index) => {
 const handleAddCate = () => {
   visible.value = true;
 }
-const handleUserProfile = () => {
-  Message.info("handle user profile")
-}
+// const handleUserProfile = () => {
+//   Message.info("handle user profile")
+// }
 const handleCateCancel = () => {
   visible.value = false;
 }
@@ -134,7 +217,7 @@ const handleCateOk = (form) => {
 .menu-space-container {
   width: 100%;
   margin-top: 50px;
-  height: calc(100vh - 230px);
+  height: calc(100vh - 180px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -147,7 +230,7 @@ const handleCateOk = (form) => {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  height: 155px;
+  height: 100px;
   width: 100%;
   color: #fff;
 }
@@ -178,22 +261,4 @@ const handleCateOk = (form) => {
   border-bottom-right-radius: 4px;
   border-left: 4px solid #fff;
 }
-
-@keyframes flash {
-  0% {
-    opacity: 0.1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.flash {
-  animation: flash 0.2s linear;
-  animation-iteration-count: 1;
-}
-
 </style>

@@ -65,7 +65,7 @@
       </div>
     </a-card>
     <div class="footer-pagination" v-if="total > 0">
-      <a-pagination :total="total" :page-size="21" show-total @change="handlePageChange"/>
+      <a-pagination :total="total" :page-size="20" show-total @change="handlePageChange"/>
     </div>
   </div>
   <!-- chat drawer -->

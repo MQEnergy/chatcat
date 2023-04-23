@@ -9,9 +9,13 @@
       </a-button>
     </a-space>
   </div>
-  <a-list class="menu-list-container scrollbar" size="small"
-          :bordered="false" hoverable :loading="loading">
-    <a-list-item class="menu-list-item" v-for="(item, index) in chatList" @click="handleSelectChat(item, index)"
+  <a-list ref="chatlistRef" class="menu-list-container scrollbar" size="small"
+          :bordered="false" :max-height="980" @reach-bottom="fetchData" :scrollbar="false" hoverable>
+    <template v-if="!bottom" #scroll-loading>
+      <a-spin />
+    </template>
+    <a-list-item v-if="chatList.length > 0" class="menu-list-item flash" v-for="(item, index) in chatList"
+                 @click="handleSelectChat(item, index)"
                  :class="{'selected': currIdx === index}" :key="index">
       <a-list-item-meta style="position: relative;">
         <template #title>
@@ -61,26 +65,51 @@ const currIdx = ref(0);
 const loading = ref(false);
 const curPage = ref(1);
 const emits = defineEmits(['new:chat', 'select:chat', 'header:info']);
+const bottom = ref(false);
+const chatlistRef = ref(null);
 
-const initChatList = (cateid, page) => {
+const initChatList = (cateid, page, type) => {
+  loading.value = true;
   GetChatList(cateid, page).then(res => {
-    chatList.splice(0, chatList.length);
-    chatList.push(...res.data.list);
-    let chatName = '';
-    if (res.data.list.length > 0) {
-      chatName = res.data.list[0].name;
+    if (res.code !== 0) {
+      return;
     }
-    emits('header:info', {
-      chatName: chatName
-    })
+    if (res.data.list.length === 0) {
+      bottom.value = true;
+    }
+    if (type === 1) {
+      chatList.splice(0, chatList.length);
+    }
+    chatList.push(...res.data.list);
+    curPage.value = res.data.current_page + 1;
+
+  }).then(() => {
+    let chatName = '';
+    if (chatList.length > 0 && currIdx.value === 0) {
+      chatName = chatList[0].name;
+      emits('header:info', {
+        chatName: chatName
+      });
+    }
+  }).finally(() => {
+    loading.value = false;
   })
 }
+const fetchData = () => {
+  initChatList(props.cateid, curPage.value, 2);
+}
+
 watch(() => props.cateid, () => {
-  initChatList(props.cateid, curPage.value);
+  initChatList(props.cateid, 1, 1);
+  bottom.value = true;
+  emits('header:info', {
+    chatName: ""
+  });
 })
+
 onMounted(() => {
   if (window.go !== undefined) {
-    initChatList(props.cateid, curPage.value);
+    initChatList(props.cateid, 1, 1);
   }
 })
 const handleAddChat = () => {
@@ -146,11 +175,15 @@ const handleSelectChat = (row, index) => {
 
 .menu-list-container {
   position: absolute;
-  max-height: calc(100%);
+  max-height: calc(100% - 55px);
   overflow-y: scroll;
   cursor: pointer;
   width: 220px;
   padding: 0 10px;
+}
+
+.menu-list-container :deep(.arco-list::-webkit-scrollbar) {
+  display: none;
 }
 
 .menu-list-container .menu-list-item {

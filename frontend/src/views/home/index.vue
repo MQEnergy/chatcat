@@ -4,7 +4,7 @@
       <a-layout>
         <!-- 侧边分类栏 -->
         <a-layout-sider style="width: 76px; background: #121212; text-align: center; ">
-          <menu-cate :list="cateList" @select="handleCateList"></menu-cate>
+          <menu-cate @select="handleCateList"></menu-cate>
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
         <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3);">
@@ -45,15 +45,15 @@ import ContentHeader from "@views/home/components/content-header.vue";
 import ChatList from "@views/home/components/chat-list.vue";
 import PromptInput from "@views/home/components/prompt-input.vue";
 import {useRouter} from "vue-router";
-import {onMounted, reactive, ref} from "vue";
-import {GetChatCateList} from "../../../wailsjs/go/chat/Service.js";
+import {onMounted, ref} from "vue";
 import {useI18n} from "vue-i18n";
-import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
 const router = useRouter();
 const prompt = ref('');
+const chatId = ref(0);
 const currCateId = ref(0);
+// const currPage = ref(1);
 // ----------------------------------------------------------------
 // 滚动位置 Todo
 const chatListRef = ref(null);
@@ -69,7 +69,6 @@ const headerInfo = ref({
 })
 const sendLoading = ref(false)
 const checkOffFlag = ref(false)
-let cateList = reactive([])
 
 const handleFinished = (value) => {
   sendLoading.value = value;
@@ -89,22 +88,12 @@ const handleHeaderInfo = (data) => {
     headerInfo.value.msgNum = data.msgNum;
   }
 }
-// 初始化分类列表
-const initCateList = () => {
-  GetChatCateList().then(res => {
-    cateList.splice(0, cateList.length);
-    cateList.push(...res.data.list);
-  })
-}
 // ----------------------------------------------------------------
 onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
+  const chatid = router.currentRoute.value.query.chatid || 0;
   prompt.value = promptValue;
-  if (window.go === undefined) {
-    Message.error(t('common.panic'))
-  } else {
-    initCateList();
-  }
+  chatId.value = chatid;
 })
 // ----------------------------------------------------------------
 const handleCateList = (item) => {

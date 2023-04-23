@@ -25,6 +25,7 @@ type App struct {
 	ClientId       string
 	WsPushChan     chan PushResp // 推送内容通道
 	BreakOffChan   chan bool     // 中断推送 false:继续 true:中断
+	ExitSignalChan chan bool     // 退出程序终止信号
 }
 
 // NewApp creates a new App application struct
@@ -46,6 +47,7 @@ func NewApp() *App {
 		ChatRecordChan: make(chan bool),
 		WsPushChan:     make(chan PushResp, 1000),
 		BreakOffChan:   make(chan bool),
+		ExitSignalChan: make(chan bool, 1),
 	}
 }
 

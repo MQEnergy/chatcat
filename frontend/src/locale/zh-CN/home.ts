@@ -6,5 +6,5 @@ export default {
   "home.menuCate.settings.chat": "对话管理",
   "home.menuCate.settings.addCate": "添加分组",
   "home.menuCate.settings.addCate.errTip1": "分组名称不能为空",
-  "home.menuCate.settings.addCate.errTip2": "不能超过五个字符",
+  "home.menuCate.settings.addCate.errTip2": "不能超过十个字符",
 }
