@@ -46,4 +46,5 @@ export default {
   'common.panic': '请关闭软件重新打开',
   'common.upgrade.notice': '更新提醒',
   'common.upgrade.btn': '下载更新',
+  'common.upgrade.noTips': '暂无新版本更新',
 };

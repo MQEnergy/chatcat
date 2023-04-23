@@ -46,4 +46,5 @@ export default {
   'common.panic': 'Please close the software and reopen it',
   'common.upgrade.notice': 'Upgrade Notice',
   'common.upgrade.btn': 'Download',
+  'common.upgrade.noTips': 'No new version available',
 };

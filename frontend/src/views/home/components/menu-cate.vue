@@ -153,18 +153,19 @@ const handleUpgrade = () => {
   }
 // 检查更新
   upgradeService.checkUpdate().then(() => {
-    if (upgradeService.isUpdate) {
-      const newVersion = upgradeService.lastVersionInfo.version
-      const releaseNotes = upgradeService.lastVersionInfo.versionDes
-      Notification.clear()
-      setTimeout(() => {
-        handleUpgradeNotification(newVersion, releaseNotes)
-      }, 1000)
-      setInterval(() => {
-        Notification.clear()
-        handleUpgradeNotification(newVersion, releaseNotes)
-      }, 1000 * 60 * 10)
+    if (!upgradeService.isUpdate) {
+      Message.clear();
+      Message.info(t('common.upgrade.noTips'));
+      return
     }
+    const newVersion = upgradeService.lastVersionInfo.version
+    const releaseNotes = upgradeService.lastVersionInfo.versionDes
+    Notification.clear()
+    handleUpgradeNotification(newVersion, releaseNotes)
+    setInterval(() => {
+      Notification.clear()
+      handleUpgradeNotification(newVersion, releaseNotes)
+    }, 1000 * 60 * 10)
   })
 }
 const initCateList = (page) => {
