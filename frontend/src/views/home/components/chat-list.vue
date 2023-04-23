@@ -170,7 +170,7 @@ const handleChat = (value) => {
   value = value.trim();
   let promptList = [{
     role: 'user',
-    content: value,
+    content: marked.parse(value),
   }];
   tempContent.value = "";
   chatList.push(...promptList)
