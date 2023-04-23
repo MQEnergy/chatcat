@@ -13,7 +13,7 @@ export default {
   'common.notice': 'Notice',
   'common.keyword.query': 'Please input keyword to query',
   'common.generate.start': 'Being generated...',
-  'common.markdown': 'Reply to me in markdown format',
+  'common.markdown': 'Reply in English and Markdown format',
   'common.breakoff': 'Stop generation',
   'common.example.tips': 'Hello！What can I do for you today？',
   'common.example.tips1': 'You can ask like this:',
