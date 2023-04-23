@@ -53,11 +53,22 @@
 import {reactive} from 'vue';
 import {BrowserOpenURL} from "../../../../wailsjs/runtime/runtime.js";
 import config from "@config/config.js";
+import {GetFeedBackUrl} from "../../../../wailsjs/go/setting/Service.js";
 
 export default {
   setup() {
     const handleSubmit = ({values, errors}) => {
       console.log('values:', values, '\nerrors:', errors)
+      if (!errors) {
+        GetFeedBackUrl({
+          title: values.title,
+          body: values.desc,
+          issue_type: parseInt(values.feedbackType)
+        }).then(res => {
+          BrowserOpenURL(res.data)
+          console.log('res:', res.data)
+        })
+      }
     }
     const handleStarRedirect = () => {
       BrowserOpenURL(config.githubUrl)
@@ -78,7 +89,4 @@ export default {
 </script>
 
 <style scoped>
-.test {
-  background: var(--color-bg-3);
-}
 </style>

@@ -228,9 +228,9 @@ const handleSelect = (e) => {
 
 .chat-card-item {
   width: 510px;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
 }
 
 .chat-space-container {

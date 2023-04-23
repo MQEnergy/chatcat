@@ -79,14 +79,14 @@ func (s *Service) FeedBack(data model.FeedBack) *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) GetFeedBackUrl(data model.FeedbackReq) *cresp.Response {
-	var body string
+	body := "- [ ] I'm sure this does not appear in [the issue list of the repository](https://github.com/MQEnergy/chatcat/issues) "
 	if data.IssueType == 1 {
-		body = fmt.Sprintf("## Basic Info \n - Version: %s \n ## Steps to reproduce: %s", data.Version, data.Body)
+		body += fmt.Sprintf("%s ## Basic Info:%s - Version: %s ## Steps to reproduce: %s", "%0A", "%0A", data.Version+"%0A", "%0A"+data.Body+"%0A")
 	} else {
-		body = fmt.Sprintf("## Basic Info \n - Version: %s \n ## What is expected?: %s", data.Version, data.Body)
+		body += fmt.Sprintf("%s ## Basic Info:%s - Version: %s ## What is expected?: %s", "%0A", "%0A", data.Version+"%0A", "%0A"+data.Body+"%0A")
 	}
 	parseUrl, _ := url.Parse("https://github.com/" + s.App.Cfg.Github.Owner + "/" + s.App.Cfg.Github.Repo + "/issues/new?title=" + data.Title + "&body=" + body)
-	return cresp.Success(parseUrl)
+	return cresp.Success(parseUrl.String())
 }
 
 // GetGithubReleaseList

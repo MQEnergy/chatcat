@@ -106,6 +106,7 @@ const initChatCateList = (page) => {
   loading.value = true;
   GetChatCateList(page).then(res => {
     if (res.code === 0) {
+      currPage.value = page;
       cateList.splice(0, cateList.length);
       cateList.push(...res.data.list);
       total.value = res.data.total;

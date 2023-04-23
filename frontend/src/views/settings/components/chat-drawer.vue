@@ -10,7 +10,7 @@
       {{ $t('settings.chat.drawerTitle') }}
     </template>
     <div>
-      <a-spin v-if="loading" tip="loading..." :style="{height: '85vh', width: '100%', textAlign: 'center'}"  />
+      <a-spin v-if="loading" tip="loading..." :style="{height: '85vh', width: '100%', textAlign: 'center'}"/>
 
       <a-row :gutter="[10, 10]">
         <a-col :span="12" v-for="(item, index) in chatList" :key="index">
@@ -54,12 +54,19 @@
       </a-space>
     </template>
   </a-drawer>
+  <!--  delete -->
+  <a-modal :width="360" v-model:visible="delSeen" @ok="handleDelOk" :ok-loading="delLoading" @cancel="handleDelCancel">
+    <template #title>
+      {{ $t('common.notice') }}
+    </template>
+    <div>{{ $t('common.chat.confirmDel') }}</div>
+  </a-modal>
 </template>
 
 <script setup>
 import {useRouter} from "vue-router";
 import {Message} from "@arco-design/web-vue";
-import {GetChatList} from "../../../../wailsjs/go/chat/Service.js";
+import {DeleteChat, GetChatList} from "../../../../wailsjs/go/chat/Service.js";
 import {reactive, ref} from "vue";
 import dayjs from 'dayjs';
 
@@ -75,40 +82,51 @@ const total = ref(0);
 let chatList = reactive([])
 const cateId = ref(null);
 const loading = ref(false);
+const delLoading = ref(false);
+const delSeen = ref(false);
+const delData = ref(null);
 
 const emits = defineEmits(['cancel']);
 const handleOk = () => {
   emits('cancel', false);
 }
-const handleDelete = (row, index) => {
-
+const handleDelOk = () => {
+  DeleteChat(delData.value.id).then(res => {
+    if (res.code !== 0) {
+      Message.error(res.msg)
+      return;
+    }
+    initDrawChatList(cateId.value, currPage.value);
+  }).finally(() => {
+    delLoading.value = false;
+  })
+}
+const handleDelCancel = () => {
+  delSeen.value = false;
 }
 const handleSelect = (e, row) => {
   switch (e) {
     case 1:
-      router.push('/index?chats=' + row.name)
+      router.push('/index?chatid=' + row.id)
       break
     case 2:
       Message.info("Edit")
       break;
     case 3:
-      handleDelete(row)
-      Message.info("Delete")
+      delData.value = row;
+      delSeen.value = true;
       break;
     case 4:
       Message.info("View")
       break;
   }
 }
-
-const handlePageChange = (e) => {
-  initDrawChatList(cateId.value, e);
-}
 const initDrawChatList = (cateid, page) => {
   loading.value = true;
   cateId.value = cateid;
   GetChatList(cateid, page).then(res => {
     if (res.code === 0) {
+      currPage.value = page;
       chatList.splice(0, chatList.length);
       chatList.push(...res.data.list);
       total.value = res.data.total;
@@ -116,6 +134,9 @@ const initDrawChatList = (cateid, page) => {
   }).finally(() => {
     loading.value = false;
   })
+}
+const handlePageChange = (e) => {
+  initDrawChatList(cateId.value, e);
 }
 defineExpose({
   initDrawChatList

@@ -21,7 +21,7 @@
               {{ $t('settings.datasync') }}
             </a-menu-item>
             <a-menu-item key="3">
-              <icon-select-all/>
+              <icon-message />
               {{ $t('settings.chat') }}
             </a-menu-item>
             <a-menu-item key="4">
@@ -29,7 +29,7 @@
               {{ $t('settings.prompt') }}
             </a-menu-item>
             <a-menu-item key="5">
-              <icon-tool/>
+              <icon-user-group />
               {{ $t('settings.contact') }}
             </a-menu-item>
             <!--          <a-menu-item key="6">-->
