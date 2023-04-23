@@ -23,6 +23,7 @@ export default {
   'common.search': 'Search',
   'common.confirmDel': 'Are you sure you want to delete?',
   'common.chat.confirmDel': 'Notice the list of chats under this category，Are you sure you want to delete?',
+  'common.prompt.confirmDel': 'Are you sure you want to delete?',
   'common.navbar': 'Navbar',
   'common.menuWidth': 'Menu Width (px)',
   'common.navbar.alerts': 'alerts',

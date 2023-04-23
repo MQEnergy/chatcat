@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref} from 'vue';
+import {computed, onMounted, reactive, ref, watch} from 'vue';
 import GeneralDrawer from "@views/settings/components/general-drawer.vue";
 import {LOCALE_OPTIONS} from "@/locale";
 import useLocale from "@/hooks/locale";
@@ -110,13 +110,13 @@ const fieldNames = {value: 'city', label: 'text'}
 const themeList = computed(() => [
   {id: 2, name: t('settings.theme.toLight')},
   {id: 3, name: t('settings.theme.toDark')},
-  {id: 1, name: t('settings.theme.system')},
+  // {id: 1, name: t('settings.theme.system')},
 ])
 const advancedList = reactive([
   {
-    title: '随机性 (temperature)',
+    title: t('settings.advanced.temperature'),
     tag: 'temperature',
-    desc: '值越大恢复越随机，介于0-2之间，大于1的值可能会导致乱码',
+    desc: t('settings.advanced.temperature.desc'),
     value: 0.7,
     min: 0,
     max: 2,
@@ -124,9 +124,9 @@ const advancedList = reactive([
     type: 1, // 1：滑块 2：输入框
     marks: {0: '0', 2: '2'},
   }, {
-    title: '单次回复限制 (max_tokens)',
+    title: t('settings.advanced.max_tokens'),
     tag: 'max_tokens',
-    desc: '单次交互所用的最大Token数，设置为0表示按照当前模型允许的最大token数量自动计算',
+    desc: t('settings.advanced.max_tokens.desc'),
     value: 0,
     min: 20,
     max: 9999,
@@ -134,9 +134,9 @@ const advancedList = reactive([
     type: 2,
     marks: {20: '20'}
   }, {
-    title: '对话新鲜度 (presence_penalty)',
+    title: t('settings.advanced.persence_penalty'),
     tag: 'presence_penalty',
-    desc: '正值会根据到目前为止是否出现在文本中来惩罚新标记，从而增加模型谈论新主题的可能性。介于-2.0 和 2.0之间',
+    desc: t('settings.advanced.persence_penalty.desc'),
     value: 0,
     min: -2,
     max: 2,
@@ -144,9 +144,9 @@ const advancedList = reactive([
     type: 1,
     marks: {'-2': '-2', 2: '2'},
   }, {
-    title: '对话重复性 (frequency_penalty)',
+    title: t('settings.advanced.frequency_penalty'),
     tag: 'frequency_penalty',
-    desc: '正值会根据新标记在文本中的现有频率对其进行惩罚，从而降低模型逐字重复同一行的可能性。介于-2.0 和 2.0之间',
+    desc: t('settings.advanced.frequency_penalty.desc'),
     value: 0,
     min: -2,
     max: 2,
@@ -154,9 +154,9 @@ const advancedList = reactive([
     type: 1,
     marks: {'-2': '-2', 2: '2'},
   }, {
-    title: '返回数量 (N)',
+    title: t('settings.advanced.N'),
     tag: 'n',
-    desc: 'API会生成多少个可能的文本选项供用户选择，它会很快消耗你的令牌配额。请谨慎使用 默认1',
+    desc: t('settings.advanced.N.desc'),
     value: 1,
     min: 1,
     max: 10,
@@ -183,6 +183,18 @@ const form = ref({
   frequency_penalty: "0",
   n: 1,
 })
+watch(() => locale.value, () => {
+  advancedList[0].title = t("settings.advanced.temperature");
+  advancedList[0].desc = t("settings.advanced.temperature.desc");
+  advancedList[1].title = t("settings.advanced.max_tokens");
+  advancedList[1].desc = t("settings.advanced.max_tokens.desc");
+  advancedList[2].title = t("settings.advanced.presence_penalty");
+  advancedList[2].desc = t("settings.advanced.presence_penalty.desc");
+  advancedList[3].title = t("settings.advanced.frequency_penalty");
+  advancedList[3].desc = t("settings.advanced.frequency_penalty.desc");
+  advancedList[4].title = t("settings.advanced.N");
+  advancedList[4].desc = t("settings.advanced.N.desc");
+})
 const locales = [...LOCALE_OPTIONS]
 const visible = ref(false);
 const {changeLocale, currentLocale} = useLocale();
@@ -194,9 +206,10 @@ const handleCheckTheme = (e) => {
   form.value.theme = e;
   switch (e) {
     case 1:
+      // document.body.setAttribute('arco-theme', 'system');
       const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
       darkThemeMq.addListener(e => {
-        console.log(e)
         if (e.matches) {
           document.body.setAttribute('arco-theme', 'dark');
         } else {

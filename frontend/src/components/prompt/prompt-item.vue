@@ -24,10 +24,6 @@
               <icon-delete/>
               {{ $t('common.del') }}
             </a-doption>
-            <a-doption :value="4">
-              <icon-copy/>
-              {{ $t('common.copy') }}
-            </a-doption>
           </template>
         </a-dropdown>
       </template>
@@ -39,12 +35,10 @@
           </a-typography-text>
         </div>
       </a-space>
-      <a-card-meta :style="{ position: 'absolute', bottom: '10px', left: '10px' }">
+      <a-card-meta v-if="item.tag_name" :style="{ position: 'absolute', bottom: '10px', left: '10px' }">
         <template #description>
           <a-space>
-            <a-tag size="small" bordered>常用</a-tag>
-            <a-tag size="small" bordered>写作辅助</a-tag>
-            <a-tag size="small" bordered>AI</a-tag>
+            <a-tag v-for="(val, idx) in item.tag_name.split(',')" :key="idx" size="small" bordered>{{ val }}</a-tag>
           </a-space>
         </template>
       </a-card-meta>
@@ -65,7 +59,6 @@
 <script setup>
 import {useRouter} from "vue-router";
 import {ref} from "vue";
-import {Message} from "@arco-design/web-vue";
 
 const promptId = ref(null)
 const router = useRouter();
@@ -79,6 +72,7 @@ const props = defineProps({
     default: 0
   }
 })
+const emits = defineEmits(['del', 'edit']);
 
 const handleSelect = (e, row) => {
   switch (e) {
@@ -86,15 +80,12 @@ const handleSelect = (e, row) => {
       router.push('/index?prompt=' + row.prompt);
       break;
     case 2:
-      Message.info("Edit")
+      emits('edit', row);
       break;
-    case 4:
-      Message.info("Copy")
+    case 3:
+      emits('del', row);
       break;
   }
-}
-const handleDelete = (row, index) => {
-
 }
 const handleSwitch = (e, row) => {
   if (e) {

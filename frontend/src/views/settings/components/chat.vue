@@ -167,9 +167,9 @@ const handleDelOk = () => {
       Message.error(res.msg)
       return;
     }
-    initChatCateList(currPage.value);
   }).finally(() => {
     delLoading.value = false;
+    initChatCateList(currPage.value);
   })
 }
 const handleDelCancel = () => {

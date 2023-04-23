@@ -1,7 +1,7 @@
 export default {
   // 通用配置
   'settings.general': '通用配置',
-  'settings.general.keyTips': '您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。',
+  'settings.general.keyTips': '您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。如果您输入 GPT-4 API 密钥，该扩展程序将支持 GPT-4。',
   'settings.general.alertTips': '请遵循指南，从OpenAI免费获取API密钥和高达5美元的积分。',
   'settings.general.alertTips.drawer.title': '🐱欢迎使用Chatcat！这是您AI旅程的开始：',
   'settings.general.alertTips.drawer.step1.h1': '如何获取 API 密钥。',
@@ -27,7 +27,18 @@ export default {
   'settings.theme.toDark': '暗黑模式',
   'settings.screen.toFull': '点击切换全屏模式',
   'settings.screen.toExit': '点击退出全屏模式',
+  // 高级设置
   'settings.advanced': '高级设置',
+  'settings.advanced.temperature': '随机性 (temperature)',
+  'settings.advanced.temperature.desc': '值越大回复越随机，介于0-2之间，大于1的值可能会导致乱码',
+  'settings.advanced.max_tokens': '单次回复限制 (max_tokens)',
+  'settings.advanced.max_tokens.desc': '单次交互所用的最大Token数，设置为0表示按照当前模型允许的最大token数量自动计算',
+  'settings.advanced.presence_penalty': '对话新鲜度 (presence_penalty)',
+  'settings.advanced.presence_penalty.desc': '正值会根据到目前为止是否出现在文本中来惩罚新标记，从而增加模型谈论新主题的可能性。介于-2.0 和 2.0之间',
+  'settings.advanced.frequency_penalty': '对话重复性 (frequency_penalty)',
+  'settings.advanced.frequency_penalty.desc': '正值会根据新标记在文本中的现有频率对其进行惩罚，从而降低模型逐字重复同一行的可能性。介于-2.0 和 2.0之间',
+  'settings.advanced.N': '返回数量 (N)',
+  'settings.advanced.N.desc': 'API会生成多少个可能的文本选项供用户选择，它会很快消耗你的令牌配额。请谨慎使用 默认1',
   // 数据同步
   'settings.datasync': '数据同步',
   'settings.datasync.linkAccount': '关联账号',

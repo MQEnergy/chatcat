@@ -59,11 +59,14 @@ const form = reactive({
 const emits = defineEmits(["cancel", "ok"])
 const formRef = ref(null)
 watch(() => props.formData, () => {
-  form.id = props.formData.id;
-  form.name = props.formData.name;
-  form.desc = props.formData.desc;
-  form.color = props.formData.color;
-  console.log("form", form)
+  if (props.formData) {
+    form.id = props.formData.id;
+    form.name = props.formData.name;
+    form.desc = props.formData.desc;
+    form.color = props.formData.color;
+  } else {
+    formRef.value.resetFields();
+  }
 })
 const tagCheckIdx = ref(null)
 const tagList = reactive([

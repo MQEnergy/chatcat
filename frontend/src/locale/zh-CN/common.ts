@@ -23,6 +23,7 @@ export default {
   'common.search': '搜索',
   'common.confirmDel': '你确定要删除吗?',
   'common.chat.confirmDel': '注意此分类下的对话列表，你确定要删除吗?',
+  'common.prompt.confirmDel': '你确定要删除这个提示词吗?',
   'common.navbar': '导航栏',
   'common.menuWidth': '菜单宽度 (px)',
   'common.navbar.alerts': '消息通知',

@@ -1,7 +1,7 @@
 export default {
   // general settings
   'settings.general': 'General',
-  'settings.general.keyTips': 'Your API key is stored locally in your browser and will never be sent anywhere else',
+  'settings.general.keyTips': 'Your API key is stored locally in your browser and will never be sent anywhere else. The extension supports GPT-4 if you input a GPT-4 API key.',
   'settings.general.alertTips': 'Please follow the guidelines to obtain API keys and up to $5 credit for free from OpenAI',
   'settings.general.alertTips.drawer.title': '🐱Welcome to Chatcat! Here is your journey to begin:',
   'settings.general.alertTips.drawer.step1.h1': 'How to get an API key.',
@@ -27,7 +27,18 @@ export default {
   'settings.theme.toDark': 'Dark mode',
   'settings.screen.toFull': 'Click to switch to full screen mode',
   'settings.screen.toExit': 'Click to exit the full screen mode',
+  // 高级设置
   'settings.advanced': 'Advanced',
+  'settings.advanced.temperature': 'Randomness (temperature)',
+  'settings.advanced.temperature.desc': 'The larger the value, the more random the reply will be, ranging between 0 and 2. Values greater than 1 may result in garbled text.',
+  'settings.advanced.max_tokens': 'Reply Limitation per Session (max_tokens)',
+  'settings.advanced.max_tokens.desc': 'The maximum number of tokens allowed for a single interaction is set to 0, which means that the maximum number of tokens allowed by the current model will be automatically calculated.',
+  'settings.advanced.presence_penalty': 'Conversation freshness (presence_penalty)',
+  'settings.advanced.presence_penalty.desc': 'The weight of the token will be punished based on whether it has appeared in the text so far, in order to increase the possibility of the model discussing new topics. It is between -2.0 and 2.0.',
+  'settings.advanced.frequency_penalty': 'Repetitiveness in Dialogue (frequency_penalty)',
+  'settings.advanced.frequency_penalty.desc': 'The weight will be penalized based on the existing frequency of the new marker in the text, thus reducing the likelihood of the model repeating the same line word by word. It is between -2.0 and 2.0.',
+  'settings.advanced.N': 'Return quantity (N)',
+  'settings.advanced.N.desc': 'How many possible text options will the API generate for users to choose from, and it will quickly consume your token quota. Please use it with caution. Default 1.',
   // data sync
   'settings.datasync': 'Data Sync',
   'settings.datasync.linkAccount': 'Linked account',
