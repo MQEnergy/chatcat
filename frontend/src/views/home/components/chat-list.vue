@@ -133,7 +133,9 @@ const initWs = () => {
               break;
             case -1: // stream error
               tempContent.value += data.data.data;
-              chatList[chatList.length - 1].content = tempContent.value;
+              if (tempContent.value.indexOf('response body closed') < 0) {
+                chatList[chatList.length - 1].content = tempContent.value;
+              }
               emits('finish', false);
               break;
             case 1: // stream finished
