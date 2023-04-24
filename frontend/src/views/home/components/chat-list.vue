@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-container" style="padding: 20px;">
+  <div class="chat-container">
     <a-space direction="vertical" :size="20">
       <a-space class="chat-space-container" align="start" :size="10">
         <a-avatar
@@ -10,7 +10,7 @@
         <!-- 聊天框 -->
         <a-space direction="vertical">
           <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
-            <a-typography-paragraph :style="{ marginTop: '1em' }">
+            <a-typography-paragraph :style="{ marginBottom: 0 }">
               <div style="font-size: 18px; font-weight: bold;">{{ $t('common.example.tips') }}</div>
               <div style="line-height: 30px;">
                 <p style="font-weight: bold;">{{ $t('common.example.tips1') }}</p>
@@ -159,29 +159,28 @@ onMounted(() => {
   if (window.go !== undefined) {
     initSettingInfo();
     initWs();
+    copyText('.hljs')
   }
-  copyText('.hljs');
 })
 const addNewChat = () => {
   chatList.splice(0, chatList.length);
 }
 // 对话
-const handleChat = (value) => {
-  value = value.trim();
-  let promptList = [{
-    role: 'user',
-    content: marked.parse(value),
-  }];
-  tempContent.value = "";
-  chatList.push(...promptList)
-  let _deepList = JSON.parse(JSON.stringify(toRaw(promptList)));
-  _deepList[0].content = value + "," + t('common.reply');
-  chatList.push({
+const handleChat = (promptList, type) => {
+  let _promptList = [...promptList, {
     role: 'assistant',
     content: t('common.generate.start'),
-  })
-  reqPromptList.push(_deepList[0])
-  reqPromptList = reqPromptList.slice(-4);
+  }];
+  tempContent.value = "";
+  if (type === 0) {
+    _promptList[0].content = marked.parse(promptList[0].content);
+  } else {
+    _promptList[1].content = marked.parse(promptList[1].content);
+    _promptList.shift(); // remove first item
+  }
+  chatList.push(..._promptList)
+  let reqPromptList = JSON.parse(JSON.stringify(toRaw(chatList)));
+  reqPromptList.pop(); // remove last item
   ChatCompletionStream(reqPromptList, clientId.value).then(res => {
     if (res.code === -1) {
       chatList[chatList.length - 1].content = res.msg
@@ -210,7 +209,11 @@ defineExpose({
 //   const textContent = e.target.parentNode.parentNode.parentNode.parentNode.firstElementChild.querySelector('.hljs').textContent;
 // }
 const handleExampleClick = (content) => {
-  emits('add:chat', content, true)
+  let promptList = [{
+    role: 'user',
+    content: content
+  }]
+  emits('add:chat', promptList, 0, true)
 }
 const handleSelect = (e) => {
   console.log(e)
@@ -236,6 +239,14 @@ const handleSelect = (e) => {
 .chat-space-container {
   width: 100%;
   /*background: #e5e6ec;*/
+}
+
+.chat-container {
+  width: 100%;
+  padding: 20px;
+  overflow-y: scroll;
+  margin-top: 55px;
+  height: 72vh;
 }
 
 .chat-container :deep(.arco-card-body p) {

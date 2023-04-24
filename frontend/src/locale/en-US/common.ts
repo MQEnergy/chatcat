@@ -49,4 +49,5 @@ export default {
   'common.upgrade.notice': 'Upgrade Notice',
   'common.upgrade.btn': 'Download',
   'common.upgrade.noTips': 'No new version available',
+  'common.prompt.input.placeholder': 'Paster or input content here Ctr + Enter to send',
 };

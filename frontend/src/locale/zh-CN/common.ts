@@ -49,4 +49,5 @@ export default {
   'common.upgrade.notice': '更新提醒',
   'common.upgrade.btn': '下载更新',
   'common.upgrade.noTips': '暂无新版本更新',
+  'common.prompt.input.placeholder': '在此处粘贴或输入内容 Ctr + Enter 发送',
 };

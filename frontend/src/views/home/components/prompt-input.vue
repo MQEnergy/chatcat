@@ -1,15 +1,30 @@
 <template>
   <a-space class="prompt-container" direction="horizontal" style="width: 100%;">
-    <a-mention size="large" v-model="promptValue" :data="promptPrefix"
-               prefix="/" placeholder="输入 / 获取模板 或直接输入问题" @keydown.enter="handleSend" allow-clear/>
-    <a-button class="prompt-btn" style="width: 60px;" size="large" type="primary" @click="handleSend"
-              :loading="sendLoading">
-      <template #icon>
-        <icon-send size="18"/>
-      </template>
-    </a-button>
+    <div class="prompt-input-div">
+      <div class="prompt-extension">
+        <a-select v-model="curSysPrompt" :style="{width:'160px'}" placeholder="Please select ..."
+                  @change="handleSysPromptChange">
+          <a-option v-for="(item, index) in systemPromptList" :key="index" :value="item" :label="item.label"/>
+        </a-select>
+        {{ curSysPrompt.value }}
+        <a-select v-if="curSysPrompt.type === 2" v-model="curSysPrompt.language"
+                  :style="{width:'120px', marginLeft: '10px'}"
+                  placeholder="Please select ...">
+          <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
+        </a-select>
+      </div>
+      <a-textarea v-model="promptValue" class="prompt-textarea" :placeholder="$t('common.prompt.input.placeholder')"
+                  @keydown="handleKeyDownSend"/>
+      <a-button class="prompt-btn" size="large" type="primary" @click="handleSend"
+                :loading="sendLoading">
+        <template #icon>
+          <icon-send size="18"/>
+        </template>
+      </a-button>
+    </div>
+
     <!-- 停止对话stream -->
-    <div class="backoff-container" v-if="checkOffFlag" style="position: absolute; bottom: 50px; left: 0px; ">
+    <div class="backoff-container" v-if="checkOffFlag" style="position: absolute; bottom: 175px; left: 10px; ">
       <a-button size="medium" @click="handleBreakOffChat">
         <template #icon>
           <icon-record-stop/>
@@ -22,6 +37,7 @@
 <script setup>
 import {reactive, ref, watch} from "vue";
 import {BreakOffChatStream} from "../../../../wailsjs/go/chat/Service.js";
+import SysInputEnums from "../../../config/sys-input.js";
 
 const props = defineProps({
   value: {
@@ -38,7 +54,14 @@ const props = defineProps({
   }
 })
 const promptValue = ref(props.value);
-const promptPrefix = reactive(['问答:', '翻译:', '改写:', '润色:', '总结:', '分析:', '解释:', '解释代码:', '检查代码:']);
+const systemPromptList = reactive(SysInputEnums)
+const curSysPrompt = ref({
+  label: "自定义内容:",
+  value: "",
+  type: 0,
+  extra: [],
+  language: '',
+});
 const sendLoading = ref(props.loading);
 const checkOffFlag = ref(props.checkoff);
 
@@ -53,21 +76,39 @@ watch(() => props.checkoff, () => {
 })
 const emits = defineEmits(['ok'])
 const handleSend = () => {
-  if (promptValue.value == "" || promptValue.value === "/" || sendLoading.value == true) {
-    return
+  if (promptValue.value == "" || sendLoading.value == true) {
+    return;
   }
-  const filter = promptPrefix.filter((item) => {
-    return promptValue.value == "/" + item && promptValue.value.length == item.length + 1
-  });
-  if (filter.length > 0) {
-    return
+  let systemPromptValue = curSysPrompt.value.value;
+  if (curSysPrompt.value.type === 2) {
+    systemPromptValue += curSysPrompt.value.language;
+  }
+  let sendPromptList = [
+    {
+      role: 'user',
+      content: promptValue.value.trim()
+    }
+  ];
+  if (curSysPrompt.value.type !== 0) {
+    sendPromptList.unshift({
+      role: 'system',
+      content: systemPromptValue,
+    });
   }
   sendLoading.value = true;
-  emits('ok', promptValue.value, sendLoading.value)
+  emits('ok', sendPromptList, curSysPrompt.value.type, sendLoading.value)
   promptValue.value = "";
+}
+const handleKeyDownSend = (event) => {
+  if (event.ctrlKey && event.keyCode === 13) {
+    handleSend()
+  }
 }
 const handleBreakOffChat = () => {
   BreakOffChatStream()
+}
+const handleSysPromptChange = (e) => {
+  curSysPrompt.value.language = '中文(简体)';
 }
 </script>
 
@@ -76,11 +117,35 @@ const handleBreakOffChat = () => {
   position: relative;
 }
 
+.prompt-container .prompt-input-div {
+  height: 145px;
+  border-top: 1px solid var(--color-neutral-3);
+  width: 100%;
+  padding: 10px;
+  background: var(--color-bg-2);
+  position: relative;
+}
+
+.prompt-container .prompt-input-div .prompt-textarea {
+  background: var(--color-bg-3);
+  height: 100px;
+  border: 1px solid var(--color-neutral-3);
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+.prompt-container .prompt-extension {
+}
+
 .prompt-container :deep(.arco-input-wrapper .arco-input) {
   height: 30px !important;
 }
 
 .prompt-container :deep(.prompt-btn) {
-  height: 44px !important;
+  border-radius: 6px;
+  width: 45px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
 }
 </style>

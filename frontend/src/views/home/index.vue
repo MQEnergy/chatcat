@@ -19,7 +19,7 @@
               <content-header :info="headerInfo"></content-header>
             </a-layout-header>
             <!-- 内容区域 -->
-            <a-layout-content class="absolute-div scrollbar">
+            <a-layout-content class="scrollbar">
               <chat-list ref="chatListRef" @add:chat="handleChat"
                          @finish="handleFinished" @header:info="handleHeaderInfo"></chat-list>
             </a-layout-content>
@@ -106,10 +106,10 @@ const handlePromptToChat = (row) => {
 const addNewChat = () => {
   chatListRef.value.addNewChat();
 }
-const handleChat = (value, loading) => {
+const handleChat = (list, type, loading) => {
   sendLoading.value = loading;
   checkOffFlag.value = false;
-  chatListRef.value.handleChat(value)
+  chatListRef.value.handleChat(list, type);
 }
 const handleSelectChat = (row) => {
   headerInfo.value.chatName = row.name;
@@ -150,8 +150,8 @@ const handleSelectChat = (row) => {
 .prompt-input-container {
   position: absolute;
   z-index: 9;
-  padding: 0 20px;
-  bottom: 20px;
+  /*padding: 0 20px;*/
+  bottom: 0px;
   width: -webkit-fill-available;
 }
 </style>

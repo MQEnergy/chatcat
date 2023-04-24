@@ -83,7 +83,7 @@ const handlePromptToChat = (row) => {
 
 .button-trigger {
   position: absolute;
-  bottom: 80px;
+  bottom: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +98,7 @@ const handlePromptToChat = (row) => {
 
 /* button right */
 .button-trigger {
-  right: 20px;
+  right: 10px;
   background-color: rgb(var(--arcoblue-6));
 }
 
