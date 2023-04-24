@@ -89,11 +89,11 @@ th, td {
 }
 
 th {
-    background-color: #f6f8fa;
+    background-color: var(--color-neutral-2);
 }
 
 tr:nth-child(even) {
-    background-color: #f6f8fa;
+    background-color: var(--color-neutral-3);
 }
 
 @keyframes flash {
