@@ -68,8 +68,8 @@ body {
 
 pre code {
     display: block;
-    background-color: #f6f8fa !important;
-    border-radius: 8px !important;
+    background: var(--color-neutral-2) !important;
+    border-radius: 6px !important;
     overflow-x: auto;
     border: none !important;
 }
@@ -114,6 +114,6 @@ tr:nth-child(even) {
 }
 
 .hljs {
-    background: var(--color-bg-1) !important;
+    background: var(--color-neutral-2) !important;
     position: relative;
 }

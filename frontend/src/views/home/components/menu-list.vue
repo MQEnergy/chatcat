@@ -173,15 +173,17 @@ const handleSelectChat = (row, index) => {
 <style scoped>
 .menu-search-container {
   padding: 10px;
+  border-bottom: 1px solid var(--color-neutral-3);
+  background: var(--color-bg-2);
 }
 
 .menu-list-container {
   position: absolute;
-  max-height: calc(100% - 55px);
+  max-height: calc(100% - 70px);
   overflow-y: scroll;
   cursor: pointer;
-  width: 220px;
-  padding: 0 10px;
+  width: 224px;
+  padding: 8px;
 }
 
 .menu-list-container :deep(.arco-list::-webkit-scrollbar) {
@@ -192,6 +194,7 @@ const handleSelectChat = (row, index) => {
   height: 49px;
   margin-bottom: 10px;
   border-radius: 4px;
+  border: 1px solid var(--color-neutral-3);
 }
 
 .menu-list-container .menu-list-item .menu-text-item {
@@ -214,9 +217,7 @@ const handleSelectChat = (row, index) => {
 }
 
 .selected {
-  background: var(--color-bg-4);
-  /*box-sizing: border-box;*/
-  /*border: 1px solid rgb(22, 93, 255) !important;*/
+  background: var(--color-bg-2);
 }
 
 </style>

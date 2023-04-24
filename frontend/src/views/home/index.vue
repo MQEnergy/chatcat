@@ -3,16 +3,16 @@
     <a-layout style="height: 100vh;">
       <a-layout>
         <!-- 侧边分类栏 -->
-        <a-layout-sider style="width: 76px; background: #121212; text-align: center; ">
+        <a-layout-sider class="layout-sider-cate-container">
           <menu-cate @select="handleCateList"></menu-cate>
         </a-layout-sider>
         <!-- 侧边chat内容列表栏 -->
-        <a-layout-sider style="width: 240px; position: relative; background: var(--color-neutral-3);">
+        <a-layout-sider class="layout-sider-chat-container">
           <menu-list :cateid="currCateId" @new:chat="addNewChat" @select:chat="handleSelectChat"
                      @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
         <!-- 当前chat内容区 -->
-        <a-layout-content style="position: relative; width: 100%; height: 100vh;">
+        <a-layout-content class="chat-list-container" style="">
           <a-layout>
             <!-- 头部 -->
             <a-layout-header>
@@ -20,7 +20,7 @@
             </a-layout-header>
             <!-- 内容区域 -->
             <a-layout-content class="absolute-div scrollbar">
-              <chat-list class="chat-list-container" ref="chatListRef" @add:chat="handleChat"
+              <chat-list ref="chatListRef" @add:chat="handleChat"
                          @finish="handleFinished" @header:info="handleHeaderInfo"></chat-list>
             </a-layout-content>
             <!-- 菜单提示 -->
@@ -123,12 +123,28 @@ const handleSelectChat = (row) => {
   width: 100%;
 }
 
-.layout-container :deep(.arco-layout-sider) {
-  width: 300px;
+.layout-container :deep(.arco-layout-sider-light) {
+  box-shadow: none !important;
 }
 
-.layout-container :deep(.arco-layout-content) {
-  background-color: var(--color-bg-2);
+.layout-container .chat-list-container {
+  background-color: var(--color-bg-3);
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.layout-container .layout-sider-cate-container {
+  width: 70px !important;
+  background: var(--color-neutral-2);
+  text-align: center;
+}
+
+.layout-container .layout-sider-chat-container {
+  width: 240px !important;
+  position: relative;
+  border-right: 1px solid var(--color-neutral-3);
+  background: var(--color-neutral-3);
 }
 
 .prompt-input-container {

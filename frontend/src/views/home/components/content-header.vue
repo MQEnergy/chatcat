@@ -1,12 +1,6 @@
 <template>
-  <div style="--wails-draggable: drag;">
+  <div class="page-header" style="--wails-draggable: drag;">
     <a-page-header
-        :style="{
-          background: 'var(--color-bg-2)',
-          '--wails-draggable': 'drag', 'top': 0, 'position': 'absolute',
-          'width': '100%', 'height': '30px', 'border-bottom': '1px solid var(--color-neutral-3)',
-          'z-index': '9'
-      }"
         :title="props.info.cateName"
         :subtitle="props.info.chatName"
         :show-back="false"
@@ -35,18 +29,20 @@ const props = defineProps({
     }
   }
 })
-// let headerInfo = reactive({
-//   cateName: props.info.cateName,
-//   chatName: props.info.chatName,
-//   modelName: props.info.modelName,
-//   msgNum: props.info.msgNum,
-//   tokenNum: props.info.tokenNum
-// })
-// watch(() => props.info, () => {
-//   headerInfo = props.info
-// })
 </script>
 
 <style scoped>
+.page-header {
+  background: var(--color-bg-2);
+  --wails-draggable: drag;
+  top: 0;
+  position: absolute;
+  width: 100%;
+  border-bottom: 1px solid var(--color-neutral-3);
+  z-index: 9
+}
 
+.page-header :deep(.arco-page-header) {
+  padding: 10px 0 !important;
+}
 </style>

@@ -32,15 +32,10 @@
           <icon-plus/>
         </a-avatar>
       </a-tooltip>
-      <!--      <a-avatar :size="36"-->
-      <!--                :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"-->
-      <!--                @click="handleUserProfile">-->
-      <!--        <icon-robot/>-->
-      <!--      </a-avatar>-->
       <div style="position: relative; cursor: pointer;">
-        <icon-menu @click="handleMenuIconHover" size="26"/>
+        <icon-menu :style="{color: 'var(--color-text-2)'}" @click="handleMenuIconHover" size="26"/>
         <div v-if="isShow" class="menu-div">
-          <a-menu theme="dark" @menu-item-click="handleMenuClick">
+          <a-menu class="menu-container" @menu-item-click="handleMenuClick">
             <a-menu-item key="0_3">{{ $t('home.menuCate.settings.sysSettings') }}</a-menu-item>
             <a-menu-item key="0_4">{{ $t('home.menuCate.settings.chat') }}</a-menu-item>
             <a-menu-item key="0_1">{{ $t('home.menuCate.settings.prompt') }}</a-menu-item>
@@ -238,14 +233,13 @@ const handleCateOk = (form) => {
 
 .menu-div {
   width: 110px;
-  background: #414241;
   overflow: hidden;
   border-bottom-right-radius: 6px;
   border-top-right-radius: 6px;
   position: absolute;
   z-index: 9;
   bottom: 0px;
-  left: 56px;
+  left: 53px;
 }
 
 .avatar {
