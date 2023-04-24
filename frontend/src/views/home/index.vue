@@ -106,10 +106,10 @@ const handlePromptToChat = (row) => {
 const addNewChat = () => {
   chatListRef.value.addNewChat();
 }
-const handleChat = (list, type, loading) => {
+const handleChat = (list, prompt, loading) => {
   sendLoading.value = loading;
   checkOffFlag.value = false;
-  chatListRef.value.handleChat(list, type);
+  chatListRef.value.handleChat(list, prompt);
 }
 const handleSelectChat = (row) => {
   headerInfo.value.chatName = row.name;

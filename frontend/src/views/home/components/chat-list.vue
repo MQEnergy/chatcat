@@ -165,30 +165,60 @@ onMounted(() => {
 const addNewChat = () => {
   chatList.splice(0, chatList.length);
 }
-// 对话
-const handleChat = (promptList, type) => {
-  let _promptList = [...promptList, {
+// 前端展示
+const assembleShowChatList = (promptList, prompt) => {
+  let showPromptList = [];
+  promptList.forEach((item) => {
+    switch (prompt.type) {
+      case 1:
+        if (item.role !== 'system') {
+          showPromptList.push({
+            role: item.role,
+            content: marked.parse(item.content),
+          });
+        }
+        break;
+      case 2:
+        showPromptList.push({
+          role: item.role,
+          content: marked.parse(item.prefix + item.content),
+        });
+        break;
+    }
+  })
+  showPromptList.push({
     role: 'assistant',
     content: t('common.generate.start'),
-  }];
+  });
+  return showPromptList
+}
+// 对话
+const handleChat = (promptList, prompt) => {
+  console.log("promptList", promptList, prompt.type)
+  const showChatList = assembleShowChatList(promptList, prompt);
+  console.log("showChatList", showChatList)
+  let chatPromptList = JSON.parse(JSON.stringify(toRaw(showChatList)));
   tempContent.value = "";
-  if (type === 0) {
-    _promptList[0].content = marked.parse(promptList[0].content);
-  } else {
-    _promptList[1].content = marked.parse(promptList[1].content);
-    _promptList.shift(); // remove first item
-  }
-  chatList.push(..._promptList)
+  chatPromptList.forEach((item) => {
+    item.content = marked.parse(item.content);
+  })
+  // if (prompt.type === 2) {
+  //   chatPromptList[0].content = marked.parse(chatPromptList[0].content);
+  // } else {
+  //   chatPromptList[1].content = marked.parse(chatPromptList[1].content);
+  //   // chatPromptList.shift();
+  // }
+  chatList.push(...chatPromptList)
   let reqPromptList = JSON.parse(JSON.stringify(toRaw(chatList)));
   reqPromptList.pop(); // remove last item
-  ChatCompletionStream(reqPromptList, clientId.value).then(res => {
-    if (res.code === -1) {
-      chatList[chatList.length - 1].content = res.msg
-      emits('finish', false);
-    }
-  }).finally(() => {
-    copyText('.hljs');
-  });
+  // ChatCompletionStream(reqPromptList, clientId.value).then(res => {
+  //   if (res.code === -1) {
+  //     chatList[chatList.length - 1].content = res.msg
+  //     emits('finish', false);
+  //   }
+  // }).finally(() => {
+  //   copyText('.hljs');
+  // });
 }
 // ----------------------------------------------------------------
 // 初始化对话列表
