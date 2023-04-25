@@ -4,18 +4,21 @@
       <div class="prompt-extension">
         <a-select v-model="curSysPrompt.id" :style="{width:'160px'}" placeholder="Please select ..."
                   @change="handleSysPromptChange">
-          <a-option v-for="(item, index) in systemPromptList" :key="index" :value="item.id" :label="item.label"/>
+          <a-option v-for="(item, index) in SysInputEnums" :key="index" :value="item.id" :label="item.label"/>
         </a-select>
-        <span v-if="curSysPrompt.type === 2 && curSysPrompt.id !== 1">{{ curSysPrompt.desc }}</span>
-        <a-input v-model="curSysPrompt.desc" size="mini" :style="{width:'320px', marginLeft: '10px'}"
-                 v-if="curSysPrompt.type === 1"
-                 placeholder="例如：我希望你能充当私人教练。"/>
+        <a-apace :style="{marginLeft: '10px'}">
+          <span v-if="curSysPrompt.is_sys === 1">{{ $t('common.system') }}:</span>
+          <span v-if="curSysPrompt.type === 2 && curSysPrompt.id !== 1">{{ curSysPrompt.desc }}</span>
+          <a-input v-model="curSysPrompt.desc" :style="{width:'400px', marginLeft: '10px'}"
+                   v-if="curSysPrompt.type === 1"
+                   placeholder="例如：我希望你能充当私人教练。"/>
 
-        <a-select v-if="curSysPrompt.type === 2 && curSysPrompt.id === 3" v-model="curSysPrompt.language"
-                  :style="{width:'120px', marginLeft: '10px'}"
-                  placeholder="Please select ...">
-          <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
-        </a-select>
+          <a-select v-if="curSysPrompt.type === 2 && curSysPrompt.id === 3" v-model="curSysPrompt.language"
+                    :style="{width:'120px', marginLeft: '10px'}"
+                    placeholder="Please select ...">
+            <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
+          </a-select>
+        </a-apace>
       </div>
       <a-textarea v-model="promptValue" class="prompt-textarea" :placeholder="$t('common.prompt.input.placeholder')"
                   @keydown="handleKeyDownSend"/>
@@ -42,6 +45,9 @@
 import {reactive, ref, watch} from "vue";
 import {BreakOffChatStream} from "../../../../wailsjs/go/chat/Service.js";
 import SysInputEnums from "../../../config/sys-input.js";
+import {Notification} from "@arco-design/web-vue";
+import {useI18n} from "vue-i18n";
+const {t} = useI18n();
 
 const props = defineProps({
   value: {
@@ -58,8 +64,7 @@ const props = defineProps({
   }
 })
 const promptValue = ref(props.value);
-const systemPromptList = reactive(SysInputEnums)
-const curSysPrompt = ref({
+let curSysPrompt = reactive({
   id: 2,
   label: "问答:",
   desc: "请输入问答内容:",
@@ -87,17 +92,17 @@ const handleSend = () => {
   }
   const sendPromptList = assemblePrompt();
   sendLoading.value = true;
-  emits('ok', sendPromptList, curSysPrompt.value, sendLoading.value)
+  emits('ok', sendPromptList, curSysPrompt, sendLoading.value)
   promptValue.value = "";
 }
 const assemblePrompt = () => {
   let promptList = [];
-  switch (curSysPrompt.value.type) {
+  switch (curSysPrompt.type) {
     case 1: // Todo
       promptList = [{
         role: 'system',
         prefix: '',
-        content: curSysPrompt.value.desc
+        content: curSysPrompt.desc
       }, {
         role: 'user',
         prefix: '',
@@ -105,11 +110,11 @@ const assemblePrompt = () => {
       }];
       break;
     case 2:
-      let systemPromptValue = curSysPrompt.value.desc;
-      if (curSysPrompt.value.type === 2 && curSysPrompt.value.id === 3) {
-        systemPromptValue += curSysPrompt.value.language + ":";
+      let systemPromptValue = curSysPrompt.desc;
+      if (curSysPrompt.type === 2 && curSysPrompt.id === 3) {
+        systemPromptValue += curSysPrompt.language + ":";
       }
-      if (curSysPrompt.value.type === 2 && curSysPrompt.value.id === 2) {
+      if (curSysPrompt.type === 2 && curSysPrompt.id === 2) {
         systemPromptValue = "";
       }
       promptList = [{
@@ -130,16 +135,24 @@ const handleBreakOffChat = () => {
   BreakOffChatStream()
 }
 const handleSysPromptChange = (e) => {
-  console.log("e", e)
-  const promptInfo = systemPromptList.filter((item) => {
+  if (e === 1) {
+    Notification.info({
+      content: t('common.prompt.input.chatTips')
+    })
+  }
+  const promptInfo = SysInputEnums.filter((item) => {
     return e === item.id
   });
   if (promptInfo.length > 0) {
-    console.log(promptInfo)
-    curSysPrompt.value = promptInfo[0];
+    curSysPrompt.id = promptInfo[0].id;
+    curSysPrompt.label = promptInfo[0].label;
+    curSysPrompt.desc = promptInfo[0].desc;
+    curSysPrompt.type = promptInfo[0].type;
+    curSysPrompt.is_sys = promptInfo[0].is_sys;
+    curSysPrompt.extra = promptInfo[0].extra;
   }
-  if (curSysPrompt.value.type === 2 && curSysPrompt.value.id === 3) {
-    curSysPrompt.value.language = '中文(简体)';
+  if (curSysPrompt.type === 2 && curSysPrompt.id === 3) {
+    curSysPrompt.language = '中文(简体)';
   }
 }
 </script>
@@ -167,10 +180,6 @@ const handleSysPromptChange = (e) => {
 }
 
 .prompt-container .prompt-extension {
-}
-
-.prompt-container :deep(.arco-input-wrapper .arco-input) {
-  height: 30px !important;
 }
 
 .prompt-container :deep(.prompt-btn) {

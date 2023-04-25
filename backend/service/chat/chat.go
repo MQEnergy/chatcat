@@ -76,6 +76,26 @@ func (s *Service) GetChatList(cateId uint, page int) *cresp.Response {
 	return cresp.Success(pagination)
 }
 
+// SearchChatList
+// @Description: search chat list
+// @receiver s
+// @param keyword
+// @param page
+// @return *cresp.Response
+// @author cx
+func (s *Service) SearchChatList(keyword string, page int) *cresp.Response {
+	var chatList = make([]model.Chat, 0)
+	pagination, err := cpaginator.NewBuilder(s.App.DB, s.App.Cfg).
+		WithModel(&model.Chat{}).
+		WithCondition("name like ?", "%"+keyword+"%").
+		WithOrderBy("id DESC").
+		Pagination(&chatList, page, s.App.Cfg.App.DefaultPageSize)
+	if err != nil {
+		return cresp.Fail("GetChatList error:" + err.Error())
+	}
+	return cresp.Success(pagination)
+}
+
 // GetChatRecordList
 // @Description: get chat record list
 // @receiver s

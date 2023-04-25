@@ -1,7 +1,8 @@
 <template>
   <div class="menu-search-container" style="">
     <a-space>
-      <a-input-search :style="{width:'100%'}" :placeholder="$t('common.keyword.query')"/>
+      <a-input-search v-model="keyword" :style="{width:'100%'}" :placeholder="$t('common.keyword.query')"
+                      @press-enter="handleSearchChat"/>
       <a-button @click="handleAddChat">
         <template #icon>
           <icon-plus/>
@@ -12,7 +13,7 @@
   <a-list ref="chatlistRef" class="menu-list-container scrollbar" size="small"
           :bordered="false" :max-height="980" @reach-bottom="fetchData" :scrollbar="false" hoverable>
     <template v-if="!bottom" #scroll-loading>
-      <a-spin />
+      <a-spin/>
     </template>
     <a-list-item v-if="chatList.length > 0" class="menu-list-item flash" v-for="(item, index) in chatList"
                  @click="handleSelectChat(item, index)"
@@ -47,7 +48,7 @@
 
 <script setup>
 import {defineProps, onMounted, reactive, ref, watch} from "vue";
-import {DeleteChat, EditChat, GetChatList, SetChatData} from "../../../../wailsjs/go/chat/Service.js";
+import {DeleteChat, EditChat, GetChatList, SearchChatList, SetChatData} from "../../../../wailsjs/go/chat/Service.js";
 import {Message} from "@arco-design/web-vue";
 import {useI18n} from "vue-i18n";
 
@@ -67,9 +68,12 @@ const curPage = ref(1);
 const emits = defineEmits(['new:chat', 'select:chat', 'header:info']);
 const bottom = ref(false);
 const chatlistRef = ref(null);
+const keyword = ref('');
+const isSearch = ref(false);
 
 const initChatList = (cateid, page, type) => {
   loading.value = true;
+  isSearch.value = false;
   GetChatList(cateid, page).then(res => {
     if (res.code !== 0) {
       return;
@@ -97,7 +101,11 @@ const initChatList = (cateid, page, type) => {
   })
 }
 const fetchData = () => {
-  initChatList(props.cateid, curPage.value, 2);
+  if (isSearch.value) {
+    searchChatList(keyword.value, curPage.value, 2);
+  } else {
+    initChatList(props.cateid, curPage.value, 2);
+  }
 }
 
 watch(() => props.cateid, () => {
@@ -142,7 +150,6 @@ const handleDelete = (row, index) => {
       return;
     }
     initChatList(props.cateid, 1, 1);
-    // chatList.splice(index, 1)
   })
 }
 const handleClose = (row, index) => {
@@ -167,6 +174,39 @@ const handleCheck = (row, index) => {
 const handleSelectChat = (row, index) => {
   currIdx.value = index;
   emits('select:chat', row);
+}
+const searchChatList = (keyword, page, type) => {
+  isSearch.value = true;
+  SearchChatList(keyword, page).then(res => {
+    if (res.code !== 0) {
+      return;
+    }
+    if (res.data.list.length === 0) {
+      bottom.value = true;
+    }
+    if (type === 1) {
+      chatList.splice(0, chatList.length);
+    }
+    chatList.push(...res.data.list);
+    curPage.value = res.data.current_page + 1;
+  }).then(() => {
+    let chatName = '';
+    if (chatList.length > 0 && currIdx.value === 0) {
+      chatName = chatList[0].name;
+      emits('header:info', {
+        chatName: chatName
+      });
+    }
+  }).finally(() => {
+    loading.value = false;
+    bottom.value = true;
+  })
+}
+const handleSearchChat = () => {
+  if (keyword.value.trim() === "") {
+    return
+  }
+  searchChatList(keyword.value.trim(), 1, 1);
 }
 </script>
 

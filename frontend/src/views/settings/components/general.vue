@@ -238,10 +238,9 @@ const handleChangeLocale = (e) => {
 }
 const handleGeneralSave = (e) => {
   SetGeneralData(form.value).then(res => {
-    console.log(res)
     if (res.code === 0) {
       Message.clear();
-      Message.success("Saved successfully")
+      Message.success(t('common.save.success'))
     }
   })
 }

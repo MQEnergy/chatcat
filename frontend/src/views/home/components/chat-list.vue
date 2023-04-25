@@ -1,64 +1,67 @@
 <template>
   <div class="chat-container">
-    <a-space direction="vertical" :size="20">
-      <a-space class="chat-space-container" align="start" :size="10">
-        <a-avatar
-            class="chat-avatar"
-            :size="32">
-          <img alt="avatar" :src="ChatGPTLogo"/>
-        </a-avatar>
-        <!-- 聊天框 -->
-        <a-space direction="vertical">
-          <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
-            <a-typography-paragraph :style="{ marginBottom: 0 }">
-              <div style="font-size: 18px; font-weight: bold;">{{ $t('common.example.tips') }}</div>
-              <div style="line-height: 30px;">
-                <p style="font-weight: bold;">{{ $t('common.example.tips1') }}</p>
-                <p v-for="(item, index) in exampleList" :key="index">
-                  {{ index + 1 }}.
-                  <a-link @click="handleExampleClick(item)">{{ item }}</a-link>
-                </p>
-              </div>
-            </a-typography-paragraph>
-          </a-card>
-        </a-space>
+    <a-space class="chat-space-container" align="start" :size="10">
+      <a-avatar
+          class="chat-avatar"
+          :size="32">
+        <img alt="avatar" :src="ChatGPTLogo"/>
+      </a-avatar>
+      <!-- 聊天框 -->
+      <a-space direction="vertical">
+        <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
+          <a-typography-paragraph :style="{ marginBottom: 0 }">
+            <div style="font-size: 18px; font-weight: bold;">{{ $t('common.example.tips') }}</div>
+            <div style="line-height: 30px;">
+              <p style="font-weight: bold;">{{ $t('common.example.tips1') }}</p>
+              <p v-for="(item, index) in exampleList" :key="index">
+                {{ index + 1 }}.
+                <a-link @click="handleExampleClick(item)">{{ item }}</a-link>
+              </p>
+            </div>
+          </a-typography-paragraph>
+        </a-card>
       </a-space>
-      <!-- 对话列表 -->
-      <a-space class="chat-space-container" align="start" :size="10" v-for="(item, index) in chatList" :key="index">
-        <!-- 头像 -->
-        <a-avatar
-            class="chat-avatar"
-            :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#165DFF', overflow: 'hidden'}"
-            :size="32">
-          <img v-if="item.role === 'assistant'"
-               alt="avatar"
-               :src="ChatGPTLogo"
-          />
-          <template v-else>
-            <icon-robot/>
-          </template>
-        </a-avatar>
-        <!-- 聊天框 -->
-        <a-space direction="vertical">
-          <a-card hoverable class="chat-card-item" :style="{
+    </a-space>
+
+    <!-- chat list -->
+    <a-space class="chat-space-container" direction="vertical" :size="10">
+      <a-space v-for="(item, index) in chatList" align="start" :key="index">
+        <template v-if="item.role !== 'system'">
+          <!-- avatar -->
+          <a-avatar
+              class="chat-avatar"
+              :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#165DFF', overflow: 'hidden'}"
+              :size="32">
+            <img v-if="item.role === 'assistant'"
+                 alt="avatar"
+                 :src="ChatGPTLogo"
+            />
+            <template v-else>
+              <icon-robot/>
+            </template>
+          </a-avatar>
+          <!-- chat -->
+          <a-space direction="vertical">
+            <a-card hoverable class="chat-card-item" :style="{
                 borderColor: item.role === 'assistant' ? '' : '',
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
-            <a-typography-paragraph copyable>
-              <div class="chat-div" v-html="item.content"></div>
-            </a-typography-paragraph>
-            <template #actions>
-              <a-dropdown @select="handleSelect" position="bl">
-                <IconMore/>
-                <template #content>
-                  <!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
-                  <a-doption>{{ $t('common.edit') }}</a-doption>
-                  <a-doption>{{ $t('common.del') }}</a-doption>
-                </template>
-              </a-dropdown>
-            </template>
-          </a-card>
-        </a-space>
+              <a-typography-paragraph copyable>
+                <div class="chat-div" v-html="item.content"></div>
+              </a-typography-paragraph>
+              <template #actions>
+                <a-dropdown @select="handleSelect" position="bl">
+                  <IconMore/>
+                  <template #content>
+                    <!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
+                    <a-doption>{{ $t('common.edit') }}</a-doption>
+                    <a-doption>{{ $t('common.del') }}</a-doption>
+                  </template>
+                </a-dropdown>
+              </template>
+            </a-card>
+          </a-space>
+        </template>
       </a-space>
     </a-space>
   </div>
@@ -79,6 +82,7 @@ import {
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
 import {copyText} from "@plugins/copy/copy.js";
+import {assembleReqChatList, assembleShowChatList} from "@plugins/assemble/prompt.js";
 
 const {t} = useI18n();
 let chatList = reactive([]);
@@ -165,60 +169,38 @@ onMounted(() => {
 const addNewChat = () => {
   chatList.splice(0, chatList.length);
 }
-// 前端展示
-const assembleShowChatList = (promptList, prompt) => {
-  let showPromptList = [];
-  promptList.forEach((item) => {
-    switch (prompt.type) {
-      case 1:
-        if (item.role !== 'system') {
-          showPromptList.push({
-            role: item.role,
-            content: marked.parse(item.content),
-          });
-        }
-        break;
-      case 2:
-        showPromptList.push({
-          role: item.role,
-          content: marked.parse(item.prefix + item.content),
-        });
-        break;
-    }
-  })
-  showPromptList.push({
+const handleChat = (promptList, prompt) => {
+  if (promptList.length === 0) {
+    return
+  }
+  let showChatList = assembleShowChatList(promptList, prompt);
+  showChatList.push({
     role: 'assistant',
     content: t('common.generate.start'),
   });
-  return showPromptList
-}
-// 对话
-const handleChat = (promptList, prompt) => {
-  console.log("promptList", promptList, prompt.type)
-  const showChatList = assembleShowChatList(promptList, prompt);
-  console.log("showChatList", showChatList)
   let chatPromptList = JSON.parse(JSON.stringify(toRaw(showChatList)));
   tempContent.value = "";
-  chatPromptList.forEach((item) => {
-    item.content = marked.parse(item.content);
-  })
-  // if (prompt.type === 2) {
-  //   chatPromptList[0].content = marked.parse(chatPromptList[0].content);
-  // } else {
-  //   chatPromptList[1].content = marked.parse(chatPromptList[1].content);
-  //   // chatPromptList.shift();
-  // }
   chatList.push(...chatPromptList)
-  let reqPromptList = JSON.parse(JSON.stringify(toRaw(chatList)));
-  reqPromptList.pop(); // remove last item
-  // ChatCompletionStream(reqPromptList, clientId.value).then(res => {
-  //   if (res.code === -1) {
-  //     chatList[chatList.length - 1].content = res.msg
-  //     emits('finish', false);
-  //   }
-  // }).finally(() => {
-  //   copyText('.hljs');
-  // });
+  let reqPromptList = [];
+  if (prompt.type === 2) {
+    reqPromptList = assembleReqChatList(promptList, prompt);
+  } else {
+    reqPromptList = assembleReqChatList(chatList, prompt);
+    reqPromptList.pop();
+  }
+  console.log("展示对话列表", JSON.stringify(chatList));
+  console.log("请求对话列表", JSON.stringify(reqPromptList));
+  if (reqPromptList.length === 0) {
+    return;
+  }
+  ChatCompletionStream(reqPromptList, clientId.value).then(res => {
+    if (res.code === -1) {
+      chatList[chatList.length - 1].content = res.msg
+      emits('finish', false);
+    }
+  }).finally(() => {
+    copyText('.hljs');
+  });
 }
 // ----------------------------------------------------------------
 // 初始化对话列表
@@ -235,15 +217,15 @@ defineExpose({
   addNewChat,
   initChatList
 })
-// const handleCopy = (e) => {
-//   const textContent = e.target.parentNode.parentNode.parentNode.parentNode.firstElementChild.querySelector('.hljs').textContent;
-// }
 const handleExampleClick = (content) => {
   let promptList = [{
     role: 'user',
+    prefix: '',
     content: content
   }]
-  emits('add:chat', promptList, 0, true)
+  emits('add:chat', promptList, {
+    type: 2,
+  }, true)
 }
 const handleSelect = (e) => {
   console.log(e)
@@ -267,8 +249,8 @@ const handleSelect = (e) => {
 }
 
 .chat-space-container {
-  width: 100%;
-  /*background: #e5e6ec;*/
+  width: 510px;
+  margin-top: 10px;
 }
 
 .chat-container {
