@@ -134,9 +134,9 @@ const advancedList = reactive([
     type: 2,
     marks: {20: '20'}
   }, {
-    title: t('settings.advanced.persence_penalty'),
+    title: t('settings.advanced.presence_penalty'),
     tag: 'presence_penalty',
-    desc: t('settings.advanced.persence_penalty.desc'),
+    desc: t('settings.advanced.presence_penalty.desc'),
     value: 0,
     min: -2,
     max: 2,
