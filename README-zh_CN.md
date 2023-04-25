@@ -2,6 +2,8 @@
 <img src="assets/chatcat.png" width="180" height="180" />
 </p>
 
+### 注意: 项目还在开发中，请勿直接使用~
+
 # Chatcat
 聊天猫 更安全高效的ChatGPT客户端 支持 Mac（Intel、M1、M2）、win7及以上系统
 

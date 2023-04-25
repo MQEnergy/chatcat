@@ -2,6 +2,8 @@
 <img src="assets/chatcat.png" width="180" height="180" />
 </p>
 
+### Notice: The project is still under development. Please do not use it directly.
+
 # Chatcat
 ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
 
