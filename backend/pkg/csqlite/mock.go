@@ -13,7 +13,7 @@ func MockSetting(db *gorm.DB) {
 		ChatModel:        "gpt-3.5-turbo",
 		Language:         "zh-CN",
 		Theme:            1,
-		ProxyUrl:         "http://127.0.0.1:7890",
+		ProxyUrl:         "",
 		Account:          "",
 		AccessToken:      "",
 		IsSync:           2,
