@@ -57,6 +57,7 @@ type GPT struct {
 	TikToken              int    // 消耗的token数量
 	Done                  chan bool
 	ChatCompStream        *openai.ChatCompletionStream
+	err                   error
 }
 
 func New(token string, app *service.App) *GPT {
@@ -109,15 +110,26 @@ func (g *GPT) WithN(n int) *GPT {
 	return g
 }
 
+func (g *GPT) Error() error {
+	return g.err
+}
+
 func (g *GPT) WithMaxTokens(tokens int) *GPT {
 	var tikToken int
+	var err error
 	if tokens == 0 {
 		modelTokens := getMaxTokensByModel()
 		prompt, _ := Prompt.(string)
 		if prompt == "" {
-			tikToken = g.NumTokensFromMessages(Messages)
+			tikToken, err = g.NumTokensFromMessages(Messages)
+			if err != nil {
+				g.err = errors.New("Chatcat Warm Reminder: Token calculation failed." + err.Error())
+			}
 		} else {
-			tikToken, _ = g.getTikTokenByEncoding(prompt)
+			tikToken, err = g.getTikTokenByEncoding(prompt)
+			if err != nil {
+				g.err = errors.New("Chatcat Warm Reminder: Token calculation failed." + err.Error())
+			}
 		}
 		g.TikToken = tikToken
 		MaxTokens = modelTokens - tikToken
@@ -246,10 +258,11 @@ func (g *GPT) ChatCompletionStream(clientId string) {
 // @receiver g
 // @param prompt
 // @author cx
-func (g *GPT) CompletionStream() {
+func (g *GPT) CompletionStream(clientId string) {
 	if Stream == false {
 		panic("CompletionStream should be set stream")
 	}
+	g.App.ClientId = clientId
 	stream, err := g.Client.CreateCompletionStream(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
 		return
@@ -369,11 +382,11 @@ func (g *GPT) getTikTokenByEncoding(prompt string) (int, error) {
 // @param model
 // @return numTokens
 // @author cx
-func (g *GPT) NumTokensFromMessages(messages []openai.ChatCompletionMessage) (numTokens int) {
+func (g *GPT) NumTokensFromMessages(messages []openai.ChatCompletionMessage) (numTokens int, err error) {
 	encoding := g.getAvailableEncodingModel(Model)
 	tkm, err := tiktoken.GetEncoding(encoding)
 	if err != nil {
-		fmt.Println(fmt.Errorf("1EncodingForModel: %v", err))
+		fmt.Println(fmt.Errorf("EncodingForModel: %v", err))
 		return
 	}
 	var tokensPerMessage int
@@ -398,7 +411,7 @@ func (g *GPT) NumTokensFromMessages(messages []openai.ChatCompletionMessage) (nu
 		}
 	}
 	numTokens += 3
-	return numTokens
+	return numTokens, nil
 }
 
 // getAvailableEncodingModel

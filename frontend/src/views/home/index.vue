@@ -113,6 +113,7 @@ const handleChat = (list, prompt, loading) => {
 }
 const handleSelectChat = (row) => {
   headerInfo.value.chatName = row.name;
+  sendLoading.value = false;
   chatListRef.value.initChatList(row.id, 1);
 }
 // ----------------------------------------------------------------

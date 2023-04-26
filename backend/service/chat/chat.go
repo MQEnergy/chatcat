@@ -314,19 +314,25 @@ func (s *Service) MoveChatToCate(cateid, chatid uint) *cresp.Response {
 // @param prompt
 // @return error
 // @author cx
-func (s *Service) CompletionStream(prompt string) *cresp.Response {
+func (s *Service) CompletionStream(prompt, clientId string) *cresp.Response {
 	generalInfo := setting.New(s.App).GetGeneralInfo()
 	data := generalInfo.Data.(model.Setting)
 	if data.ApiKey == "" {
 		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
 	}
 	GPTPkg = cgpt.New(data.ApiKey, s.App)
-	GPTPkg.WithProxy(data.ProxyUrl).
+	gpt := GPTPkg.WithProxy(data.ProxyUrl).
 		WithModel(data.AskModel).
 		WithPrompt(prompt).
-		WithMaxTokens(0).
-		WithCompletionRequest().
-		CompletionStream()
+		WithMaxTokens(0)
+	if err := gpt.Error(); err != nil {
+		return cresp.Fail(err.Error())
+	}
+	if cgpt.MaxTokens <= 0 {
+		return cresp.Fail("Chatcat Warm Reminder: Your token is running low, Please start a new conversation.")
+	}
+	gpt.WithCompletionRequest().
+		CompletionStream(clientId)
 
 	return cresp.Success("")
 }
@@ -352,6 +358,9 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage, 
 		WithN(data.N).
 		WithMessages(messages).
 		WithMaxTokens(data.MaxTokens)
+	if err := gpt.Error(); err != nil {
+		return cresp.Fail(err.Error())
+	}
 	if cgpt.MaxTokens <= 0 {
 		return cresp.Fail("Chatcat Warm Reminder: Your token is running low, Please start a new conversation.")
 	}
@@ -391,6 +400,9 @@ func (s *Service) GetTokensNumFromMessages(data model.Setting, messages []openai
 		WithModel(data.ChatModel).
 		WithMessages(messages).
 		WithMaxTokens(0)
+	if err := gpt.Error(); err != nil {
+		return cresp.Success(0)
+	}
 	if cgpt.MaxTokens <= 0 {
 		return cresp.Success(0)
 	}
