@@ -220,9 +220,10 @@ const handleExampleClick = (content) => {
   }, true)
 }
 const handleSelect = (e) => {
-  console.log(e)
   switch (e) {
-    case 'add':
+    case '1': // save
+      break;
+    case '2': // delete
       break;
   }
 }

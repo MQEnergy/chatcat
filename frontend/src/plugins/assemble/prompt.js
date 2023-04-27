@@ -9,21 +9,21 @@ const stripHTML = (text) => {
 const assembleShowChatList = (promptList, prompt) => {
   let showPromptList = [];
   promptList.forEach((item) => {
-    switch (prompt.type) {
-      case 1:
-        if (prompt.role !== 'system') {
+    if (item.role !== 'system' && item.content !== '') {
+      switch (prompt.type) {
+        case 1:
           showPromptList.push({
             role: item.role,
             content: marked.parse(item.content),
           });
-        }
-        break;
-      case 2:
-        showPromptList.push({
-          role: item.role,
-          content: marked.parse(item.prefix + item.content),
-        });
-        break;
+          break;
+        case 2:
+          showPromptList.push({
+            role: item.role,
+            content: marked.parse(item.prefix + item.content),
+          });
+          break;
+      }
     }
   })
   return showPromptList
@@ -33,19 +33,21 @@ const assembleShowChatList = (promptList, prompt) => {
 const assembleReqChatList = (promptList, prompt) => {
   let reqPromptList = [];
   promptList.forEach((item) => {
-    switch (prompt.type) {
-      case 1:
-        reqPromptList.push({
-          role: item.role,
-          content: stripHTML(item.content),
-        });
-        break;
-      case 2:
-        reqPromptList.push({
-          role: item.role,
-          content: item.prefix + item.content,
-        });
-        break;
+    if (item.content !== '') {
+      switch (prompt.type) {
+        case 1:
+          reqPromptList.push({
+            role: item.role,
+            content: stripHTML(item.content),
+          });
+          break;
+        case 2:
+          reqPromptList.push({
+            role: item.role,
+            content: item.prefix + item.content,
+          });
+          break;
+      }
     }
   })
   return reqPromptList;

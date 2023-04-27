@@ -57,6 +57,7 @@ export default {
   'common.prompt.input.system': 'For example: I hope you can serve as a personal coach.',
   'common.prompt.input.replynormal': 'reply with normal format',
   'common.prompt.input.replymarkdown': 'reply with markdown format',
+  'common.prompt.input.replyform': 'reply with form format',
   'common.prompt.select.title1': 'Q&A:',
   'common.prompt.select.title1.desc': 'Answer this question:',
   'common.prompt.select.title2': 'Chat:',

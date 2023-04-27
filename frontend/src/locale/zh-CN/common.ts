@@ -57,6 +57,7 @@ export default {
   'common.prompt.input.system': '例如：我希望你能充当私人教练',
   'common.prompt.input.replynormal': '正常格式回复',
   'common.prompt.input.replymarkdown': 'markdown格式回复',
+  'common.prompt.input.replyform': '表格格式回复',
   'common.prompt.select.title1': '问答:',
   'common.prompt.select.title1.desc': '请输入问答内容:',
   'common.prompt.select.title2': '对话:',

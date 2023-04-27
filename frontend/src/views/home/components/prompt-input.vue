@@ -81,7 +81,7 @@ let curSysPrompt = reactive({
 });
 const sendLoading = ref(props.loading);
 const checkOffFlag = ref(props.checkoff);
-const replyPreList = reactive([t('common.prompt.input.replynormal'), t('common.prompt.input.replymarkdown')]);
+const replyPreList = reactive([t('common.prompt.input.replynormal'), t('common.prompt.input.replymarkdown'), t('common.prompt.input.replyform')]);
 const currReply = ref(t('common.prompt.input.replynormal'));
 
 watch(() => props.value, () => {
@@ -106,6 +106,10 @@ const handleSend = () => {
 }
 const assemblePrompt = () => {
   let promptList = [];
+  let currReplyContent = currReply.value
+  if (currReply.value === t('common.prompt.input.replynormal')) {
+    currReplyContent = "";
+  }
   switch (curSysPrompt.type) {
     case 1:
       promptList = [{
@@ -115,7 +119,7 @@ const assemblePrompt = () => {
       }, {
         role: 'user',
         prefix: '',
-        content: promptValue.value.trim() + "," + currReply.value
+        content: promptValue.value.trim() + "," + currReplyContent
       }];
       break;
     case 2:
@@ -129,7 +133,7 @@ const assemblePrompt = () => {
       promptList = [{
         role: 'user',
         prefix: systemPromptValue,
-        content: promptValue.value.trim() + "," + currReply.value
+        content: promptValue.value.trim() + "," + currReplyContent
       }]
       break;
   }
