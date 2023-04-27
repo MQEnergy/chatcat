@@ -43,7 +43,6 @@
           <!-- chat -->
           <a-space direction="vertical">
             <a-card hoverable class="chat-card-item" :style="{
-                borderColor: item.role === 'assistant' ? '' : '',
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
               <a-typography-paragraph copyable>
@@ -53,9 +52,8 @@
                 <a-dropdown @select="handleSelect" position="bl">
                   <IconMore/>
                   <template #content>
-                    <!--                  <a-doption>{{ $t('common.share') }}</a-doption>-->
-                    <a-doption>{{ $t('common.edit') }}</a-doption>
-                    <a-doption>{{ $t('common.del') }}</a-doption>
+                    <a-doption :value="1">{{ $t('common.save') }}</a-doption>
+                    <a-doption :value="2">{{ $t('common.del') }}</a-doption>
                   </template>
                 </a-dropdown>
               </template>
@@ -188,8 +186,6 @@ const handleChat = (promptList, prompt) => {
     reqPromptList = assembleReqChatList(chatList, prompt);
     reqPromptList.pop();
   }
-  console.log("展示对话列表", JSON.stringify(chatList));
-  console.log("请求对话列表", JSON.stringify(reqPromptList));
   if (reqPromptList.length === 0) {
     return;
   }
@@ -212,24 +208,30 @@ const initChatList = (id, page) => {
     }
   });
 }
-defineExpose({
-  handleChat,
-  addNewChat,
-  initChatList
-})
 const handleExampleClick = (content) => {
   let promptList = [{
     role: 'user',
     prefix: '',
     content: content
   }]
+  console.log("handleExampleClick", promptList);
   emits('add:chat', promptList, {
     type: 2,
   }, true)
 }
 const handleSelect = (e) => {
   console.log(e)
+  switch (e) {
+    case 'add':
+      break;
+  }
 }
+
+defineExpose({
+  handleChat,
+  addNewChat,
+  initChatList
+})
 </script>
 
 <style scoped>
@@ -249,7 +251,6 @@ const handleSelect = (e) => {
 }
 
 .chat-space-container {
-  width: 510px;
   margin-top: 10px;
 }
 

@@ -8,16 +8,21 @@
         </a-select>
         <a-apace :style="{marginLeft: '10px'}">
           <span v-if="curSysPrompt.is_sys === 1">{{ $t('common.system') }}:</span>
-          <span v-if="curSysPrompt.type === 2 && curSysPrompt.id !== 1">{{ curSysPrompt.desc }}</span>
+          <span v-if="curSysPrompt.type === 2 && curSysPrompt.id !== 2">{{ curSysPrompt.desc }}</span>
           <a-input v-model="curSysPrompt.desc" :style="{width:'400px', marginLeft: '10px'}"
                    v-if="curSysPrompt.type === 1"
-                   placeholder="例如：我希望你能充当私人教练。"/>
+                   :placeholder="$t('common.prompt.input.system')"/>
 
           <a-select v-if="curSysPrompt.type === 2 && curSysPrompt.id === 3" v-model="curSysPrompt.language"
                     :style="{width:'120px', marginLeft: '10px'}"
                     placeholder="Please select ...">
             <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
           </a-select>
+          <div style="position: absolute; right: 10px; top: 10px; width: 230px;">
+            <a-select v-model="currReply" :style="{width: '100%'}">
+              <a-option v-for="(item, index) in replyPreList" :key="index" :value="item" :label="item"/>
+            </a-select>
+          </div>
         </a-apace>
       </div>
       <a-textarea v-model="promptValue" class="prompt-textarea" :placeholder="$t('common.prompt.input.placeholder')"
@@ -47,6 +52,7 @@ import {BreakOffChatStream} from "../../../../wailsjs/go/chat/Service.js";
 import SysInputEnums from "../../../config/sys-input.js";
 import {Notification} from "@arco-design/web-vue";
 import {useI18n} from "vue-i18n";
+
 const {t} = useI18n();
 
 const props = defineProps({
@@ -65,9 +71,9 @@ const props = defineProps({
 })
 const promptValue = ref(props.value);
 let curSysPrompt = reactive({
-  id: 2,
-  label: "问答:",
-  desc: "请输入问答内容:",
+  id: 1,
+  label: t('common.prompt.select.title1'),
+  desc: t('common.prompt.select.title1.desc'),
   type: 2,
   is_sys: 2,
   extra: [],
@@ -75,6 +81,8 @@ let curSysPrompt = reactive({
 });
 const sendLoading = ref(props.loading);
 const checkOffFlag = ref(props.checkoff);
+const replyPreList = reactive([t('common.prompt.input.replynormal'), t('common.prompt.input.replymarkdown')]);
+const currReply = ref(t('common.prompt.input.replynormal'));
 
 watch(() => props.value, () => {
   promptValue.value = props.value;
@@ -91,6 +99,7 @@ const handleSend = () => {
     return;
   }
   const sendPromptList = assemblePrompt();
+  console.log("handleSend", sendPromptList);
   sendLoading.value = true;
   emits('ok', sendPromptList, curSysPrompt, sendLoading.value)
   promptValue.value = "";
@@ -98,15 +107,15 @@ const handleSend = () => {
 const assemblePrompt = () => {
   let promptList = [];
   switch (curSysPrompt.type) {
-    case 1: // Todo
+    case 1:
       promptList = [{
         role: 'system',
         prefix: '',
-        content: curSysPrompt.desc
+        content: curSysPrompt.desc.trim(),
       }, {
         role: 'user',
         prefix: '',
-        content: promptValue.value.trim()
+        content: promptValue.value.trim() + "," + currReply.value
       }];
       break;
     case 2:
@@ -114,13 +123,13 @@ const assemblePrompt = () => {
       if (curSysPrompt.type === 2 && curSysPrompt.id === 3) {
         systemPromptValue += curSysPrompt.language + ":";
       }
-      if (curSysPrompt.type === 2 && curSysPrompt.id === 2) {
+      if (curSysPrompt.type === 2 && curSysPrompt.id === 1) {
         systemPromptValue = "";
       }
       promptList = [{
         role: 'user',
         prefix: systemPromptValue,
-        content: promptValue.value.trim()
+        content: promptValue.value.trim() + "," + currReply.value
       }]
       break;
   }
@@ -135,9 +144,10 @@ const handleBreakOffChat = () => {
   BreakOffChatStream()
 }
 const handleSysPromptChange = (e) => {
-  if (e === 1) {
+  if (e === 2) {
     Notification.info({
-      content: t('common.prompt.input.chatTips')
+      content: t('common.prompt.input.chatTips'),
+      duration: 3000
     })
   }
   const promptInfo = SysInputEnums.filter((item) => {

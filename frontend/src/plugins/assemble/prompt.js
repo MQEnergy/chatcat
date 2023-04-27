@@ -11,12 +11,12 @@ const assembleShowChatList = (promptList, prompt) => {
   promptList.forEach((item) => {
     switch (prompt.type) {
       case 1:
-        // if (item.role !== 'system')
+        if (prompt.role !== 'system') {
           showPromptList.push({
             role: item.role,
             content: marked.parse(item.content),
           });
-        // }
+        }
         break;
       case 2:
         showPromptList.push({

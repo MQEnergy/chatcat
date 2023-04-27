@@ -110,7 +110,6 @@ const fieldNames = {value: 'city', label: 'text'}
 const themeList = computed(() => [
   {id: 2, name: t('settings.theme.toLight')},
   {id: 3, name: t('settings.theme.toDark')},
-  // {id: 1, name: t('settings.theme.system')},
 ])
 const advancedList = reactive([
   {
@@ -121,7 +120,7 @@ const advancedList = reactive([
     min: 0,
     max: 2,
     step: 0.1,
-    type: 1, // 1：滑块 2：输入框
+    type: 1,
     marks: {0: '0', 2: '2'},
   }, {
     title: t('settings.advanced.max_tokens'),
@@ -153,17 +152,18 @@ const advancedList = reactive([
     step: 0.1,
     type: 1,
     marks: {'-2': '-2', 2: '2'},
-  }, {
-    title: t('settings.advanced.N'),
-    tag: 'n',
-    desc: t('settings.advanced.N.desc'),
-    value: 1,
-    min: 1,
-    max: 10,
-    step: 1,
-    type: 1,
-    marks: {1: '1', 10: '10'},
   },
+  // {
+  //   title: t('settings.advanced.N'),
+  //   tag: 'n',
+  //   desc: t('settings.advanced.N.desc'),
+  //   value: 1,
+  //   min: 1,
+  //   max: 10,
+  //   step: 1,
+  //   type: 1,
+  //   marks: {1: '1', 10: '10'},
+  // },
 ])
 const modelList = reactive(['gpt-3.5-turbo', 'gpt-3.5-turbo-0301', 'gpt-4', 'gpt-4-0314', 'gpt-4-32k', 'gpt-4-32k-0314'])
 const form = ref({
