@@ -38,13 +38,13 @@ const assembleReqChatList = (promptList, prompt) => {
         case 1:
           reqPromptList.push({
             role: item.role,
-            content: stripHTML(item.content),
+            content: stripHTML(item.content + "," + item.reply_content),
           });
           break;
         case 2:
           reqPromptList.push({
             role: item.role,
-            content: item.prefix + item.content,
+            content: item.prefix + item.content + "," + item.reply_content,
           });
           break;
       }

@@ -116,10 +116,12 @@ const assemblePrompt = () => {
         role: 'system',
         prefix: '',
         content: curSysPrompt.desc.trim(),
+        reply_content: currReplyContent
       }, {
         role: 'user',
         prefix: '',
-        content: promptValue.value.trim() + currReplyContent
+        content: promptValue.value.trim(),
+        reply_content: currReplyContent
       }];
       break;
     case 2:
@@ -133,7 +135,8 @@ const assemblePrompt = () => {
       promptList = [{
         role: 'user',
         prefix: systemPromptValue,
-        content: promptValue.value.trim() + currReplyContent
+        content: promptValue.value.trim(),
+        reply_content: currReplyContent
       }]
       break;
   }
