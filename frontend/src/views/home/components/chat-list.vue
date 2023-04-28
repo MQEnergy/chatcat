@@ -81,6 +81,7 @@ import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
 import {copyText} from "@plugins/copy/copy.js";
 import {assembleReqChatList, assembleShowChatList} from "@plugins/assemble/prompt.js";
+import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
 let chatList = reactive([]);
@@ -150,9 +151,11 @@ const initWs = () => {
       }
     });
     socket.addEventListener('close', (event) => {
+      Message.error("Websocket connect error, Please close and reopen.")
       console.log('websocket closed');
     });
     socket.addEventListener('error', (event) => {
+      Message.error("Websocket connect error, Please close and reopen.")
       console.error('websocker error');
     });
   })

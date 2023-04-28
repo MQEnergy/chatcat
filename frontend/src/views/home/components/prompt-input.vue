@@ -18,7 +18,7 @@
                     placeholder="Please select ...">
             <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
           </a-select>
-          <div style="position: absolute; right: 10px; top: 10px; width: 230px;">
+          <div v-if="curSysPrompt.id === 1 || curSysPrompt.id === 2" style="position: absolute; right: 10px; top: 10px; width: 230px;">
             <a-select v-model="currReply" :style="{width: '100%'}">
               <a-option v-for="(item, index) in replyPreList" :key="index" :value="item" :label="item"/>
             </a-select>
