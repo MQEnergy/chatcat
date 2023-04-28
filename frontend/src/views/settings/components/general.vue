@@ -192,8 +192,8 @@ watch(() => locale.value, () => {
   advancedList[2].desc = t("settings.advanced.presence_penalty.desc");
   advancedList[3].title = t("settings.advanced.frequency_penalty");
   advancedList[3].desc = t("settings.advanced.frequency_penalty.desc");
-  advancedList[4].title = t("settings.advanced.N");
-  advancedList[4].desc = t("settings.advanced.N.desc");
+  // advancedList[4].title = t("settings.advanced.N");
+  // advancedList[4].desc = t("settings.advanced.N.desc");
 })
 const locales = [...LOCALE_OPTIONS]
 const visible = ref(false);

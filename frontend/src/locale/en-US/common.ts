@@ -63,7 +63,7 @@ export default {
   'common.prompt.select.title2': 'Chat:',
   'common.prompt.select.title2.desc': '',
   'common.prompt.select.title3': 'Translate:',
-  'common.prompt.select.title3.desc': 'Translate the following content to',
+  'common.prompt.select.title3.desc': 'Translate the following content to ',
   'common.prompt.select.title4': 'Rewrite:',
   'common.prompt.select.title4.desc': 'Rewrite the following content:',
   'common.prompt.select.title5': 'Polishing:',
