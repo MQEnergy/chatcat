@@ -106,7 +106,7 @@ const handleSend = () => {
 }
 const assemblePrompt = () => {
   let promptList = [];
-  let currReplyContent = currReply.value
+  let currReplyContent = "," + currReply.value
   if (currReply.value === t('common.prompt.input.replynormal')) {
     currReplyContent = "";
   }
@@ -119,7 +119,7 @@ const assemblePrompt = () => {
       }, {
         role: 'user',
         prefix: '',
-        content: promptValue.value.trim() + "," + currReplyContent
+        content: promptValue.value.trim() + currReplyContent
       }];
       break;
     case 2:
@@ -133,7 +133,7 @@ const assemblePrompt = () => {
       promptList = [{
         role: 'user',
         prefix: systemPromptValue,
-        content: promptValue.value.trim() + "," + currReplyContent
+        content: promptValue.value.trim() + currReplyContent
       }]
       break;
   }
