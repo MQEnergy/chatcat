@@ -128,22 +128,21 @@ onMounted(() => {
   }
 })
 const handleAddChat = () => {
-  let num = chatList.length + 1
   SetChatData({
     cate_id: props.cateid,
-    name: t('common.newchat') + num,
+    name: t('common.newchat'),
     sort: 50,
   }).then((res) => {
     if (res.code !== 0) {
       Message.error(res.msg);
       return;
     }
-    emits('new:chat', res.data);
     chatList.unshift({
       id: res.data.id,
       name: res.data.name,
       sort: res.data.sort
     })
+    emits('new:chat', res.data);
   })
 }
 const handleEdit = (row, index) => {

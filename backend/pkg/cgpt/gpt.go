@@ -133,7 +133,7 @@ func (g *GPT) WithMaxTokens(tokens int) *GPT {
 		}
 		g.TikToken = tikToken
 		MaxTokens = modelTokens - tikToken
-		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s message: %v", tikToken, modelTokens, MaxTokens, Model, Messages)
+		g.App.LogInfof("tikToken: %d modelTokens: %d leftToken: %d model: %s message count: %v", tikToken, modelTokens, MaxTokens, Model, len(Messages))
 	} else {
 		MaxTokens = tokens
 		g.TikToken = tokens

@@ -11,6 +11,7 @@ import (
 	"github.com/mozillazg/go-pinyin"
 	"github.com/sashabaranov/go-openai"
 	"gorm.io/gorm"
+	"strconv"
 	"strings"
 )
 
@@ -202,12 +203,14 @@ func (s *Service) DeleteChatCate(cateid int) *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) SetChatData(data model.Chat) *cresp.Response {
-	var chatData model.Chat
-	if err := s.App.DB.First(&chatData, "name = ? and cate_id = ?", data.Name, data.CateId).Error; err == nil {
-		return cresp.Fail("chat is already existed")
-	}
+	var chatInfo model.Chat
 	if data.Name == "" {
 		return cresp.Fail("chat name is required")
+	}
+	if err := s.App.DB.Last(&chatInfo, "cate_id = ?", data.CateId).Error; err == nil {
+		data.Name += strconv.Itoa(int(chatInfo.ID) + 1)
+	} else {
+		data.Name += "1"
 	}
 	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat save failed")
@@ -340,7 +343,7 @@ func (s *Service) CompletionStream(prompt, clientId string) *cresp.Response {
 	gpt := GPTPkg.WithProxy(data.ProxyUrl).
 		WithModel(data.AskModel).
 		WithPrompt(prompt).
-		WithMaxTokens(0)
+		WithMaxTokens(data.MaxTokens)
 	if err := gpt.Error(); err != nil {
 		return cresp.Fail(err.Error())
 	}
@@ -417,7 +420,7 @@ func (s *Service) GetTokensNumFromMessages(data model.Setting, messages []openai
 		WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
 		WithMessages(messages).
-		WithMaxTokens(0)
+		WithMaxTokens(data.MaxTokens)
 	if err := gpt.Error(); err != nil {
 		return cresp.Success(0)
 	}

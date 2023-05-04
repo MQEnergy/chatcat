@@ -118,7 +118,8 @@ const initChatRecordList = (chatid, page) => {
   }).finally(() => {
     recordLoading.value = false;
     nextTick(() => {
-      copyTextListener('code');
+      tokenNumFromMessage(settingInfo.value, chatList);
+      copyTextListener('pre code');
     })
   })
 }
@@ -266,7 +267,7 @@ const handleChat = (promptList, prompt) => {
       emits('finish', false);
     }
   }).finally(() => {
-    copyTextListener('code');
+    copyTextListener('pre code');
   });
 }
 // ----------------------------------------------------------------
