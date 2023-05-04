@@ -4,11 +4,11 @@
       <a-layout>
         <!-- menu cate sider -->
         <a-layout-sider class="layout-sider-cate-container">
-          <menu-cate @select="handleCateList"></menu-cate>
+          <menu-cate @select="handleCateList" :cateid="headerInfo.cateId"></menu-cate>
         </a-layout-sider>
         <!-- menu list sider -->
         <a-layout-sider class="layout-sider-chat-container">
-          <menu-list :cateid="headerInfo.cateId" @new:chat="addNewChat" @select:chat="handleSelectChat"
+          <menu-list :cateid="headerInfo.cateId" :chatid="headerInfo.chatId" @new:chat="addNewChat" @select:chat="handleSelectChat"
                      @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
         <!-- chat content -->
@@ -94,9 +94,13 @@ const handleHeaderInfo = (data) => {
 onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
   const chatid = parseInt(router.currentRoute.value.query.chatid || 0);
+  const cateid = parseInt(router.currentRoute.value.query.cateid || 0);
   prompt.value = promptValue;
   if (chatid !== 0) {
     headerInfo.value.chatId = chatid;
+  }
+  if (cateid !== 0) {
+    headerInfo.value.cateId = cateid;
   }
 })
 // ----------------------------------------------------------------

@@ -47,15 +47,19 @@
 </template>
 
 <script setup>
-import {defineProps, onMounted, reactive, ref, watch} from "vue";
+import {defineProps, reactive, ref, watch} from "vue";
 import {DeleteChat, EditChat, GetChatList, SearchChatList, SetChatData} from "../../../../wailsjs/go/chat/Service.js";
 import {Message} from "@arco-design/web-vue";
 import {useI18n} from "vue-i18n";
 
 const {t} = useI18n();
 
-let props = defineProps({
+const props = defineProps({
   cateid: {
+    type: Number,
+    default: 0
+  },
+  chatid: {
     type: Number,
     default: 0
   }
@@ -73,60 +77,58 @@ const isSearch = ref(false);
 const currChatId = ref(0);
 const currCateId = ref(0);
 
-const initChatList = (cateid, page, type) => {
+const initChatList = async (cateid, page, type) => {
   if (window.go === undefined) {
     return;
   }
   loading.value = true;
   isSearch.value = false;
-  GetChatList(cateid, page).then(res => {
-    if (res.code !== 0) {
-      return;
-    }
-    if (res.data.list.length === 0) {
-      bottom.value = true;
-    }
+  let res = await GetChatList(cateid, page);
+  if (res.code === 0) {
     if (type === 1) {
       chatList.splice(0, chatList.length);
     }
     chatList.push(...res.data.list);
-    curPage.value = res.data.current_page + 1;
-    let chatName = '';
-    if (chatList.length > 0 && currIdx.value === 0) {
-      chatName = chatList[0].name;
-      currChatId.value = chatList[0].id;
-      currCateId.value = props.cateid;
+    if (chatList.length > 0) {
+      curPage.value = res.data.current_page + 1;
+      if (currChatId.value === 0) {
+        currIdx.value = 0;
+      } else {
+        chatList.forEach((item, index) => {
+          if (item.id === currChatId.value) {
+            currIdx.value = index;
+          }
+        })
+      }
+      let chatName = chatList[0].name;
+      currChatId.value = props.chatid || chatList[0].id;
       emits('header:info', {
         chatName: chatName,
         chatId: currChatId.value,
         cateId: currCateId.value,
       });
     }
-  }).finally(() => {
-    loading.value = false;
-    bottom.value = true;
-  })
+  }
+  loading.value = false;
+  bottom.value = true;
 }
-const fetchData = () => {
+const fetchData = async () => {
   if (isSearch.value) {
     searchChatList(keyword.value, curPage.value, 2);
   } else {
-    initChatList(props.cateid, curPage.value, 2);
+    await initChatList(props.cateid, curPage.value, 2);
   }
 }
 
 watch(() => props.cateid, () => {
   currCateId.value = props.cateid;
-  currIdx.value = 0;
   initChatList(props.cateid, 1, 1);
+})
+watch(() => props.chatid, () => {
+  currChatId.value = props.chatid;
   bottom.value = true;
 })
 
-onMounted(() => {
-  if (window.go !== undefined) {
-    // initChatList(props.cateid, 1, 1);
-  }
-})
 const handleAddChat = () => {
   SetChatData({
     cate_id: props.cateid,
@@ -202,7 +204,6 @@ const searchChatList = (keyword, page, type) => {
       currCateId.value = props.cateid;
       emits('header:info', {
         chatName: chatName,
-        cateName: cateName,
         chatId: currChatId,
         cateId: currCateId,
       });
@@ -214,6 +215,7 @@ const searchChatList = (keyword, page, type) => {
 }
 const handleSearchChat = () => {
   if (keyword.value.trim() === "") {
+    initChatList(currCateId.value, 1, 1);
     return
   }
   searchChatList(keyword.value.trim(), 1, 1);

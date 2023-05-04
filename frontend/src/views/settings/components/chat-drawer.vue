@@ -115,7 +115,7 @@ const handleSelect = (e, row) => {
       delSeen.value = true;
       break;
     case 2:
-      router.push('/index?chatid=' + row.id);
+      router.push('/index?chatid=' + row.id + '&cateid=' + cateId.value);
       break;
     case 3:
       moveData.value = row;

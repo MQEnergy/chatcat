@@ -52,7 +52,7 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
-import {defineEmits, h, onMounted, reactive, ref} from "vue";
+import {defineEmits, defineProps, h, onMounted, reactive, ref, watch} from "vue";
 import {Button, Message, Notification, Progress, TypographyParagraph} from '@arco-design/web-vue';
 import CateAdd from "@views/home/components/cate-add.vue";
 import {GetChatCateList, SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
@@ -71,6 +71,15 @@ const cateList = reactive([])
 const currCateId = ref(0)
 const currPage = ref(1);
 
+const props = defineProps({
+  cateid: {
+    type: Number,
+    default: 0
+  }
+})
+watch(() => props.cateid, (newVal, oldVal) => {
+  currCateId.value = newVal;
+})
 const handleMenuClick = (e) => {
   switch (e) {
     case '0_1':
