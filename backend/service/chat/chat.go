@@ -108,7 +108,7 @@ func (s *Service) GetChatRecordList(chatId uint, page int) *cresp.Response {
 	pagination, err := cpaginator.NewBuilder(s.App.DB, s.App.Cfg).
 		WithModel(&model.ChatRecord{}).
 		WithCondition("chat_id = ?", chatId).
-		WithOrderBy("id DESC").
+		WithOrderBy("id ASC").
 		Pagination(&chatRecordList, page, s.App.Cfg.App.DefaultPageSize)
 	if err != nil {
 		return cresp.Fail("GetChatRecordList error:" + err.Error())
@@ -222,14 +222,14 @@ func (s *Service) SetChatData(data model.Chat) *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
-	var chatRecordInfo model.ChatRecord
-	if err := s.App.DB.First(&chatRecordInfo, "name = ?", data.Name).Error; err == nil {
-		return cresp.Fail("chat record is already existed")
-	}
-	if err := s.App.DB.Save(data).Error; err != nil {
+	//var chatRecordInfo model.ChatRecord
+	//if err := s.App.DB.First(&chatRecordInfo, "name = ?", data.Name).Error; err == nil {
+	//	return cresp.Fail("chat record is already existed")
+	//}
+	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat record save failed")
 	}
-	return cresp.Success(chatRecordInfo)
+	return cresp.Success(data)
 }
 
 // DeleteChat
@@ -265,6 +265,19 @@ func (s *Service) DeleteChat(id uint) *cresp.Response {
 // @author cx
 func (s *Service) DeleteChatRecords(chatid int) *cresp.Response {
 	if err := s.App.DB.Delete(&model.ChatRecord{}, "chat_id = ?", chatid).Error; err != nil {
+		return cresp.Fail("delete record failed")
+	}
+	return cresp.Success("")
+}
+
+// DeleteChatRecord
+// @Description: delete chat record
+// @receiver s
+// @param recordId
+// @return *cresp.Response
+// @author cx
+func (s *Service) DeleteChatRecord(recordId int) *cresp.Response {
+	if err := s.App.DB.Delete(&model.ChatRecord{}, "id = ?", recordId).Error; err != nil {
 		return cresp.Fail("delete record failed")
 	}
 	return cresp.Success("")

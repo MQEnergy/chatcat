@@ -23,9 +23,11 @@ const props = defineProps({
     default: {
       cateName: "",
       chatName: "",
+      cateId: 0,
+      chatId: 0,
       modelName: "",
-      msgNum: "",
-      tokenNum: ""
+      msgNum: 0,
+      tokenNum: 0
     }
   }
 })
@@ -39,7 +41,8 @@ const props = defineProps({
   position: absolute;
   width: 100%;
   border-bottom: 1px solid var(--color-neutral-3);
-  z-index: 9
+  z-index: 9;
+  height: 52px;
 }
 
 .page-header :deep(.arco-page-header) {

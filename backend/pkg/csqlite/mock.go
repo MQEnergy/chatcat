@@ -18,7 +18,7 @@ func MockSetting(db *gorm.DB) {
 		AccessToken:      "",
 		IsSync:           2,
 		SyncTime:         5,
-		Temperature:      "0.7",
+		Temperature:      "0.3",
 		MaxTokens:        0,
 		PresencePenalty:  "0.6",
 		FrequencyPenalty: "0.6",

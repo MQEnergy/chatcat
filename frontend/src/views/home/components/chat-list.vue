@@ -1,12 +1,11 @@
 <template>
   <div class="chat-container">
-    <a-space class="chat-space-container" align="start" :size="10">
+    <a-space v-if="chatList.length === 0 && !recordLoading" class="chat-space-container flash" align="start" :size="10">
       <a-avatar
           class="chat-avatar"
           :size="32">
         <img alt="avatar" :src="ChatGPTLogo"/>
       </a-avatar>
-      <!-- 聊天框 -->
       <a-space direction="vertical">
         <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
           <a-typography-paragraph :style="{ marginBottom: 0 }">
@@ -25,8 +24,8 @@
 
     <!-- chat list -->
     <a-space class="chat-space-container" direction="vertical" :size="10">
-      <a-space v-for="(item, index) in chatList" align="start" :key="index">
-        <template v-if="item.role !== 'system'">
+      <template v-for="(item, index) in chatList" :key="index">
+        <a-space v-if="item.role !== 'system'" class="flash" align="start">
           <!-- avatar -->
           <a-avatar
               class="chat-avatar"
@@ -49,18 +48,18 @@
                 <div class="chat-div" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
-                <a-dropdown @select="handleSelect" position="bl">
-                  <IconMore/>
-                  <template #content>
-                    <a-doption :value="1">{{ $t('common.save') }}</a-doption>
-                    <a-doption :value="2">{{ $t('common.del') }}</a-doption>
-                  </template>
-                </a-dropdown>
+                <a-popconfirm
+                    :cancel-text="$t('common.cancel')"
+                    :ok-text="$t('common.ok')"
+                    :content="$t('common.confirmDel')"
+                    @ok="handleDelete(item, index)">
+                  <icon-delete/>
+                </a-popconfirm>
               </template>
             </a-card>
           </a-space>
-        </template>
-      </a-space>
+        </a-space>
+      </template>
     </a-space>
   </div>
 </template>
@@ -68,49 +67,89 @@
 </script>
 <script setup>
 import ChatGPTLogo from '@assets/images/chatgpt_black_logo.svg';
-import {onMounted, reactive, ref, toRaw} from "vue";
+import {nextTick, onMounted, reactive, ref, toRaw, watch} from "vue";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
 import {
   ChatCompletionStream,
+  DeleteChatRecord,
   GetChatRecordList,
   GetTokensNumFromMessages,
-  GetWsUrl
+  GetWsUrl, SetChatRecordData
 } from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
 import {GetGeneralInfo} from "../../../../wailsjs/go/setting/Service.js";
-import {copyText} from "@plugins/copy/copy.js";
+import {copyTextListener} from "@plugins/copy/copy.js";
 import {assembleReqChatList, assembleShowChatList} from "@plugins/assemble/prompt.js";
 import {Message} from "@arco-design/web-vue";
 
 const {t} = useI18n();
+
+const props = defineProps({
+  cateid: {
+    type: Number,
+    default: 0
+  },
+  chatid: {
+    type: Number,
+    default: 0
+  }
+})
 let chatList = reactive([]);
 let reqPromptList = reactive([]);
 const clientId = ref("")
 const tempContent = ref('');
 const settingInfo = ref(null);
 const exampleList = reactive(['帮我制定一个一周的健身计划', '为我撰写有关AI对人类发展的5个吸引眼球的文章标题', '给我一份制作红烧肉的食谱', '给我写一个python的http请求代码'])
-const emits = defineEmits(['add:chat', 'finish', 'header:info']);
+const emits = defineEmits(['add:chat', 'finish', 'model:info']);
+const chatId = ref(0);
+const cateId = ref(0);
+const recordLoading = ref(false);
+const curPage = ref(1);
 
+// ----------------------------------------------------------------
+const initChatRecordList = (chatid, page) => {
+  recordLoading.value = true;
+  // no page Todo
+  GetChatRecordList(chatid, page).then(res => {
+    if (res.code === 0) {
+      chatList.splice(0, chatList.length, ...res.data.list);
+    }
+  }).finally(() => {
+    recordLoading.value = false;
+    nextTick(() => {
+      copyTextListener('code');
+    })
+  })
+}
+watch(() => props.cateid, () => {
+  cateId.value = props.cateid;
+})
+watch(() => props.chatid, () => {
+  chatId.value = props.chatid;
+  initChatRecordList(chatId.value, curPage.value);
+})
 // ----------------------------------------------------------------
 const initSettingInfo = () => {
   GetGeneralInfo().then(res => {
+    if (res.code !== 0) {
+      return
+    }
     settingInfo.value = res.data;
-    emits('header:info', {
+    emits('model:info', {
       modelName: res.data.chat_model,
     })
   })
 }
 const tokenNumFromMessage = (settings, list) => {
   GetTokensNumFromMessages(settings, list).then(res => {
-    emits('header:info', {
+    emits('model:info', {
       tokenNum: res.data,
       msgNum: list.length
     })
   })
 }
 // ----------------------------------------------------------------
-// init ws
 const initWs = () => {
   GetWsUrl().then(res => {
     let wsUrl = res + "?group_id=chat"
@@ -146,6 +185,9 @@ const initWs = () => {
               }
               emits('finish', false);
               tokenNumFromMessage(settingInfo.value, reqPromptList);
+              if (chatList.length > 0) {
+                handleSaveChat(chatList[chatList.length - 1]);
+              }
               break;
           }
       }
@@ -164,15 +206,41 @@ onMounted(() => {
   if (window.go !== undefined) {
     initSettingInfo();
     initWs();
-    copyText('.hljs')
   }
 })
+const handleSaveChat = (chatInfo) => {
+  const reqChatInfo = {
+    cate_id: cateId.value,
+    chat_id: chatId.value,
+    name: "",
+    role: chatInfo.role,
+    prefix: chatInfo.prefix || '',
+    reply_content: chatInfo.reply_content || '',
+    content: chatInfo.content,
+  }
+  SetChatRecordData(reqChatInfo).then(res => {
+    if (res.code !== 0) {
+      Message.error(res.msg);
+    }
+  })
+}
 const addNewChat = () => {
   chatList.splice(0, chatList.length);
 }
 const handleChat = (promptList, prompt) => {
   if (promptList.length === 0) {
     return
+  }
+  console.log(promptList)
+  if (prompt.value === 2) {
+    handleSaveChat(promptList[0]);
+  } else {
+    if (promptList.length === 2) {
+      if (promptList[0].content !== "") {
+        handleSaveChat(promptList[0]);
+      }
+      handleSaveChat(promptList[1]);
+    }
   }
   let showChatList = assembleShowChatList(promptList, prompt);
   showChatList.push({
@@ -182,7 +250,7 @@ const handleChat = (promptList, prompt) => {
   let chatPromptList = JSON.parse(JSON.stringify(toRaw(showChatList)));
   tempContent.value = "";
   chatList.push(...chatPromptList)
-  let reqPromptList = [];
+  let reqPromptList;
   if (prompt.type === 2) {
     reqPromptList = assembleReqChatList(promptList, prompt);
   } else {
@@ -198,53 +266,40 @@ const handleChat = (promptList, prompt) => {
       emits('finish', false);
     }
   }).finally(() => {
-    copyText('.hljs');
+    copyTextListener('code');
   });
 }
 // ----------------------------------------------------------------
-// 初始化对话列表
-const initChatList = (id, page) => {
-  addNewChat()
-  GetChatRecordList(id, page).then(res => {
-    if (res.code === 0) {
-      chatList.push(...res.data.list);
-    }
-  });
-}
 const handleExampleClick = (content) => {
   let promptList = [{
     role: 'user',
     prefix: '',
-    content: content
+    content: content,
+    reply_content: ''
   }]
-  console.log("handleExampleClick", promptList);
   emits('add:chat', promptList, {
     type: 2,
   }, true)
 }
-const handleSelect = (e) => {
-  switch (e) {
-    case '1': // save
-      break;
-    case '2': // delete
-      break;
-  }
+const handleDelete = (row, index) => {
+  DeleteChatRecord(row.id).then((res) => {
+    if (res.code !== 0) {
+      Message.error(res.msg)
+      return;
+    }
+    initChatRecordList(chatId.value, curPage.value);
+  })
 }
-
 defineExpose({
   handleChat,
   addNewChat,
-  initChatList
+  initChatRecordList
 })
 </script>
 
 <style scoped>
 .chat-div {
   overflow: scroll;
-}
-
-.chat-space-container :deep(.arco-card-actions) {
-  margin-top: 0px !important;
 }
 
 .chat-card-item {
@@ -263,7 +318,7 @@ defineExpose({
   padding: 20px;
   overflow-y: scroll;
   margin-top: 55px;
-  height: 72vh;
+  height: 70vh;
 }
 
 .chat-container :deep(.arco-card-body p) {
@@ -277,7 +332,7 @@ defineExpose({
 
 .chat-container :deep(.arco-typography-operation-copy), .chat-container :deep(.arco-typography-operation-copied) {
   position: absolute;
-  bottom: 8px;
+  bottom: 9px;
   right: 40px;
 }
 

@@ -70,8 +70,13 @@ const bottom = ref(false);
 const chatlistRef = ref(null);
 const keyword = ref('');
 const isSearch = ref(false);
+const currChatId = ref(0);
+const currCateId = ref(0);
 
 const initChatList = (cateid, page, type) => {
+  if (window.go === undefined) {
+    return;
+  }
   loading.value = true;
   isSearch.value = false;
   GetChatList(cateid, page).then(res => {
@@ -86,13 +91,15 @@ const initChatList = (cateid, page, type) => {
     }
     chatList.push(...res.data.list);
     curPage.value = res.data.current_page + 1;
-
-  }).then(() => {
     let chatName = '';
     if (chatList.length > 0 && currIdx.value === 0) {
       chatName = chatList[0].name;
+      currChatId.value = chatList[0].id;
+      currCateId.value = props.cateid;
       emits('header:info', {
-        chatName: chatName
+        chatName: chatName,
+        chatId: currChatId.value,
+        cateId: currCateId.value,
       });
     }
   }).finally(() => {
@@ -109,16 +116,15 @@ const fetchData = () => {
 }
 
 watch(() => props.cateid, () => {
+  currCateId.value = props.cateid;
+  currIdx.value = 0;
   initChatList(props.cateid, 1, 1);
   bottom.value = true;
-  emits('header:info', {
-    chatName: ""
-  });
 })
 
 onMounted(() => {
   if (window.go !== undefined) {
-    initChatList(props.cateid, 1, 1);
+    // initChatList(props.cateid, 1, 1);
   }
 })
 const handleAddChat = () => {
@@ -189,12 +195,17 @@ const searchChatList = (keyword, page, type) => {
     }
     chatList.push(...res.data.list);
     curPage.value = res.data.current_page + 1;
-  }).then(() => {
+
     let chatName = '';
     if (chatList.length > 0 && currIdx.value === 0) {
       chatName = chatList[0].name;
+      currChatId.value = chatList[0].id;
+      currCateId.value = props.cateid;
       emits('header:info', {
-        chatName: chatName
+        chatName: chatName,
+        cateName: cateName,
+        chatId: currChatId,
+        cateId: currCateId,
       });
     }
   }).finally(() => {

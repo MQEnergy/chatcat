@@ -2,32 +2,30 @@
   <div class="layout-container">
     <a-layout style="height: 100vh;">
       <a-layout>
-        <!-- 侧边分类栏 -->
+        <!-- menu cate sider -->
         <a-layout-sider class="layout-sider-cate-container">
           <menu-cate @select="handleCateList"></menu-cate>
         </a-layout-sider>
-        <!-- 侧边chat内容列表栏 -->
+        <!-- menu list sider -->
         <a-layout-sider class="layout-sider-chat-container">
-          <menu-list :cateid="currCateId" @new:chat="addNewChat" @select:chat="handleSelectChat"
+          <menu-list :cateid="headerInfo.cateId" @new:chat="addNewChat" @select:chat="handleSelectChat"
                      @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
-        <!-- 当前chat内容区 -->
-        <a-layout-content class="chat-list-container" style="">
+        <!-- chat content -->
+        <a-layout-content class="chat-list-container">
           <a-layout>
-            <!-- 头部 -->
             <a-layout-header>
               <content-header :info="headerInfo"></content-header>
             </a-layout-header>
-            <!-- 内容区域 -->
             <a-layout-content class="scrollbar">
-              <chat-list ref="chatListRef" @add:chat="handleChat"
-                         @finish="handleFinished" @header:info="handleHeaderInfo"></chat-list>
+              <chat-list ref="chatListRef" @add:chat="handleChat" :chatid="headerInfo.chatId"
+                         :cateid="headerInfo.cateId" @finish="handleFinished"
+                         @model:info="handleHeaderInfo"></chat-list>
             </a-layout-content>
-            <!-- 菜单提示 -->
             <menu-tips @add:prompt="handlePromptToChat"></menu-tips>
-            <!-- 对话输入框 -->
+            <!-- prompt input footer -->
             <a-layout-footer class="prompt-input-container">
-              <prompt-input :value="prompt" @ok="handleChat" :checkoff="checkOffFlag"
+              <prompt-input :value="prompt" @add:chat="handleChat" :checkoff="checkOffFlag"
                             :loading="sendLoading"></prompt-input>
             </a-layout-footer>
           </a-layout>
@@ -51,19 +49,14 @@ import {useI18n} from "vue-i18n";
 const {t} = useI18n();
 const router = useRouter();
 const prompt = ref('');
-const chatId = ref(0);
-const currCateId = ref(0);
-// const currPage = ref(1);
-// ----------------------------------------------------------------
-// 滚动位置 Todo
 const chatListRef = ref(null);
-const chatListHeight = ref(0);
 // ----------------------------------------------------------------
-// 头部显示
 const headerInfo = ref({
-  cateName: '未分类',
-  chatName: '新的聊天',
-  modelName: 'model',
+  cateName: t('common.nocate'),
+  chatName: t('common.newchat'),
+  cateId: 0,
+  chatId: 0,
+  modelName: '',
   msgNum: 0,
   tokenNum: 0
 })
@@ -75,11 +68,20 @@ const handleFinished = (value) => {
   checkOffFlag.value = value;
 }
 const handleHeaderInfo = (data) => {
-  if (data.modelName !== undefined) {
-    headerInfo.value.modelName = data.modelName;
+  if (data.cateName !== undefined) {
+    headerInfo.value.cateName = data.cateName;
   }
   if (data.chatName !== undefined) {
     headerInfo.value.chatName = data.chatName;
+  }
+  if (data.cateId !== undefined) {
+    headerInfo.value.cateId = data.cateId;
+  }
+  if (data.chatId !== undefined) {
+    headerInfo.value.chatId = data.chatId;
+  }
+  if (data.modelName !== undefined) {
+    headerInfo.value.modelName = data.modelName;
   }
   if (data.tokenNum !== undefined) {
     headerInfo.value.tokenNum = data.tokenNum;
@@ -91,13 +93,15 @@ const handleHeaderInfo = (data) => {
 // ----------------------------------------------------------------
 onMounted(() => {
   const promptValue = router.currentRoute.value.query.prompt || '';
-  const chatid = router.currentRoute.value.query.chatid || 0;
+  const chatid = parseInt(router.currentRoute.value.query.chatid || 0);
   prompt.value = promptValue;
-  chatId.value = chatid;
+  if (chatid !== 0) {
+    headerInfo.value.chatId = chatid;
+  }
 })
 // ----------------------------------------------------------------
 const handleCateList = (item) => {
-  currCateId.value = item.id;
+  headerInfo.value.cateId = item.id;
   headerInfo.value.cateName = item.name;
 }
 const handlePromptToChat = (row) => {
@@ -114,7 +118,7 @@ const handleChat = (list, prompt, loading) => {
 const handleSelectChat = (row) => {
   headerInfo.value.chatName = row.name;
   sendLoading.value = false;
-  chatListRef.value.initChatList(row.id, 1);
+  headerInfo.value.chatId = row.id;
 }
 // ----------------------------------------------------------------
 </script>

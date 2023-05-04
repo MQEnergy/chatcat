@@ -18,7 +18,8 @@
                     placeholder="Please select ...">
             <a-option v-for="(item, index) in curSysPrompt.extra" :key="index" :value="item.label" :label="item.label"/>
           </a-select>
-          <div v-if="curSysPrompt.id === 1 || curSysPrompt.id === 2" style="position: absolute; right: 10px; top: 10px; width: 230px;">
+          <div v-if="curSysPrompt.id === 1 || curSysPrompt.id === 2"
+               style="position: absolute; right: 10px; top: 10px; width: 230px;">
             <a-select v-model="currReply" :style="{width: '100%'}">
               <a-option v-for="(item, index) in replyPreList" :key="index" :value="item" :label="item"/>
             </a-select>
@@ -36,7 +37,7 @@
     </div>
 
     <!-- 停止对话stream -->
-    <div class="backoff-container" v-if="checkOffFlag" style="position: absolute; bottom: 175px; left: 10px; ">
+    <div class="backoff-container" v-if="checkOffFlag">
       <a-button size="medium" @click="handleBreakOffChat">
         <template #icon>
           <icon-record-stop/>
@@ -93,17 +94,18 @@ watch(() => props.loading, () => {
 watch(() => props.checkoff, () => {
   checkOffFlag.value = props.checkoff;
 })
-const emits = defineEmits(['ok'])
+const emits = defineEmits(['add:chat'])
+
 const handleSend = () => {
   if (promptValue.value == "" || sendLoading.value == true) {
     return;
   }
   const sendPromptList = assemblePrompt();
-  console.log("handleSend", sendPromptList);
   sendLoading.value = true;
-  emits('ok', sendPromptList, curSysPrompt, sendLoading.value)
+  emits('add:chat', sendPromptList, curSysPrompt, sendLoading.value)
   promptValue.value = "";
 }
+
 const assemblePrompt = () => {
   let promptList = [];
   let currReplyContent = "," + currReply.value
@@ -180,18 +182,16 @@ const handleSysPromptChange = (e) => {
 }
 
 .prompt-container .prompt-input-div {
-  height: 145px;
-  border-top: 1px solid var(--color-neutral-3);
+  height: 150px;
   width: 100%;
   padding: 10px;
   background: var(--color-bg-2);
   position: relative;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .prompt-container .prompt-input-div .prompt-textarea {
-  background: var(--color-bg-3);
-  height: 100px;
-  border: 1px solid var(--color-neutral-3);
+  height: 110px;
   margin-top: 10px;
   border-radius: 6px;
 }
@@ -204,6 +204,12 @@ const handleSysPromptChange = (e) => {
   width: 45px;
   position: absolute;
   right: 20px;
-  bottom: 20px;
+  bottom: 16px;
+}
+
+.backoff-container {
+  position: absolute;
+  bottom: 175px;
+  left: 10px;
 }
 </style>

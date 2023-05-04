@@ -20,9 +20,11 @@ type Chat struct {
 // ChatRecord chat对话记录表
 type ChatRecord struct {
 	BaseModel
-	CateId  uint   `gorm:"column:cate_id;type:int unsigned" json:"cate_id"`
-	ChatId  uint   `gorm:"column:chat_id;type:int unsigned" json:"chat_id"`
-	Name    string `gorm:"column:name;type:text" json:"name"`
-	Content string `gorm:"column:content;type:text" json:"content"`
-	Role    string `gorm:"column:role;type:text" json:"role"` // 角色类型 system user assistant
+	CateId       uint   `gorm:"column:cate_id;type:int unsigned" json:"cate_id"`
+	ChatId       uint   `gorm:"column:chat_id;type:int unsigned" json:"chat_id"`
+	Name         string `gorm:"column:name;type:text" json:"name"`
+	Content      string `gorm:"column:content;type:text" json:"content"`
+	ReplyContent string `gorm:"column:reply_content;type:text" json:"reply_content"`
+	Prefix       string `gorm:"column:prefix;type:text" json:"prefix"`
+	Role         string `gorm:"column:role;type:text" json:"role"` // 角色类型 system user assistant
 }

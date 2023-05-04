@@ -119,3 +119,8 @@ tr:nth-child(even) {
     position: relative;
     margin-top: 10px !important;
 }
+
+.arco-typography pre code {
+    padding: 12px !important;
+    position: relative;
+}
