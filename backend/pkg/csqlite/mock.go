@@ -20,8 +20,8 @@ func MockSetting(db *gorm.DB) {
 		SyncTime:         5,
 		Temperature:      "0.3",
 		MaxTokens:        0,
-		PresencePenalty:  "0.6",
-		FrequencyPenalty: "0.6",
+		PresencePenalty:  "0",
+		FrequencyPenalty: "0",
 		N:                1,
 		TopP:             "0.1",
 		BaseModel: model.BaseModel{
@@ -34,6 +34,14 @@ func MockSetting(db *gorm.DB) {
 // MockChatCate ...
 func MockChatCate(db *gorm.DB) {
 
+}
+
+func MockChat(db *gorm.DB) {
+	db.Create(&model.Chat{
+		CateId: 0,
+		Name:   "New Chat1",
+		Sort:   50,
+	})
 }
 
 // MockTagList

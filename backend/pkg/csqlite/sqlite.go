@@ -90,6 +90,7 @@ func autoMigrate(db *gorm.DB) {
 	// 写入初始化数据
 	MockSetting(db)
 	MockChatCate(db)
+	MockChat(db)
 	MockTagList(db)
 	MockPromptList(db)
 }
