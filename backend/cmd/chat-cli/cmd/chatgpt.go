@@ -51,7 +51,7 @@ func handleChat() {
 		WithPrompt(prompt).
 		WithMaxTokens(0).
 		WithCompletionRequest().
-		CompletionStream()
+		CompletionStream("1")
 
 	// /chat/completions stream
 	gpt.WithModel(data.ChatModel).
@@ -63,5 +63,5 @@ func handleChat() {
 		}).
 		WithMaxTokens(0).
 		WithChatCompletionRequest().
-		ChatCompletionStream()
+		ChatCompletionStream("1")
 }

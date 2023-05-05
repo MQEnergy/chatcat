@@ -145,9 +145,11 @@ const initChatRecordList = (chatid, page) => {
 }
 watch(() => props.cateid, () => {
   cateId.value = props.cateid;
+  resetFlag();
 })
 watch(() => props.chatid, () => {
   chatId.value = props.chatid;
+  resetFlag();
   initChatRecordList(chatId.value, curPage.value);
 })
 // ----------------------------------------------------------------
@@ -209,8 +211,7 @@ const messageHandler = (data) => {
           if (tempContent.value.indexOf('response body closed') < 0) {
             chatList[chatIndex].content = tempContent.value;
           }
-          regFlag.value = true;
-          currLoading.value = false;
+          resetFlag();
           chatList[chatIndex].loading = false;
           emits('finish', false);
           break;
@@ -218,8 +219,7 @@ const messageHandler = (data) => {
           if (chatList.length > 0) {
             reqPromptList.push(chatList[chatIndex]);
           }
-          regFlag.value = true;
-          currLoading.value = false;
+          resetFlag();
           chatList[chatIndex].loading = false;
           emits('finish', false);
           tokenNumFromMessage(settingInfo.value, reqPromptList);
@@ -229,6 +229,10 @@ const messageHandler = (data) => {
           break;
       }
   }
+}
+const resetFlag = () => {
+  regFlag.value = true;
+  currLoading.value = false;
 }
 onMounted(() => {
   if (window.go !== undefined) {
