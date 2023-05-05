@@ -110,7 +110,7 @@ func (s *Service) GetChatRecordList(chatId uint, page int) *cresp.Response {
 		WithModel(&model.ChatRecord{}).
 		WithCondition("chat_id = ?", chatId).
 		WithOrderBy("id ASC").
-		Pagination(&chatRecordList, page, s.App.Cfg.App.DefaultPageSize)
+		Pagination(&chatRecordList, page, 100)
 	if err != nil {
 		return cresp.Fail("GetChatRecordList error:" + err.Error())
 	}
@@ -393,7 +393,7 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage, 
 
 // GetWsUrl ...
 func (s *Service) GetWsUrl() string {
-	return s.App.Cfg.App.WsUrl
+	return s.App.Cfg.App.WsUrl + "?group_id=chat"
 }
 
 // BreakOffChatStream
@@ -420,7 +420,7 @@ func (s *Service) GetTokensNumFromMessages(data model.Setting, messages []openai
 		WithProxy(data.ProxyUrl).
 		WithModel(data.ChatModel).
 		WithMessages(messages).
-		WithMaxTokens(data.MaxTokens)
+		WithMaxTokens(0)
 	if err := gpt.Error(); err != nil {
 		return cresp.Success(0)
 	}

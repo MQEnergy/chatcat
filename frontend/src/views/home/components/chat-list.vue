@@ -48,6 +48,15 @@
                 <div class="chat-div" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
+                <div v-if="item.role === 'assistant' && regFlag" style="position: absolute; left: 10px;"
+                     @click="handleRegenerate(item, index)">
+                  <a-button type="text" :loading="item.loading">
+                    <template #icon>
+                      <icon-refresh/>
+                    </template>
+                    {{ $t('common.regenerate') }}
+                  </a-button>
+                </div>
                 <a-popconfirm
                     :cancel-text="$t('common.cancel')"
                     :ok-text="$t('common.ok')"
@@ -106,6 +115,9 @@ const chatId = ref(0);
 const cateId = ref(0);
 const recordLoading = ref(false);
 const curPage = ref(1);
+const currIndex = ref(0);
+const regFlag = ref(false);
+const currLoading = ref(false);
 
 // ----------------------------------------------------------------
 const initChatRecordList = (chatid, page) => {
@@ -113,6 +125,10 @@ const initChatRecordList = (chatid, page) => {
   // no page Todo
   GetChatRecordList(chatid, page).then(res => {
     if (res.code === 0) {
+      regFlag.value = true;
+      res.data.list.forEach((item) => {
+        item.loading = false;
+      })
       chatList.splice(0, chatList.length, ...res.data.list);
     }
   }).finally(() => {
@@ -146,63 +162,68 @@ const tokenNumFromMessage = (settings, list) => {
   GetTokensNumFromMessages(settings, list).then(res => {
     emits('model:info', {
       tokenNum: res.data,
-      msgNum: list.length
+      msgNum: chatList.length
     })
   })
 }
 // ----------------------------------------------------------------
 const initWs = () => {
   GetWsUrl().then(res => {
-    let wsUrl = res + "?group_id=chat"
-    const socket = new WebSocket(wsUrl);
+    const socket = new WebSocket(res);
     socket.addEventListener('open', (event) => {
     });
     socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      switch (data.code) {
-        case 0: // connect
-          clientId.value = data.data.client_id;
-          console.log(`ws connected：${event.data}`);
-          break;
-        case 10010: // message
-          switch (data.data.code) {
-            case 0: // streaming
-              emits('finish', true);
-              tempContent.value += data.data.data;
-              if (chatList.length > 0) {
-                chatList[chatList.length - 1].content = marked.parse(tempContent.value);
-              }
-              break;
-            case -1: // stream error
-              tempContent.value += data.data.data;
-              if (tempContent.value.indexOf('response body closed') < 0) {
-                chatList[chatList.length - 1].content = tempContent.value;
-              }
-              emits('finish', false);
-              break;
-            case 1: // stream finished
-              if (chatList.length > 0) {
-                reqPromptList.push(chatList[chatList.length - 1]);
-              }
-              emits('finish', false);
-              tokenNumFromMessage(settingInfo.value, reqPromptList);
-              if (chatList.length > 0) {
-                handleSaveChat(chatList[chatList.length - 1]);
-              }
-              break;
-          }
-      }
+      messageHandler(data);
     });
     socket.addEventListener('close', (event) => {
       Message.error("Websocket connect error, Please close and reopen.")
-      console.log('websocket closed');
     });
     socket.addEventListener('error', (event) => {
       Message.error("Websocket connect error, Please close and reopen.")
-      console.error('websocker error');
     });
   })
 };
+const messageHandler = (data) => {
+  switch (data.code) {
+    case 0: // connect
+      clientId.value = data.data.client_id;
+      console.log(`ws connected：${event.data}`);
+      break;
+    case 10010: // message
+      let chatIndex = currIndex.value !== 0 ? currIndex.value : chatList.length - 1;
+      switch (data.data.code) {
+        case 0: // streaming
+          emits('finish', true);
+          tempContent.value += data.data.data;
+          if (chatList.length > 0) {
+            chatList[chatIndex].content = marked.parse(tempContent.value);
+          }
+          break;
+        case -1: // stream error
+          tempContent.value += data.data.data;
+          if (tempContent.value.indexOf('response body closed') < 0) {
+            chatList[chatIndex].content = tempContent.value;
+          }
+          regFlag.value = true;
+          chatList[chatIndex].loading = false;
+          emits('finish', false);
+          break;
+        case 1: // stream finished
+          if (chatList.length > 0) {
+            reqPromptList.push(chatList[chatIndex]);
+          }
+          regFlag.value = true;
+          chatList[chatIndex].loading = false;
+          emits('finish', false);
+          tokenNumFromMessage(settingInfo.value, reqPromptList);
+          if (chatList.length > 0) {
+            handleSaveChat(chatList[chatIndex]);
+          }
+          break;
+      }
+  }
+}
 onMounted(() => {
   if (window.go !== undefined) {
     initSettingInfo();
@@ -232,8 +253,14 @@ const handleChat = (promptList, prompt) => {
   if (promptList.length === 0) {
     return
   }
-  console.log(promptList)
-  if (prompt.value === 2) {
+  if (chatList.length > 100) {
+    Message.error(t('common.chat.limit'));
+    nextTick(() => {
+      emits('finish', false);
+    })
+    return;
+  }
+  if (prompt.type === 2) {
     handleSaveChat(promptList[0]);
   } else {
     if (promptList.length === 2) {
@@ -261,6 +288,7 @@ const handleChat = (promptList, prompt) => {
   if (reqPromptList.length === 0) {
     return;
   }
+  regFlag.value = false;
   ChatCompletionStream(reqPromptList, clientId.value).then(res => {
     if (res.code === -1) {
       chatList[chatList.length - 1].content = res.msg
@@ -290,6 +318,37 @@ const handleDelete = (row, index) => {
     }
     initChatRecordList(chatId.value, curPage.value);
   })
+}
+const handleRegenerate = (row, index) => {
+  if (row.loading || currLoading.value) {
+    return
+  }
+  currIndex.value = index;
+  row.loading = true;
+  currLoading.value = true;
+
+  if (index == 0) {
+    Message.error(t('common.chat.nopre'))
+    return
+  }
+  let userChatInfo = chatList[index - 1];
+  if (userChatInfo.role !== 'user' || userChatInfo.content === "") {
+    Message.error(t('common.chat.nopre'))
+    return;
+  }
+  row.content = t('common.generate.start');
+  let reqPromptList = [{
+    role: userChatInfo.role,
+    content: userChatInfo.prefix + userChatInfo.content + userChatInfo.reply_content,
+  }]
+  ChatCompletionStream(reqPromptList, clientId.value).then(res => {
+    if (res.code === -1) {
+      chatList[index].content = res.msg;
+      emits('finish', false);
+    }
+  }).finally(() => {
+    copyTextListener('pre code');
+  });
 }
 defineExpose({
   handleChat,

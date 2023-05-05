@@ -171,7 +171,7 @@ const handleSysPromptChange = (e) => {
     curSysPrompt.extra = promptInfo[0].extra;
   }
   if (curSysPrompt.type === 2 && curSysPrompt.id === 3) {
-    curSysPrompt.language = '中文(简体)';
+    curSysPrompt.language = 'English';
   }
 }
 </script>

@@ -67,7 +67,7 @@
           <template #extra>
             <a-button type="outline" @click="handleGeneralSave">
               <template #icon>
-                <icon-save />
+                <icon-save/>
               </template>
               {{ $t('common.save') }}
             </a-button>
@@ -82,7 +82,8 @@
               <template #actions>
                 <div :style="{ width: '160px', marginLeft: '20px' }">
                   <a-slider :min="item.min" :max="item.max" v-if="item.type === 1" :marks="item.marks" :step="item.step"
-                            :default-value="item.value" @change="handleSliderChange($event, item)"/>
+                            :default-value="item.value" v-model="item.value"
+                            @change="handleSliderChange($event, item)"/>
                   <a-input v-else v-model="item.value"></a-input>
                 </div>
               </template>
@@ -111,12 +112,29 @@ const themeList = computed(() => [
   {id: 2, name: t('settings.theme.toLight')},
   {id: 3, name: t('settings.theme.toDark')},
 ])
+const form = ref({
+  api_key: '',
+  chat_model: '',
+  ask_model: '',
+  language: locale.value,
+  theme: 1,
+  proxy_url: '',
+  account: '',
+  access_token: '',
+  is_sync: 1,
+  sync_time: 0,
+  temperature: "0.3",
+  max_tokens: 0,
+  presence_penalty: "0",
+  frequency_penalty: "0",
+  n: 1,
+})
 const advancedList = reactive([
   {
     title: t('settings.advanced.temperature'),
     tag: 'temperature',
     desc: t('settings.advanced.temperature.desc'),
-    value: 0.7,
+    value: 0.3,
     min: 0,
     max: 2,
     step: 0.1,
@@ -166,23 +184,7 @@ const advancedList = reactive([
   // },
 ])
 const modelList = reactive(['gpt-3.5-turbo', 'gpt-3.5-turbo-0301', 'gpt-4', 'gpt-4-0314', 'gpt-4-32k', 'gpt-4-32k-0314'])
-const form = ref({
-  api_key: '',
-  chat_model: '',
-  ask_model: '',
-  language: locale.value,
-  theme: 1,
-  proxy_url: '',
-  account: '',
-  access_token: '',
-  is_sync: 1,
-  sync_time: 0,
-  temperature: "0.7",
-  max_tokens: 0,
-  presence_penalty: "0",
-  frequency_penalty: "0",
-  n: 1,
-})
+
 watch(() => locale.value, () => {
   advancedList[0].title = t("settings.advanced.temperature");
   advancedList[0].desc = t("settings.advanced.temperature.desc");
@@ -206,9 +208,7 @@ const handleCheckTheme = (e) => {
   form.value.theme = e;
   switch (e) {
     case 1:
-      // document.body.setAttribute('arco-theme', 'system');
       const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-
       darkThemeMq.addListener(e => {
         if (e.matches) {
           document.body.setAttribute('arco-theme', 'dark');
@@ -237,6 +237,13 @@ const handleChangeLocale = (e) => {
   changeLocale(e);
 }
 const handleGeneralSave = (e) => {
+  advancedList.forEach((item) => {
+    if (item.tag !== 'max_tokens') {
+      form.value[item.tag] = item.value.toString();
+    } else {
+      form.value[item.tag] = parseInt(item.value);
+    }
+  })
   SetGeneralData(form.value).then(res => {
     if (res.code === 0) {
       Message.clear();
@@ -267,13 +274,15 @@ const initGeneralInfo = (e) => {
   GetGeneralInfo().then(res => {
     if (res.code === 0) {
       form.value = res.data;
+      advancedList[0].value = parseFloat(form.value.temperature);
+      advancedList[1].value = form.value.max_tokens;
+      advancedList[2].value = parseFloat(form.value.presence_penalty);
+      advancedList[3].value = parseFloat(form.value.frequency_penalty);
     }
   })
 }
 onMounted(() => {
-  if (window.go === undefined) {
-    Message.error(t('common.panic'));
-  } else {
+  if (window.go !== undefined) {
     initGeneralInfo();
   }
 })
@@ -350,8 +359,6 @@ onMounted(() => {
 
 .card-container {
   margin-top: 20px;
-  /*border-color: var(--color-fill-2);*/
-  /*padding-left: 0px;*/
 }
 
 .card-container :deep(.arco-card-body) {

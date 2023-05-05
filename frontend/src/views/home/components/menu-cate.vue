@@ -190,14 +190,12 @@ const handleMenuIconHover = (e) => {
 }
 const handleCateClick = (row, index) => {
   currCateId.value = row.id
+  router.push('/index?cateid=' + row.id);
   emits('select', row);
 }
 const handleAddCate = () => {
   visible.value = true;
 }
-// const handleUserProfile = () => {
-//   Message.info("handle user profile")
-// }
 const handleCateCancel = () => {
   visible.value = false;
 }
