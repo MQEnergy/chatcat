@@ -55,7 +55,7 @@ func main() {
 
 	// Create application with options
 	if err := wails.Run(&options.App{
-		Title:             app.Cfg.App.AppName + " " + app.Cfg.App.Version,
+		Title:             app.Cfg.App.AppName,
 		Width:             app.Cfg.App.Width,
 		Height:            app.Cfg.App.Height,
 		MinWidth:          app.Cfg.App.MinWidth,    // 最小宽度
