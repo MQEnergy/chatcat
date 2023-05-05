@@ -44,7 +44,7 @@
             <a-card hoverable class="chat-card-item" :style="{
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
-              <a-typography-paragraph copyable>
+              <a-typography-paragraph :copyable="regFlag">
                 <div class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
@@ -58,6 +58,7 @@
                   </a-button>
                 </div>
                 <a-popconfirm
+                    v-if="regFlag"
                     :cancel-text="$t('common.cancel')"
                     :ok-text="$t('common.ok')"
                     :content="$t('common.confirmDel')"
@@ -128,7 +129,9 @@ const initChatRecordList = (chatid, page) => {
       regFlag.value = true;
       res.data.list.forEach((item) => {
         item.loading = false;
-        item.content = marked.parse(item.content);
+        if (item.role === 'user') {
+          item.content = marked.parse(item.content);
+        }
       })
       chatList.splice(0, chatList.length, ...res.data.list);
     }
@@ -207,6 +210,7 @@ const messageHandler = (data) => {
             chatList[chatIndex].content = tempContent.value;
           }
           regFlag.value = true;
+          currLoading.value = false;
           chatList[chatIndex].loading = false;
           emits('finish', false);
           break;
@@ -215,6 +219,7 @@ const messageHandler = (data) => {
             reqPromptList.push(chatList[chatIndex]);
           }
           regFlag.value = true;
+          currLoading.value = false;
           chatList[chatIndex].loading = false;
           emits('finish', false);
           tokenNumFromMessage(settingInfo.value, reqPromptList);
@@ -264,6 +269,7 @@ const handleChat = (promptList, prompt) => {
     })
     return;
   }
+  currIndex.value = 0;
   if (prompt.type === 2) {
     handleSaveChat(promptList[0]);
   } else {
@@ -315,6 +321,7 @@ const handleExampleClick = (content) => {
   }, true)
 }
 const handleDelete = (row, index) => {
+  if (currLoading.value) return;
   DeleteChatRecord(row.id).then((res) => {
     if (res.code !== 0) {
       Message.error(res.msg)
@@ -331,6 +338,7 @@ const handleRegenerate = (row, index) => {
     Message.error(t('common.chat.nopre'))
     return
   }
+  tempContent.value = "";
   currIndex.value = index;
   row.loading = true;
   currLoading.value = true;
