@@ -338,16 +338,16 @@ const handleRegenerate = (row, index) => {
     Message.error(t('common.chat.nopre'))
     return
   }
-  tempContent.value = "";
-  currIndex.value = index;
-  row.loading = true;
-  currLoading.value = true;
-
   let userChatInfo = chatList[index - 1];
   if (userChatInfo.role !== 'user' || userChatInfo.content === "") {
     Message.error(t('common.chat.nopre'))
     return;
   }
+  tempContent.value = "";
+  currIndex.value = index;
+  row.loading = true;
+  currLoading.value = true;
+
   row.content = t('common.generate.start');
   let reqPromptList = [{
     role: userChatInfo.role,
