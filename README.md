@@ -2,7 +2,14 @@
 <img src="assets/chatcat.png" width="180" height="180" />
 </p>
 
+### More Secure、Efficient、Integrated An chatGPT-based integrated efficiency tool
+
 ### Notice: The project is still under development. Please do not use it directly.
+
+[![GitHub license](https://img.shields.io/github/license/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/blob/main/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/MQEnergy/chatcat)](https://goreportcard.com/report/github.com/MQEnergy/chatcat)
+[![codebeat badge](https://codebeat.co/badges/1bf7dd49-1283-4ec9-b56e-a755e1e9c8dd)](https://codebeat.co/projects/github-com-mqenergy-chatcat-main)
+[![GitHub stars](https://img.shields.io/github/stars/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/stargazers)
 
 # Chatcat
 ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems

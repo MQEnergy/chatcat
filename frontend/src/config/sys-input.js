@@ -8,8 +8,8 @@ const SysInputEnums = [
     id: 1,
     label: t('common.prompt.select.title1'),
     desc: t('common.prompt.select.title1.desc'),
-    type: 2, // 1: 连续对话  2：问答
-    is_sys: 2, // 1: 是否需要system
+    type: 2, // 1: chat  2：answer
+    is_sys: 2, // 1: is system
     extra: []
   }, {
     id: 2,

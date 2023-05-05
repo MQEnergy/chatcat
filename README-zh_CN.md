@@ -1,8 +1,14 @@
 <p align="center" style="text-align: center">
 <img src="assets/chatcat.png" width="180" height="180" />
 </p>
+### 更安全、更高效、更聚合 基于 chatGPT 的一体化效率工具
 
 ### 注意: 项目还在开发中，请勿直接使用~
+
+[![GitHub license](https://img.shields.io/github/license/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/blob/main/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/MQEnergy/chatcat)](https://goreportcard.com/report/github.com/MQEnergy/chatcat)
+[![codebeat badge](https://codebeat.co/badges/1bf7dd49-1283-4ec9-b56e-a755e1e9c8dd)](https://codebeat.co/projects/github-com-mqenergy-chatcat-main)
+[![GitHub stars](https://img.shields.io/github/stars/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/stargazers)
 
 # Chatcat
 聊天猫 更安全高效的ChatGPT客户端 支持 Mac（Intel、M1、M2）、win7及以上系统

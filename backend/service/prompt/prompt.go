@@ -34,6 +34,17 @@ func (s *Service) GetPromptList(page int) *cresp.Response {
 	return cresp.Success(pagination)
 }
 
+// GetNormalPromptList
+// @Description: get normal prompt list
+// @receiver s
+// @return *cresp.Response
+// @author cx
+func (s *Service) GetNormalPromptList() *cresp.Response {
+	var promptList = make([]model.Prompt, 0)
+	s.App.DB.Find(&promptList, "is_common = 1")
+	return cresp.Success(promptList)
+}
+
 // SetPromptData
 // @Description: set prompt data
 // @receiver s

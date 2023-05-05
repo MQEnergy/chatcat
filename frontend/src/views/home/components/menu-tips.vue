@@ -38,7 +38,7 @@
                         :body-style="{height: '340px', overflowY: 'scroll'}"
                         :title="$t('settings.prompt.common')">
                   <a-space direction="vertical">
-                    <prompt-simple-item v-for="(item, index) in PromptEnums"
+                    <prompt-simple-item v-for="(item, index) in promptList"
                                         :item="item" :index="index" @add:prompt="handlePromptToChat">
                     </prompt-simple-item>
                   </a-space>
@@ -54,15 +54,17 @@
 
 <script setup>
 import {IconBug, IconBulb, IconClose, IconMessage} from '@arco-design/web-vue/es/icon';
-import {ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 import PromptSimpleItem from "@components/prompt/prompt-simple-item.vue";
-import PromptEnums from "@config/prompt.js";
+import {GetNormalPromptList} from "../../../../wailsjs/go/prompt/Service.js";
 
 const router = useRouter();
 const position = ref('right');
 const popupVisible = ref(false);
 const emits = defineEmits(['add:prompt'])
+const promptList = reactive([]);
+
 const handleMenuClick = (e) => {
   switch (e) {
     case "1": // contact
@@ -75,6 +77,13 @@ const handleMenuClick = (e) => {
 const handlePromptToChat = (row) => {
   emits('add:prompt', row)
 }
+const initPromptList = async () => {
+  const res = await GetNormalPromptList();
+  promptList.splice(0, promptList.length, ...res.data);
+}
+onMounted(async () => {
+  await initPromptList();
+})
 </script>
 
 <style scoped>

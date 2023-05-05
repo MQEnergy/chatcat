@@ -7,18 +7,18 @@ import {
 
 export class UpgradeService {
   /**
-   * 启动升级
+   * constructor
    * @returns {Promise<void>}
    */
   constructor() {
-    this.isUpdate = false; // 是否可更新
-    this.lastVersionInfo == {}; // 最新版本信息
-    this.downloadFileInfo = {}; // 下载信息 包含：文件大小 和 预估下载时间
+    this.isUpdate = false; // is update
+    this.lastVersionInfo == {}; // last version info
+    this.downloadFileInfo = {}; // download info include: file size, estimated download time.
     this.upgradeInfo = {}; //
   }
 
   /**
-   * 检查是否可更新
+   * check update
    * @returns {Promise<void>}
    */
   async checkUpdate() {
@@ -29,7 +29,7 @@ export class UpgradeService {
   }
 
   /**
-   * 获取下载信息
+   * get download info
    * @returns {Promise<*|boolean>}
    */
   async getDownloadInfo() {
@@ -43,7 +43,7 @@ export class UpgradeService {
   }
 
   /**
-   * 下载应用
+   * download app
    * @returns {Promise<*|boolean>}
    */
   async downloadApp() {
@@ -62,7 +62,7 @@ export class UpgradeService {
     this.upgradeInfo = upgradeInfo.data;
   }
 
-// 安装应用
+// install app
   async installApp() {
     console.log('installApp')
     if (!this.isUpdate) {
