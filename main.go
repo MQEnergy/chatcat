@@ -31,7 +31,7 @@ var assets embed.FS
 var (
 	env       = "test"
 	app       *service.App
-	fremeless = true
+	frameless = true
 )
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 
 	// frameless
 	if runtime.GOOS == "darwin" {
-		fremeless = false
+		frameless = false
 	}
 
 	// Create application with options
@@ -63,7 +63,7 @@ func main() {
 		MaxWidth:          app.Cfg.App.Width * 10,  // 最大宽度
 		MaxHeight:         app.Cfg.App.Height * 10, // 最大高度
 		DisableResize:     false,                   // 调整窗口尺寸
-		Frameless:         fremeless,               // 无边框
+		Frameless:         frameless,               // 无边框
 		StartHidden:       false,                   // 启动后隐藏
 		HideWindowOnClose: false,                   // 关闭窗口将隐藏而不退出应用程序
 		LogLevel:          logger.DEBUG,            // 日志级别

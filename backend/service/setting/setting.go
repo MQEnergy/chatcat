@@ -6,7 +6,9 @@ import (
 	"chatcat/backend/service"
 	"fmt"
 	"github.com/google/go-github/v51/github"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"net/url"
+	rt "runtime"
 )
 
 type Service struct {
@@ -100,4 +102,42 @@ func (s *Service) GetGithubReleaseList() *cresp.Response {
 		return cresp.Fail(err.Error())
 	}
 	return cresp.Success(releases)
+}
+
+// Minimise ...
+func (s *Service) Minimise() {
+	runtime.WindowMinimise(s.App.Ctx)
+}
+
+// Fullscreen ...
+func (s *Service) Fullscreen() {
+	runtime.WindowFullscreen(s.App.Ctx)
+}
+
+// NormalScreen ...
+func (s *Service) NormalScreen() {
+	runtime.WindowSetSize(s.App.Ctx, s.App.Cfg.App.Width, s.App.Cfg.App.Height)
+}
+
+// Hide ...
+func (s *Service) Hide() {
+	runtime.Hide(s.App.Ctx)
+}
+
+// Quit ...
+func (s *Service) Quit() {
+	runtime.Quit(s.App.Ctx)
+}
+
+// ReloadApp ...
+func (s *Service) ReloadApp() {
+	runtime.WindowReloadApp(s.App.Ctx)
+}
+
+// IsWindows ...
+func (s *Service) IsWindows() bool {
+	if rt.GOOS == "darwin" {
+		return false
+	}
+	return true
 }

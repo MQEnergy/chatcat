@@ -45,7 +45,7 @@
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
               <a-typography-paragraph copyable>
-                <div class="chat-div" v-html="item.content"></div>
+                <div class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
                 <div v-if="item.role === 'assistant' && regFlag" style="position: absolute; left: 10px;"
@@ -128,6 +128,7 @@ const initChatRecordList = (chatid, page) => {
       regFlag.value = true;
       res.data.list.forEach((item) => {
         item.loading = false;
+        item.content = marked.parse(item.content);
       })
       chatList.splice(0, chatList.length, ...res.data.list);
     }

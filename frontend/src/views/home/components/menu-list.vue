@@ -144,6 +144,7 @@ const handleAddChat = () => {
       name: res.data.name,
       sort: res.data.sort
     })
+    currIdx.value = 0;
     emits('new:chat', res.data);
   })
 }

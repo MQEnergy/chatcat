@@ -56,7 +56,7 @@ const headerInfo = ref({
   chatName: t('common.newchat'),
   cateId: 0,
   chatId: 0,
-  modelName: '',
+  modelName: 'loading',
   msgNum: 0,
   tokenNum: 0
 })

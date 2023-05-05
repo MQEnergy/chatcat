@@ -2,9 +2,10 @@
   <router-view/>
 </template>
 <script setup>
-import {GetGeneralInfo} from "../wailsjs/go/setting/Service.js";
+import {GetGeneralInfo, IsWindows} from "../wailsjs/go/setting/Service.js";
 
 if (window.go !== undefined) {
+
   GetGeneralInfo().then(res => {
     if (res.code === 0) {
       const theme = res.data.theme;
@@ -29,6 +30,11 @@ if (window.go !== undefined) {
     }
   })
 }
+const handleWindow = async () => {
+  const isWindows = await IsWindows();
+  window.isWindows = isWindows;
+}
+handleWindow();
 </script>
 
 <style>
