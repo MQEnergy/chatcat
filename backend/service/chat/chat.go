@@ -225,10 +225,6 @@ func (s *Service) SetChatData(data model.Chat) *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) SetChatRecordData(data model.ChatRecord) *cresp.Response {
-	//var chatRecordInfo model.ChatRecord
-	//if err := s.App.DB.First(&chatRecordInfo, "name = ?", data.Name).Error; err == nil {
-	//	return cresp.Fail("chat record is already existed")
-	//}
 	if err := s.App.DB.Save(&data).Error; err != nil {
 		return cresp.Fail("chat record save failed")
 	}

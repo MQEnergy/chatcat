@@ -50,7 +50,7 @@
               <template #actions>
                 <div v-if="item.role === 'assistant' && regFlag" style="position: absolute; left: 10px;"
                      @click="handleRegenerate(item, index)">
-                  <a-button type="text" :loading="item.loading">
+                  <a-button type="text" size="mini" :loading="item.loading">
                     <template #icon>
                       <icon-refresh/>
                     </template>
@@ -235,10 +235,13 @@ const handleSaveChat = (chatInfo) => {
     cate_id: cateId.value,
     chat_id: chatId.value,
     name: "",
-    role: chatInfo.role,
-    prefix: chatInfo.prefix || '',
-    reply_content: chatInfo.reply_content || '',
     content: chatInfo.content,
+    reply_content: chatInfo.reply_content || '',
+    prefix: chatInfo.prefix || '',
+    role: chatInfo.role,
+  }
+  if (chatInfo.id) {
+    reqChatInfo.id = chatInfo.id;
   }
   SetChatRecordData(reqChatInfo).then(res => {
     if (res.code !== 0) {
@@ -323,14 +326,14 @@ const handleRegenerate = (row, index) => {
   if (row.loading || currLoading.value) {
     return
   }
-  currIndex.value = index;
-  row.loading = true;
-  currLoading.value = true;
-
   if (index == 0) {
     Message.error(t('common.chat.nopre'))
     return
   }
+  currIndex.value = index;
+  row.loading = true;
+  currLoading.value = true;
+
   let userChatInfo = chatList[index - 1];
   if (userChatInfo.role !== 'user' || userChatInfo.content === "") {
     Message.error(t('common.chat.nopre'))
@@ -350,6 +353,7 @@ const handleRegenerate = (row, index) => {
     copyTextListener('pre code');
   });
 }
+
 defineExpose({
   handleChat,
   addNewChat,
