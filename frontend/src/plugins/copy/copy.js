@@ -42,7 +42,7 @@ export function copyTextListener(divClass) {
           copyBtn.innerHTML = copiedIcon;
           setTimeout(() => {
             copyBtn.innerHTML = normalIcon;
-          }, 1500);
+          }, 1000);
         });
         clipboard.on('error', function (e) {
           console.info('Action:', e.action);
