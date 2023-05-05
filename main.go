@@ -110,8 +110,7 @@ func InitGoroutine() {
 				params.Add("data", string(payload))
 				pushUrl := fmt.Sprintf("%s?%s", app.Cfg.App.PushUrl, params.Encode())
 				chttp.Request("GET", pushUrl, "")
-			//res, err := chttp.Request("GET", pushUrl, "")
-			//app.LogInfof("pushUrl: %s response: %v err: %v", res, pushUrl, err)
+
 			case exitSignal := <-app.ExitSignalChan:
 				if exitSignal {
 					app.LogInfof("ExitSignalChan received：%s", exitSignal)
