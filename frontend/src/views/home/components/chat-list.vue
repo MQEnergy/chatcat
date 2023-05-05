@@ -44,7 +44,7 @@
             <a-card hoverable class="chat-card-item" :style="{
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
-              <a-typography-paragraph :copyable="regFlag">
+              <a-typography-paragraph :copyable="regFlag && !currLoading">
                 <div class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
@@ -58,7 +58,7 @@
                   </a-button>
                 </div>
                 <a-popconfirm
-                    v-if="regFlag"
+                    v-if="regFlag && !currLoading"
                     :cancel-text="$t('common.cancel')"
                     :ok-text="$t('common.ok')"
                     :content="$t('common.confirmDel')"
