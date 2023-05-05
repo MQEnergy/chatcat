@@ -221,6 +221,10 @@ func (g *GPT) ChatCompletionStream(clientId string) {
 	g.App.ClientId = clientId
 	g.ChatCompStream, err = g.Client.CreateChatCompletionStream(g.App.Ctx, g.ChatCompletionRequest)
 	if err != nil {
+		g.App.WsPushChan <- service.PushResp{
+			Code: -1,
+			Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
+		}
 		return
 	}
 	defer g.ChatCompStream.Close()
@@ -265,6 +269,10 @@ func (g *GPT) CompletionStream(clientId string) {
 	g.App.ClientId = clientId
 	stream, err := g.Client.CreateCompletionStream(g.App.Ctx, g.CompletionRequest)
 	if err != nil {
+		g.App.WsPushChan <- service.PushResp{
+			Code: -1,
+			Data: fmt.Sprintf("Chatcat Warm Reminder: %s", err.Error()),
+		}
 		return
 	}
 	defer stream.Close()
