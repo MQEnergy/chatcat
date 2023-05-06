@@ -429,7 +429,7 @@ defineExpose({
 
 <style scoped>
 .chat-div {
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .chat-card-item {
