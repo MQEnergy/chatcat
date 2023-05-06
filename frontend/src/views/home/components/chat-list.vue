@@ -47,7 +47,7 @@
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
               <a-typography-paragraph :copyable="regFlag && !currLoading">
-                <template v-if="item.content === $t('common.generate.start')">
+                <template v-if="item.role === 'assistant' && item.content === $t('common.generate.start')">
                   <a-spin size="6" dot/>
                 </template>
                 <div v-else class="chat-div scrollbar" v-html="item.content"></div>
