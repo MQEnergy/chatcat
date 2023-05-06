@@ -1,6 +1,7 @@
 <template>
-  <div class="chat-container">
-    <a-space v-if="chatList.length === 0 && !recordLoading" class="chat-space-container flash" ref="chatListRef"
+  <div class="chat-container" ref="chatRecordRef">
+    <a-space class="chat-space-container flash"
+             v-if="chatList.length === 0 && !recordLoading"
              align="start" :size="10">
       <a-avatar
           class="chat-avatar"
@@ -46,7 +47,10 @@
                 backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
               }">
               <a-typography-paragraph :copyable="regFlag && !currLoading">
-                <div class="chat-div scrollbar" v-html="item.content"></div>
+                <template v-if="item.content === $t('common.generate.start')">
+                  <a-spin dot/>
+                </template>
+                <div v-else class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
                 <div v-if="item.reg_flag && regFlag" style="position: absolute; left: 10px;"
@@ -120,7 +124,7 @@ const curPage = ref(1);
 const currIndex = ref(0);
 const regFlag = ref(false);
 const currLoading = ref(false);
-const chatListRef = ref(null);
+const chatRecordRef = ref(null);
 
 // ----------------------------------------------------------------
 const initChatRecordList = (chatid, page) => {
@@ -147,12 +151,21 @@ const initChatRecordList = (chatid, page) => {
       chatList.splice(0, chatList.length, ...res.data.list);
     }
   }).finally(() => {
-    recordLoading.value = false;
     nextTick(() => {
+      recordLoading.value = false;
+      handleScrollToBottom();
       tokenNumFromMessage(settingInfo.value, chatList);
       copyTextListener('pre code');
     })
   })
+}
+const handleScrollToBottom = () => {
+  setTimeout(() => {
+    chatRecordRef.value.scrollTo({
+      top: chatRecordRef.value.scrollHeight,
+      behavior: "smooth",
+    });
+  }, 200);
 }
 watch(() => props.cateid, () => {
   cateId.value = props.cateid;
@@ -237,6 +250,7 @@ const messageHandler = (data) => {
           }
           break;
       }
+      handleScrollToBottom();
   }
 }
 const resetFlag = (chatIndex) => {
@@ -418,6 +432,7 @@ defineExpose({
 
 .chat-space-container {
   margin-top: 10px;
+  overflow: scroll;
 }
 
 .chat-container {
@@ -426,6 +441,7 @@ defineExpose({
   overflow-y: scroll;
   margin-top: 55px;
   height: 70vh;
+  animation: slide-down 1s ease-out forwards;
 }
 
 .chat-container :deep(.arco-card-body p) {
@@ -461,5 +477,19 @@ defineExpose({
   cursor: pointer;
   display: none;
   background: var(--color-bg-2);
+}
+
+@keyframes scroll-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 </style>

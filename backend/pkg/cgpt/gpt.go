@@ -162,7 +162,7 @@ func (g *GPT) WithProxy(rawUrl string) *GPT {
 		Transport: &http.Transport{
 			Proxy: proxy,
 		},
-		Timeout: time.Minute,
+		Timeout: time.Second * 30,
 	}
 	g.Client = openai.NewClientWithConfig(config)
 	return g
