@@ -161,12 +161,14 @@ const initChatRecordList = (chatid, page) => {
   })
 }
 const handleScrollToBottom = () => {
-  setTimeout(() => {
-    chatRecordRef.value.scrollTo({
-      top: chatRecordRef.value.scrollHeight,
-      behavior: "smooth",
-    });
-  }, 200);
+  if (currIndex.value === 0) {
+    setTimeout(() => {
+      chatRecordRef.value.scrollTo({
+        top: chatRecordRef.value.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 200);
+  }
 }
 watch(() => props.cateid, () => {
   cateId.value = props.cateid;
@@ -223,6 +225,7 @@ const messageHandler = (data) => {
       break;
     case 10010: // message
       let chatIndex = currIndex.value !== 0 ? currIndex.value : chatList.length - 1;
+      handleScrollToBottom();
       switch (data.data.code) {
         case 0: // streaming
           tempContent.value += data.data.data;
@@ -251,13 +254,13 @@ const messageHandler = (data) => {
           }
           break;
       }
-      handleScrollToBottom();
   }
 }
 const resetFlag = (chatIndex) => {
   BreakOffChatStream()
   regFlag.value = true;
   currLoading.value = false;
+  currIndex.value = 0;
   if (chatList.length > 0) {
     chatList[chatIndex].loading = false;
     chatList[chatIndex].reg_flag = true;
@@ -301,6 +304,9 @@ const handleChat = (promptList, prompt) => {
       emits('finish', false);
     })
     return;
+  }
+  if (chatRecordRef.value) {
+    chatRecordRef.value.scrollTop = chatRecordRef.value.scrollHeight;
   }
   currIndex.value = 0;
   if (prompt.type === 2) {
@@ -372,6 +378,7 @@ const handleExampleClick = (content) => {
 }
 const handleDelete = (row, index) => {
   if (currLoading.value) return;
+  currIndex.value = index;
   DeleteChatRecord(row.id).then((res) => {
     if (res.code !== 0) {
       Message.error(res.msg)
