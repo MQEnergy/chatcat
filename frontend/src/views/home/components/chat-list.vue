@@ -48,7 +48,7 @@
               }">
               <a-typography-paragraph :copyable="regFlag && !currLoading">
                 <template v-if="item.content === $t('common.generate.start')">
-                  <a-spin dot/>
+                  <a-spin size="6" dot/>
                 </template>
                 <div v-else class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
@@ -441,7 +441,6 @@ defineExpose({
 
 .chat-space-container {
   margin-top: 10px;
-  overflow: scroll;
 }
 
 .chat-container {

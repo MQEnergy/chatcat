@@ -332,8 +332,9 @@ func (s *Service) CompletionStream(prompt, clientId string) *cresp.Response {
 	if data.ApiKey == "" {
 		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
 	}
-	GPTPkg = cgpt.New(data.ApiKey, s.App).WithProxy(data.ProxyUrl)
+	GPTPkg = cgpt.New(data.ApiKey, s.App)
 	gpt := GPTPkg.WithProxy(data.ProxyUrl).
+		WithProxy(data.ProxyUrl).
 		WithModel(data.AskModel).
 		WithPrompt(prompt).
 		WithMaxTokens(data.MaxTokens)
@@ -361,8 +362,9 @@ func (s *Service) ChatCompletionStream(messages []openai.ChatCompletionMessage, 
 	if data.ApiKey == "" {
 		return cresp.Fail("Chatcat Warm Reminder: You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.")
 	}
-	GPTPkg = cgpt.New(data.ApiKey, s.App).WithProxy(data.ProxyUrl)
-	gpt := GPTPkg.WithModel(data.ChatModel).
+	GPTPkg = cgpt.New(data.ApiKey, s.App)
+	gpt := GPTPkg.WithProxy(data.ProxyUrl).
+		WithModel(data.ChatModel).
 		WithTemperature(gconv.Float32(data.Temperature)).
 		WithPresencePenalty(gconv.Float32(data.PresencePenalty)).
 		WithFrequencyPenalty(gconv.Float32(data.FrequencyPenalty)).
@@ -391,7 +393,7 @@ func (s *Service) GetWsUrl() string {
 // @receiver s
 // @author cx
 func (s *Service) BreakOffChatStream() {
-	if GPTPkg != nil {
+	if GPTPkg != nil && GPTPkg.ChatCompStream != nil {
 		GPTPkg.ChatCompStream.Close()
 	}
 }
