@@ -1,6 +1,7 @@
 <template>
   <div class="chat-container">
-    <a-space v-if="chatList.length === 0 && !recordLoading" class="chat-space-container flash" align="start" :size="10">
+    <a-space v-if="chatList.length === 0 && !recordLoading" class="chat-space-container flash" ref="chatListRef"
+             align="start" :size="10">
       <a-avatar
           class="chat-avatar"
           :size="32">
@@ -48,7 +49,7 @@
                 <div class="chat-div scrollbar" v-html="item.content"></div>
               </a-typography-paragraph>
               <template #actions>
-                <div v-if="item.role === 'assistant' && regFlag" style="position: absolute; left: 10px;"
+                <div v-if="item.reg_flag && regFlag" style="position: absolute; left: 10px;"
                      @click="handleRegenerate(item, index)">
                   <a-button type="text" size="mini" :loading="item.loading">
                     <template #icon>
@@ -119,18 +120,28 @@ const curPage = ref(1);
 const currIndex = ref(0);
 const regFlag = ref(false);
 const currLoading = ref(false);
+const chatListRef = ref(null);
 
 // ----------------------------------------------------------------
 const initChatRecordList = (chatid, page) => {
   recordLoading.value = true;
-  // no page Todo
+  // no page 100 limit Todo
   GetChatRecordList(chatid, page).then(res => {
     if (res.code === 0) {
       regFlag.value = true;
-      res.data.list.forEach((item) => {
+      res.data.list.forEach((item, index) => {
         item.loading = false;
+        item.reg_flag = false;
         if (item.role === 'user') {
           item.content = marked.parse(item.content);
+        }
+        if (item.role === 'assistant') {
+          item.reg_flag = true;
+          if (index === 0) {
+            item.reg_flag = false;
+          } else if (res.data.list[index - 1].role === 'assistant') {
+            item.reg_flag = false;
+          }
         }
       })
       chatList.splice(0, chatList.length, ...res.data.list);
@@ -145,11 +156,11 @@ const initChatRecordList = (chatid, page) => {
 }
 watch(() => props.cateid, () => {
   cateId.value = props.cateid;
-  resetFlag();
+  resetFlag(0);
 })
 watch(() => props.chatid, () => {
   chatId.value = props.chatid;
-  resetFlag();
+  resetFlag(0);
   initChatRecordList(chatId.value, curPage.value);
 })
 // ----------------------------------------------------------------
@@ -183,7 +194,7 @@ const initWs = () => {
       messageHandler(data);
     });
     socket.addEventListener('close', (event) => {
-      Message.error("Websocket connect error, Please close and reopen.")
+      Message.error("Websocket connect close, Please close and reopen.")
     });
     socket.addEventListener('error', (event) => {
       Message.error("Websocket connect error, Please close and reopen.")
@@ -200,27 +211,25 @@ const messageHandler = (data) => {
       let chatIndex = currIndex.value !== 0 ? currIndex.value : chatList.length - 1;
       switch (data.data.code) {
         case 0: // streaming
-          emits('finish', true);
           tempContent.value += data.data.data;
           if (chatList.length > 0) {
             chatList[chatIndex].content = marked.parse(tempContent.value);
           }
+          emits('finish', true);
           break;
         case -1: // stream error
           tempContent.value += data.data.data;
           if (tempContent.value.indexOf('response body closed') < 0) {
             chatList[chatIndex].content = tempContent.value;
           }
-          resetFlag();
-          chatList[chatIndex].loading = false;
+          resetFlag(chatIndex);
           emits('finish', false);
           break;
         case 1: // stream finished
           if (chatList.length > 0) {
             reqPromptList.push(chatList[chatIndex]);
           }
-          resetFlag();
-          chatList[chatIndex].loading = false;
+          resetFlag(chatIndex);
           emits('finish', false);
           tokenNumFromMessage(settingInfo.value, reqPromptList);
           if (chatList.length > 0) {
@@ -230,9 +239,13 @@ const messageHandler = (data) => {
       }
   }
 }
-const resetFlag = () => {
+const resetFlag = (chatIndex) => {
   regFlag.value = true;
   currLoading.value = false;
+  if (chatList.length > 0) {
+    chatList[chatIndex].loading = false;
+    chatList[chatIndex].reg_flag = true;
+  }
 }
 onMounted(() => {
   if (window.go !== undefined) {
@@ -290,6 +303,21 @@ const handleChat = (promptList, prompt) => {
     content: t('common.generate.start'),
   });
   let chatPromptList = JSON.parse(JSON.stringify(toRaw(showChatList)));
+  chatPromptList.forEach((item, index) => {
+    item.loading = false;
+    item.reg_flag = false;
+    if (item.role === 'user') {
+      item.content = marked.parse(item.content);
+    }
+    if (item.role === 'assistant') {
+      item.reg_flag = true;
+      if (index === 0) {
+        item.reg_flag = false;
+      } else if (chatPromptList[index - 1].role === 'assistant') {
+        item.reg_flag = false;
+      }
+    }
+  });
   tempContent.value = "";
   chatList.push(...chatPromptList)
   let reqPromptList;
@@ -318,7 +346,9 @@ const handleExampleClick = (content) => {
     role: 'user',
     prefix: '',
     content: content,
-    reply_content: ''
+    reply_content: '',
+    reg_flag: false,
+    loading: false,
   }]
   emits('add:chat', promptList, {
     type: 2,

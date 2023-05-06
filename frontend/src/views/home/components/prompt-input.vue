@@ -36,7 +36,7 @@
       </a-button>
     </div>
 
-    <!-- 停止对话stream -->
+    <!-- stop chat stream -->
     <div class="backoff-container" v-if="checkOffFlag">
       <a-button size="medium" @click="handleBreakOffChat">
         <template #icon>

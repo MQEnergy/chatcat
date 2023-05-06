@@ -149,12 +149,16 @@ func (g *GPT) WithMaxTokens(tokens int) *GPT {
 // @author cx
 func (g *GPT) WithProxy(rawUrl string) *GPT {
 	config := openai.DefaultConfig(g.Token)
-	proxyUrl, err := url.Parse(rawUrl)
-	if err != nil {
-		panic(err)
+	proxy := http.ProxyFromEnvironment
+	if rawUrl != "" {
+		proxyUrl, err := url.Parse(rawUrl)
+		if err != nil {
+			panic(err)
+		}
+		proxy = http.ProxyURL(proxyUrl)
 	}
 	transport := &http.Transport{
-		Proxy: http.ProxyURL(proxyUrl),
+		Proxy: proxy,
 	}
 	config.HTTPClient = &http.Client{
 		Transport: transport,
@@ -288,7 +292,7 @@ func (g *GPT) CompletionStream(clientId string) {
 			}
 			return
 		}
-		// ws 推送
+		// ws push
 		clog.PrintInfo(fmt.Sprintf("CompletionStream text: %#v", response.Choices[0].Text))
 		g.App.WsPushChan <- service.PushResp{
 			Code: 0,
