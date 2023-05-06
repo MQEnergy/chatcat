@@ -86,6 +86,7 @@ import {nextTick, onMounted, reactive, ref, toRaw, watch} from "vue";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
 import {
+  BreakOffChatStream,
   ChatCompletionStream,
   DeleteChatRecord,
   GetChatRecordList,
@@ -254,6 +255,7 @@ const messageHandler = (data) => {
   }
 }
 const resetFlag = (chatIndex) => {
+  BreakOffChatStream()
   regFlag.value = true;
   currLoading.value = false;
   if (chatList.length > 0) {
