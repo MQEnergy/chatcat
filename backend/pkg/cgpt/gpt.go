@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"sync"
+	"time"
 )
 
 /*
@@ -157,11 +158,11 @@ func (g *GPT) WithProxy(rawUrl string) *GPT {
 		}
 		proxy = http.ProxyURL(proxyUrl)
 	}
-	transport := &http.Transport{
-		Proxy: proxy,
-	}
 	config.HTTPClient = &http.Client{
-		Transport: transport,
+		Transport: &http.Transport{
+			Proxy: proxy,
+		},
+		Timeout: time.Minute,
 	}
 	g.Client = openai.NewClientWithConfig(config)
 	return g

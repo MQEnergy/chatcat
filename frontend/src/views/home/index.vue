@@ -8,7 +8,8 @@
         </a-layout-sider>
         <!-- menu list sider -->
         <a-layout-sider class="layout-sider-chat-container">
-          <menu-list :cateid="headerInfo.cateId" :chatid="headerInfo.chatId" @new:chat="addNewChat" @select:chat="handleSelectChat"
+          <menu-list :cateid="headerInfo.cateId" :chatid="headerInfo.chatId" @new:chat="addNewChat"
+                     @select:chat="handleSelectChat"
                      @header:info="handleHeaderInfo"></menu-list>
         </a-layout-sider>
         <!-- chat content -->
@@ -106,6 +107,7 @@ onMounted(() => {
 // ----------------------------------------------------------------
 const handleCateList = (item) => {
   headerInfo.value.cateId = item.id;
+  headerInfo.value.chatId = 0;
   headerInfo.value.cateName = item.name;
 }
 const handlePromptToChat = (row) => {
