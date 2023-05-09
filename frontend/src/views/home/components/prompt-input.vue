@@ -187,7 +187,7 @@ const handleSysPromptChange = (e) => {
   padding: 10px;
   background: var(--color-bg-2);
   position: relative;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--color-neutral-3);
 }
 
 .prompt-container .prompt-input-div .prompt-textarea {
@@ -211,5 +211,8 @@ const handleSysPromptChange = (e) => {
   position: absolute;
   bottom: 175px;
   left: 10px;
+}
+.prompt-container :deep(.arco-textarea-wrapper) {
+  background: none;
 }
 </style>

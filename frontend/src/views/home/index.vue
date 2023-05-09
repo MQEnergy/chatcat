@@ -149,6 +149,10 @@ const handleSelectChat = (row) => {
   width: 70px !important;
   background: var(--color-neutral-2);
   text-align: center;
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard */
 }
 
 .layout-container .layout-sider-chat-container {
@@ -156,6 +160,10 @@ const handleSelectChat = (row) => {
   position: relative;
   border-right: 1px solid var(--color-neutral-3);
   /*background: var(--color-neutral-3);*/
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard */
 }
 
 .prompt-input-container {
