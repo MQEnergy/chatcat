@@ -4,7 +4,13 @@
 
 ### 更安全、更高效、更聚合 基于 chatGPT 的一体化效率工具
 
-### 注意: 项目还在开发中，请勿直接使用~
+中文文档 | [English](README.md)
+
+下载地址:
+
+- [Chatcat Mac Intel v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.dmg) (英特尔芯片)
+- [Chatcat Mac M1/M2 v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-arm64-installer.dmg) (苹果芯片)
+- [Chatcat Win x64 v0.1.0-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.exe) (支持window7系统64位及以上)
 
 [![GitHub license](https://img.shields.io/github/license/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/blob/main/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/MQEnergy/chatcat)](https://goreportcard.com/report/github.com/MQEnergy/chatcat)
@@ -23,8 +29,6 @@ Chatcat的ChatGPT客户端旨在成为最佳的助手，为学习和工作提供
 同时，我们还将不断拓展和扩展聊天工具的功能和特性。我们将积极倾听用户的建议和反馈，尽可能地满足各种不同用户的需求和使用场景，力求做到最全面、最多样化、最灵活性的工具。
 
 我们相信，只要我们不断努力和追求，Chatcat必将成为最好的聊天效率工具，为用户创造更多的价值。
-
-中文文档 | [English](README.md)
 
 ## 功能介绍
 1. 分类管理：对对话内容列表进行分门别类的管理
