@@ -249,6 +249,16 @@ const handleCateOk = (form) => {
   left: 53px;
 }
 
+.menu-div :deep(.arco-menu-light) {
+  background: rgb(var(--gray-9)) !important;
+}
+.menu-div :deep(.arco-menu-light .arco-menu-item, .arco-menu-light .arco-menu-group-title, .arco-menu-light .arco-menu-pop-header, .arco-menu-light .arco-menu-inline-header) {
+  color: rgb(var(--gray-1)) !important;
+  background: rgb(var(--gray-9));
+}
+.menu-div :deep(.arco-menu-light .arco-menu-item:hover) {
+  background: rgb(var(--gray-8));
+}
 .avatar {
   position: relative;
   cursor: pointer;

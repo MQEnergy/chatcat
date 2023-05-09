@@ -270,7 +270,7 @@ const handleSearchChat = () => {
 }
 
 .selected {
-  background: var(--color-bg-2);
+  background: var(--color-neutral-3);
 }
 
 </style>
