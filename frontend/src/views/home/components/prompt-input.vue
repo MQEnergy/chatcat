@@ -28,7 +28,7 @@
       </div>
       <a-textarea v-model="promptValue" class="prompt-textarea" :placeholder="$t('common.prompt.input.placeholder')"
                   @keydown="handleKeyDownSend"/>
-      <a-button class="prompt-btn" size="large" type="primary" @click="handleSend"
+      <a-button class="prompt-btn" size="large" @click="handleSend"
                 :loading="sendLoading">
         <template #icon>
           <icon-send size="18"/>
@@ -199,12 +199,14 @@ const handleSysPromptChange = (e) => {
 .prompt-container .prompt-extension {
 }
 
-.prompt-container :deep(.prompt-btn) {
+.prompt-container .prompt-btn {
   border-radius: 6px;
   width: 45px;
   position: absolute;
   right: 20px;
   bottom: 16px;
+  background: rgb(var(--purple-5));
+  color: #fff;
 }
 
 .backoff-container {

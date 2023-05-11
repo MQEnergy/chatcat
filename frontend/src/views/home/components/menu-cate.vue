@@ -27,7 +27,7 @@
     <a-space direction="vertical" :size="20">
       <a-tooltip :content="$t('home.menuCate.settings.addCate')" position="right">
         <a-avatar :size="36"
-                  :style="{ backgroundColor: '#3370ff', cursor: 'pointer' }"
+                  :style="{ backgroundColor: 'rgb(var(--purple-5))', cursor: 'pointer' }"
                   @click="handleAddCate">
           <icon-plus/>
         </a-avatar>

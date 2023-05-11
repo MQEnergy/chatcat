@@ -123,4 +123,5 @@ tr:nth-child(even) {
     background: var(--color-bg-1) !important;
     padding: 12px !important;
     position: relative;
+    border: none !important;
 }

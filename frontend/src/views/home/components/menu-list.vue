@@ -273,7 +273,7 @@ const handleSearchChat = () => {
 
 .selected {
   background: var(--color-neutral-3);
-  background: #8a57ea;
+  background: rgb(var(--purple-5));
   color: #fff;
 }
 

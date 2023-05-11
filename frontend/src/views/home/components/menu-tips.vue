@@ -103,12 +103,8 @@ onMounted(async () => {
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.1s;
-}
-
-/* button right */
-.button-trigger {
   right: 10px;
-  background-color: rgb(var(--arcoblue-6));
+  background-color: rgb(var(--purple-5));
 }
 
 .button-trigger .button-trigger-active {

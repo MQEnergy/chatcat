@@ -33,7 +33,7 @@
           <!-- avatar -->
           <a-avatar
               class="chat-avatar"
-              :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#8a57ea', overflow: 'hidden'}"
+              :style="{backgroundColor: item.role === 'assistant' ? '#fff' : 'rgb(var(--purple-5))', overflow: 'hidden'}"
               :size="32">
             <img v-if="item.role === 'assistant'"
                  alt="avatar"
@@ -46,7 +46,7 @@
           <!-- chat -->
           <a-space direction="vertical">
             <a-card class="chat-card-item" :style="{
-                backgroundColor: item.role === 'assistant' ? 'var(--color-border-1)' : '#8a57ea'
+                backgroundColor: item.role === 'assistant' ? 'var(--color-border-1)' : 'rgb(var(--purple-5))'
               }">
               <a-typography-paragraph copyable>
                 <template v-if="item.role === 'assistant' && item.content === $t('common.generate.start')">
@@ -449,10 +449,6 @@ defineExpose({
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
-  /*background-color: var(--color-bg-5);*/
-  /*background-color: #3271fd;*/
-  background-color: #8a57ea;
-  /*background-color: #9373ee;*/
   border: none;
 }
 
