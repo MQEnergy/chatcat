@@ -226,7 +226,7 @@ const handleSearchChat = () => {
 <style scoped>
 .menu-search-container {
   padding: 10px;
-  border-bottom: 1px solid var(--color-neutral-3);
+  border-bottom: 1px solid var(--color-neutral-2);
   background: var(--color-bg-2);
 }
 

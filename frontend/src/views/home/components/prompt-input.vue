@@ -185,9 +185,9 @@ const handleSysPromptChange = (e) => {
   height: 150px;
   width: 100%;
   padding: 10px;
-  background: var(--color-bg-2);
+  background: var(--color-bg-1);
   position: relative;
-  border-top: 1px solid var(--color-neutral-3);
+  border-top: 1px solid var(--color-neutral-2);
 }
 
 .prompt-container .prompt-input-div .prompt-textarea {
@@ -203,8 +203,8 @@ const handleSysPromptChange = (e) => {
   border-radius: 6px;
   width: 45px;
   position: absolute;
-  right: 20px;
-  bottom: 16px;
+  right: 10px;
+  bottom: 10px;
   background: rgb(var(--purple-5));
   color: #fff;
 }
@@ -216,5 +216,6 @@ const handleSysPromptChange = (e) => {
 }
 .prompt-container :deep(.arco-textarea-wrapper) {
   background: none;
+  border: none;
 }
 </style>

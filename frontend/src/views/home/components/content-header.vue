@@ -72,7 +72,7 @@ const handleNormalScreen = () => {
   top: 0;
   position: absolute;
   width: 100%;
-  border-bottom: 1px solid var(--color-neutral-3);
+  border-bottom: 1px solid var(--color-neutral-2);
   z-index: 9;
   height: 52px;
 }

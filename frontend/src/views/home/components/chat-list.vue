@@ -67,22 +67,24 @@
               </a-typography-paragraph>
 
               <template #actions>
-                <div v-if="item.reg_flag && regFlag" style="position: absolute; left: 10px;"
-                     @click="handleRegenerate(item, index)">
-                  <a-button type="text" size="mini" :style="{color: 'rgb(var(--purple-5))'}" :loading="item.loading">
-                    <template #icon>
-                      <icon-refresh/>
-                    </template>
-                    {{ $t('common.regenerate') }}
-                  </a-button>
-                </div>
+                <a-button class="refresh-btn"
+                          type="text"
+                          v-if="item.reg_flag && regFlag"
+                          size="mini" :loading="item.loading"
+                          @click="handleRegenerate(item, index)">
+                  <template #icon>
+                    <icon-refresh/>
+                  </template>
+                  {{ $t('common.regenerate') }}
+                </a-button>
                 <a-popconfirm
                     v-if="regFlag && !currLoading"
                     :cancel-text="$t('common.cancel')"
                     :ok-text="$t('common.ok')"
                     :content="$t('common.confirmDel')"
                     @ok="handleDelete(item, index)">
-                  <icon-delete :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
+                  <icon-delete class="delete-btn"
+                               :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
                 </a-popconfirm>
               </template>
             </a-card>
@@ -490,9 +492,8 @@ defineExpose({
 
 .chat-container :deep(.arco-typography-operation-copy), .chat-container :deep(.arco-typography-operation-copied) {
   position: absolute;
-  bottom: 9px;
-  right: 40px;
-  color: #fff;
+  bottom: 3px;
+  right: 10px;
   background: none;
 }
 
@@ -528,5 +529,19 @@ defineExpose({
     opacity: 0;
     transform: translateY(20px);
   }
+}
+
+.refresh-btn {
+  position: absolute;
+  left: 13px;
+  color: rgb(var(--purple-5));
+  padding: 0px;
+  background: none !important;
+}
+
+.delete-btn {
+  position: absolute;
+  right: 35px;
+  bottom: 10px;
 }
 </style>

@@ -139,7 +139,7 @@ const handleSelectChat = (row) => {
 }
 
 .layout-container .chat-list-container {
-  background-color: var(--color-bg-2);
+  background-color: var(--color-bg-1);
   position: relative;
   width: 100%;
   height: 100vh;
@@ -158,7 +158,7 @@ const handleSelectChat = (row) => {
 .layout-container .layout-sider-chat-container {
   width: 240px !important;
   position: relative;
-  border-right: 1px solid var(--color-neutral-3);
+  border-right: 1px solid var(--color-neutral-2);
   /*background: var(--color-neutral-3);*/
   -webkit-user-select: none; /* Chrome, Safari, Opera */
   -moz-user-select: none; /* Firefox */
