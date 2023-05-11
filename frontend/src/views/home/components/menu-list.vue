@@ -17,7 +17,7 @@
     </template>
     <a-list-item v-if="chatList.length > 0" class="menu-list-item flash" v-for="(item, index) in chatList"
                  @click="handleSelectChat(item, index)"
-                 :class="{'selected flash': currIdx === index}" :key="index">
+                 :class="{'selected': currIdx === index}" :key="index">
       <a-list-item-meta style="position: relative;">
         <template #title>
           <div v-if="index === editIdx">
@@ -247,6 +247,7 @@ const handleSearchChat = () => {
   height: 49px;
   margin-bottom: 10px;
   border-radius: 4px;
+  padding: 9px 15px !important;
   /*border: 1px solid var(--color-neutral-3);*/
   border: none;
 }
