@@ -52,14 +52,17 @@
                 <template v-if="item.role === 'assistant' && item.content === $t('common.generate.start')">
                   <a-spin size="6" dot/>
                 </template>
-                <div v-else class="chat-div scrollbar" :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"
+                <div v-else class="chat-div scrollbar"
+                     :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"
                      v-html="item.content"></div>
                 <template #copy-tooltip>
                   {{ $t('common.copy') }}
                 </template>
                 <template #copy-icon={copied} v-if="regFlag && !currLoading">
-                  <icon-copy v-if="!copied" :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
-                  <icon-check-circle-fill v-else :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
+                  <icon-copy v-if="!copied"
+                             :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
+                  <icon-check-circle-fill v-else
+                                          :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
                 </template>
               </a-typography-paragraph>
 
@@ -440,15 +443,12 @@ defineExpose({
 </script>
 
 <style scoped>
-.chat-div {
-  /*overflow: scroll;*/
-}
-
 .chat-card-item {
   width: 510px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+  background-color: rgb(var(--purple-5));
   border: none;
 }
 
@@ -460,6 +460,10 @@ defineExpose({
   font-size: 18px;
   font-weight: bold;
   color: #fff;
+}
+
+.chat-card-item .example-assistant-p .arco-link:hover {
+  border-bottom: 1px solid #fff;
 }
 
 .chat-space-container {
