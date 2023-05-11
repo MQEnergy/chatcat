@@ -11,13 +11,13 @@
     </a-space>
   </div>
   <a-list ref="chatlistRef" class="menu-list-container scrollbar" size="small"
-          :bordered="false" :max-height="980" @reach-bottom="fetchData" :scrollbar="false" hoverable>
+          :bordered="false" :max-height="980" @reach-bottom="fetchData" :scrollbar="false">
     <template v-if="!bottom" #scroll-loading>
       <a-spin/>
     </template>
     <a-list-item v-if="chatList.length > 0" class="menu-list-item flash" v-for="(item, index) in chatList"
                  @click="handleSelectChat(item, index)"
-                 :class="{'selected': currIdx === index}" :key="index">
+                 :class="{'selected flash': currIdx === index}" :key="index">
       <a-list-item-meta style="position: relative;">
         <template #title>
           <div v-if="index === editIdx">
@@ -26,7 +26,7 @@
                      v-model="item.name"
                      allow-clear/>
           </div>
-          <div v-else class="menu-text-item">{{ item.name }}</div>
+          <div v-else class="menu-text-item" :style="{'color': currIdx === index ? '#fff' : ''}">{{ item.name }}</div>
         </template>
       </a-list-item-meta>
       <template #actions>
@@ -247,7 +247,8 @@ const handleSearchChat = () => {
   height: 49px;
   margin-bottom: 10px;
   border-radius: 4px;
-  border: 1px solid var(--color-neutral-3);
+  /*border: 1px solid var(--color-neutral-3);*/
+  border: none;
 }
 
 .menu-list-container .menu-list-item .menu-text-item {
@@ -271,6 +272,8 @@ const handleSearchChat = () => {
 
 .selected {
   background: var(--color-neutral-3);
+  background: #8a57ea;
+  color: #fff;
 }
 
 </style>

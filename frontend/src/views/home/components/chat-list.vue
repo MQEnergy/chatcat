@@ -9,14 +9,16 @@
         <img alt="avatar" :src="ChatGPTLogo"/>
       </a-avatar>
       <a-space direction="vertical">
-        <a-card hoverable class="chat-card-item" :style="{ backgroundColor: 'var(--color-bg-5)' }">
-          <a-typography-paragraph :style="{ marginBottom: 0 }">
-            <div style="font-size: 18px; font-weight: bold;">{{ $t('common.example.tips') }}</div>
+        <a-card class="chat-card-item">
+          <a-typography-paragraph class="example-assistant-p">
+            <div class="assistant-p-title">{{ $t('common.example.tips') }}</div>
             <div style="line-height: 30px;">
-              <p style="font-weight: bold;">{{ $t('common.example.tips1') }}</p>
-              <p v-for="(item, index) in exampleList" :key="index">
+              <p style="font-weight: bold; color: #fff;">{{ $t('common.example.tips1') }}</p>
+              <p v-for="(item, index) in exampleList" :key="index" style="color: #fff">
                 {{ index + 1 }}.
-                <a-link @click="handleExampleClick(item)">{{ item }}</a-link>
+                <a-link @click="handleExampleClick(item)" :style="{color: '#fff', background: 'none'}">
+                  {{ item }}
+                </a-link>
               </p>
             </div>
           </a-typography-paragraph>
@@ -25,13 +27,13 @@
     </a-space>
 
     <!-- chat list -->
-    <a-space class="chat-space-container" direction="vertical" :size="10">
+    <a-space class="chat-space-container" direction="vertical" :size="20">
       <template v-for="(item, index) in chatList" :key="index">
         <a-space v-if="item.role !== 'system'" class="flash" align="start">
           <!-- avatar -->
           <a-avatar
               class="chat-avatar"
-              :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#165DFF', overflow: 'hidden'}"
+              :style="{backgroundColor: item.role === 'assistant' ? '#fff' : '#8a57ea', overflow: 'hidden'}"
               :size="32">
             <img v-if="item.role === 'assistant'"
                  alt="avatar"
@@ -43,15 +45,24 @@
           </a-avatar>
           <!-- chat -->
           <a-space direction="vertical">
-            <a-card hoverable class="chat-card-item" :style="{
-                backgroundColor: item.role === 'assistant' ? 'var(--color-bg-5)': 'var(--color-neutral-2)'
+            <a-card class="chat-card-item" :style="{
+                backgroundColor: item.role === 'assistant' ? 'var(--color-border-1)' : '#8a57ea'
               }">
-              <a-typography-paragraph :copyable="regFlag && !currLoading">
+              <a-typography-paragraph copyable>
                 <template v-if="item.role === 'assistant' && item.content === $t('common.generate.start')">
                   <a-spin size="6" dot/>
                 </template>
-                <div v-else class="chat-div scrollbar" v-html="item.content"></div>
+                <div v-else class="chat-div scrollbar" :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"
+                     v-html="item.content"></div>
+                <template #copy-tooltip>
+                  {{ $t('common.copy') }}
+                </template>
+                <template #copy-icon={copied} v-if="regFlag && !currLoading">
+                  <icon-copy v-if="!copied" :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
+                  <icon-check-circle-fill v-else :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
+                </template>
               </a-typography-paragraph>
+
               <template #actions>
                 <div v-if="item.reg_flag && regFlag" style="position: absolute; left: 10px;"
                      @click="handleRegenerate(item, index)">
@@ -68,7 +79,7 @@
                     :ok-text="$t('common.ok')"
                     :content="$t('common.confirmDel')"
                     @ok="handleDelete(item, index)">
-                  <icon-delete/>
+                  <icon-delete :style="{color: item.role === 'assistant' ? 'rgb(var(--gray-10))' : '#fff' }"/>
                 </a-popconfirm>
               </template>
             </a-card>
@@ -270,6 +281,7 @@ onMounted(() => {
   if (window.go !== undefined) {
     initSettingInfo();
     initWs();
+    copyTextListener('pre code');
   }
 })
 const handleSaveChat = (chatInfo) => {
@@ -434,9 +446,24 @@ defineExpose({
 
 .chat-card-item {
   width: 510px;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  /*background-color: var(--color-bg-5);*/
+  /*background-color: #3271fd;*/
+  background-color: #8a57ea;
+  /*background-color: #9373ee;*/
+  border: none;
+}
+
+.chat-card-item .example-assistant-p {
+  margin-bottom: 0px;
+}
+
+.chat-card-item .example-assistant-p .assistant-p-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .chat-space-container {
@@ -465,6 +492,8 @@ defineExpose({
   position: absolute;
   bottom: 9px;
   right: 40px;
+  color: #fff;
+  background: none;
 }
 
 .chat-avatar {
@@ -484,7 +513,7 @@ defineExpose({
   border-radius: 4px;
   cursor: pointer;
   display: none;
-  background: var(--color-bg-2);
+  background: var(--color-border-1);
 }
 
 @keyframes scroll-down {

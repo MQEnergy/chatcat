@@ -100,6 +100,10 @@ export default defineComponent({
   height: 94vh;
   margin: 0 auto;
   position: relative;
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard */
 }
 
 .settings-container :deep(.arco-card) {

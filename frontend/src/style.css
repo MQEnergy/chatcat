@@ -115,12 +115,12 @@ tr:nth-child(even) {
 }
 
 .hljs {
-    background: var(--color-neutral-2) !important;
     position: relative;
     margin-top: 10px !important;
 }
 
 .arco-typography pre code {
+    background: var(--color-bg-1) !important;
     padding: 12px !important;
     position: relative;
 }
