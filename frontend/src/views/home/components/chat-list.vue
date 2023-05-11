@@ -69,7 +69,7 @@
               <template #actions>
                 <div v-if="item.reg_flag && regFlag" style="position: absolute; left: 10px;"
                      @click="handleRegenerate(item, index)">
-                  <a-button type="text" size="mini" :loading="item.loading">
+                  <a-button type="text" size="mini" :style="{color: 'rgb(var(--purple-5))'}" :loading="item.loading">
                     <template #icon>
                       <icon-refresh/>
                     </template>

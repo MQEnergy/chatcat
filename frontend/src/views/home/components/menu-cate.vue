@@ -271,6 +271,6 @@ const handleCateOk = (form) => {
   height: 35px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
-  border-left: 4px solid rgb(var(--gray-9));
+  border-left: 4px solid rgb(var(--purple-5));
 }
 </style>
