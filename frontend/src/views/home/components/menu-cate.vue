@@ -134,7 +134,15 @@ const handleUpgrade = () => {
                 setTimeout(() => {
                   loadingRef.value = false;
                 }, 500);
-                upgradeService.installApp()
+                upgradeService.installApp().then(res => {
+                  if (res.code !== 0) {
+                    Notification.info({
+                      title: t('common.notice'),
+                      content: res.msg,
+                    })
+                    return;
+                  }
+                })
               })
             }
           }, t('common.upgrade.btn'))
@@ -146,7 +154,7 @@ const handleUpgrade = () => {
       showIcon: false,
       title: `${newVersion}` + t('common.upgrade.notice'),
       content: h(TypographyParagraph, {
-        style: {marginTop: '10px', height: '200px', overflowY: 'scroll'},
+        style: {marginTop: '10px', maxHeight: '200px', overflowY: 'scroll'},
         innerHTML: releaseNotes
       }),
       closable: true,
@@ -252,13 +260,16 @@ const handleCateOk = (form) => {
 .menu-div :deep(.arco-menu-light) {
   background: rgb(var(--gray-9)) !important;
 }
+
 .menu-div :deep(.arco-menu-light .arco-menu-item, .arco-menu-light .arco-menu-group-title, .arco-menu-light .arco-menu-pop-header, .arco-menu-light .arco-menu-inline-header) {
   color: rgb(var(--gray-1)) !important;
   background: rgb(var(--gray-9));
 }
+
 .menu-div :deep(.arco-menu-light .arco-menu-item:hover) {
   background: rgb(var(--gray-8));
 }
+
 .avatar {
   position: relative;
   cursor: pointer;

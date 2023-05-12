@@ -68,6 +68,6 @@ export class UpgradeService {
     if (!this.isUpdate) {
       return false;
     }
-    await RestartApplication(this.upgradeInfo.file_path)
+    return await RestartApplication(this.upgradeInfo.file_path);
   }
 }

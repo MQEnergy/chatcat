@@ -150,8 +150,12 @@ func (i *Info) downloadLatestVersion(downloadUrl string) (string, error) {
 func (i *Info) RestartApplication(filePath string) error {
 	clog.PrintInfo("RestartApplication", filePath)
 	// 启动新的进程
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		cmd := exec.Command("cmd", "/c", "start "+filePath)
+		return cmd.Start()
+	case "darwin":
+		cmd := exec.Command("open", filePath)
 		return cmd.Start()
 	}
 	return fmt.Errorf("请自行安装 新版本存放目录：%s", filePath)
