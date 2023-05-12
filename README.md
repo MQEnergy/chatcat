@@ -18,17 +18,7 @@ Download:
 - [Chatcat Win x64 v0.1.0-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.exe) (Supports Windows7 64-bit and above)
 
 # Chatcat
-ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 and above systems
-
-The ChatGPT client aims to be the best assistant, providing support for learning and work, and allowing users to deeply understand the charm of artificial intelligence. In the process of using it, you will unconsciously progress and learn in the AI era.
-
-As an efficient chat tool, Chatcat has always been committed to providing the best chat experience for users. We always maintain an attitude of continuous evolution and improvement, striving to make the most optimized and outstanding products.
-
-To this end, we will constantly improve and enhance the efficiency and quality of the chat tool, striving to meet the needs and expectations of users. Through continuous technological upgrades and optimization, we will provide users with faster, smarter and more convenient chat experience.
-
-At the same time, we will continue to expand and extend the features and characteristics of the chat tool. We will actively listen to user feedback and suggestions, as much as possible to meet the needs and usage scenarios of different users, and strive to make the most comprehensive, diverse and flexible tool.
-
-We believe that as long as we continue to work hard and pursue, Chatcat will surely become the best chat efficiency tool, creating more value for users.
+ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 64-bit and above systems
 
 ## Introduction
 1. Classification Management: Manage dialogue content lists by category.
@@ -40,7 +30,7 @@ We believe that as long as we continue to work hard and pursue, Chatcat will sur
 
 ## Screenshots
 <p align="center" style="text-align: center">
-<img src="screenshot/use.gif" />
+<img src="screenshot/home.png" />
 <img src="screenshot/setting_general.png" />
 <img src="screenshot/setting_prompt.png" />
 </p>
