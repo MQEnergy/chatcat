@@ -49,7 +49,7 @@ func (i *Info) GetLastVersionInfo() (versionInfo Latest) {
 	}
 	versionInfo.Version = *releaseList[0].TagName
 	versionInfo.VersionDes = *releaseList[0].Body
-	versionInfo.Url += i.Cfg.App.UpgradeUrl + i.Cfg.App.Version + "/" + i.newPackageName()
+	versionInfo.Url += i.Cfg.App.UpgradeUrl + versionInfo.Version + "/" + i.newPackageName()
 	versionInfo.ReleaseDate = releaseList[0].PublishedAt.String()
 	return
 }

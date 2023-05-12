@@ -60,6 +60,6 @@ func Hub(hub *gowebsocket.Hub, a *service.App) {
 	a.LogInfof("websocket starting success port: %d", a.Cfg.App.WsPort)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", a.Cfg.App.WsPort), nil); err != nil {
-		a.LogInfof("ListenAndServe err:", err.Error())
+		a.LogInfof("ListenAndServe err: %s", err.Error())
 	}
 }
