@@ -13,7 +13,7 @@ app:
   height: 866
   minWidth: 1000
   minHeight: 700
-  upgradeUrl: "https://github.com/MQEnergy/chatcat/archive/refs/tags/" # 更新地址
+  upgradeUrl: "https://github.com/MQEnergy/chatcat/releases/download/" # 更新地址
   homeUrl: "https://chat.yippai.com" # 应用主页
   serverUrl: "" # 服务器地址
   dbName: "chatcat.db" # db名字
