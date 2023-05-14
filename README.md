@@ -13,9 +13,9 @@ English | [中文文档](README-zh_CN.md)
 
 Download:
 
-- [Chatcat Mac Intel v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.dmg) (Intel CPU)
-- [Chatcat Mac M1/M2 v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-arm64-installer.dmg) (Apple CPU)
-- [Chatcat Win x64 v0.1.0-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.exe) (Supports Windows7 64-bit and above)
+- [Chatcat Mac Intel v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.dmg) (Intel CPU)
+- [Chatcat Mac M1/M2 v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-arm64-installer.dmg) (Apple CPU)
+- [Chatcat Win x64 v0.1.2-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.exe) (Supports Windows7 64-bit and above)
 
 # Chatcat
 ChatCat More Safety ChatGPT Client Supports Mac (Intel, M1, M2), win7 64-bit and above systems

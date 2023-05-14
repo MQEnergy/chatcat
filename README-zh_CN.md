@@ -4,18 +4,18 @@
 
 ### 更安全、更高效、更聚合 基于 chatGPT 的一体化效率工具
 
-中文文档 | [English](README.md)
-
-下载地址:
-
-- [Chatcat Mac Intel v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.dmg) (英特尔芯片)
-- [Chatcat Mac M1/M2 v0.1.0-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-arm64-installer.dmg) (苹果芯片)
-- [Chatcat Win x64 v0.1.0-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.0/chatcat-amd64-installer.exe) (支持window7系统64位及以上)
-
 [![GitHub license](https://img.shields.io/github/license/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/blob/main/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/MQEnergy/chatcat)](https://goreportcard.com/report/github.com/MQEnergy/chatcat)
 [![codebeat badge](https://codebeat.co/badges/1bf7dd49-1283-4ec9-b56e-a755e1e9c8dd)](https://codebeat.co/projects/github-com-mqenergy-chatcat-main)
 [![GitHub stars](https://img.shields.io/github/stars/MQEnergy/chatcat)](https://github.com/MQEnergy/chatcat/stargazers)
+
+中文文档 | [English](README.md)
+
+下载地址:
+
+- [Chatcat Mac Intel v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.dmg) (英特尔芯片)
+- [Chatcat Mac M1/M2 v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-arm64-installer.dmg) (苹果芯片)
+- [Chatcat Win x64 v0.1.2-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.exe) (支持window7系统64位及以上)
 
 # Chatcat
 

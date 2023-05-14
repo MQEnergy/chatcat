@@ -8,7 +8,7 @@ import (
 
 func MockSetting(db *gorm.DB) {
 	db.Create(&model.Setting{
-		ApiKey:           "",
+		ApiKey:           "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",
 		AskModel:         "gpt-3.5-turbo",
 		ChatModel:        "gpt-3.5-turbo",
 		Language:         "zh-CN",
