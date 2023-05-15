@@ -113,7 +113,7 @@ func InitGoroutine() {
 
 			case exitSignal := <-app.ExitSignalChan:
 				if exitSignal {
-					app.LogInfof("ExitSignalChan received：%s", exitSignal)
+					app.LogInfof("ExitSignalChan received：%v", exitSignal)
 					time.Sleep(time.Second * 1)
 					os.Exit(0)
 				}

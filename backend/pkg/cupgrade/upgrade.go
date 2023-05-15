@@ -87,10 +87,21 @@ func (i *Info) newPackageName() string {
 // @param url
 // @return map[string]interface{}
 // @author cx
-func (i *Info) GetDownloadUrlInfo(url string) (map[string]interface{}, error) {
+func (i *Info) GetDownloadUrlInfo(proxyUrl, downloadUrl string) (map[string]interface{}, error) {
 	const DownloadSpeed = 5.0 // 下载速度为 5MB/s
+	proxy := http.ProxyFromEnvironment
+	if proxyUrl != "" {
+		_proxyUrl, err := url.Parse(proxyUrl)
+		if err != nil {
+			panic(err)
+		}
+		proxy = http.ProxyURL(_proxyUrl)
+	}
+	client := &http.Client{
+		Transport: &http.Transport{Proxy: proxy},
+	}
 	// 发送 HEAD 请求获取文件大小和文件类型等信息
-	res, err := http.Head(url)
+	res, err := client.Head(downloadUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -112,10 +123,21 @@ func (i *Info) GetDownloadUrlInfo(url string) (map[string]interface{}, error) {
 // @return string
 // @return error
 // @author cx
-func (i *Info) downloadLatestVersion(downloadUrl string) (string, error) {
+func (i *Info) downloadLatestVersion(proxyUrl, downloadUrl string) (string, error) {
 	var databaseHome string
-
-	resp, err := http.Get(downloadUrl)
+	proxy := http.ProxyFromEnvironment
+	if proxyUrl != "" {
+		_proxyUrl, err := url.Parse(proxyUrl)
+		if err != nil {
+			panic(err)
+		}
+		proxy = http.ProxyURL(_proxyUrl)
+	}
+	client := &http.Client{
+		Transport: &http.Transport{Proxy: proxy},
+	}
+	fmt.Println("proxyUrl", proxyUrl)
+	resp, err := client.Get(downloadUrl)
 	if err != nil {
 		return "", err
 	}
@@ -166,7 +188,7 @@ func (i *Info) RestartApplication(filePath string) error {
 // @receiver i
 // @return *Latest
 // @return error
-func (i *Info) DoUpgrade(versionInfo Latest) (string, error) {
+func (i *Info) DoUpgrade(proxyUrl string, versionInfo Latest) (string, error) {
 	if versionInfo.Version == "" {
 		return "", fmt.Errorf("版本获取失败")
 	}
@@ -175,7 +197,7 @@ func (i *Info) DoUpgrade(versionInfo Latest) (string, error) {
 	if !localVer.LessThan(remoteVer) {
 		return "", fmt.Errorf("当前版本已是最新版本")
 	}
-	filePath, err := i.downloadLatestVersion(versionInfo.Url)
+	filePath, err := i.downloadLatestVersion(proxyUrl, versionInfo.Url)
 	if err != nil {
 		return "", fmt.Errorf("下载最新版本失败 err: %s", err.Error())
 	}

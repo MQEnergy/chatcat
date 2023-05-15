@@ -1,9 +1,11 @@
 package version
 
 import (
+	"chatcat/backend/model"
 	"chatcat/backend/pkg/cresp"
 	"chatcat/backend/pkg/cupgrade"
 	"chatcat/backend/service"
+	"chatcat/backend/service/setting"
 	"github.com/hashicorp/go-version"
 )
 
@@ -53,7 +55,9 @@ func (s *Service) CheckAndGetLatestServerVersion() *cresp.Response {
 // @author cx
 func (s *Service) DoUpgrade() *cresp.Response {
 	remoteVersionInfo := cupgrade.New(s.App.Cfg).GetLastVersionInfo()
-	filePath, err := cupgrade.New(s.App.Cfg).DoUpgrade(remoteVersionInfo)
+	generalInfo := setting.New(s.App).GetGeneralInfo()
+	settingInfo := generalInfo.Data.(model.Setting)
+	filePath, err := cupgrade.New(s.App.Cfg).DoUpgrade(settingInfo.ProxyUrl, remoteVersionInfo)
 	if err != nil {
 		return cresp.Fail(err.Error())
 	}
@@ -70,7 +74,9 @@ func (s *Service) DoUpgrade() *cresp.Response {
 // @return *cresp.Response
 // @author cx
 func (s *Service) GetDownloadUrlInfo(url string) *cresp.Response {
-	info, err := cupgrade.New(s.App.Cfg).GetDownloadUrlInfo(url)
+	generalInfo := setting.New(s.App).GetGeneralInfo()
+	settingInfo := generalInfo.Data.(model.Setting)
+	info, err := cupgrade.New(s.App.Cfg).GetDownloadUrlInfo(settingInfo.ProxyUrl, url)
 	if err != nil {
 		return cresp.Fail("获取下载信息异常 err:" + err.Error())
 	}
