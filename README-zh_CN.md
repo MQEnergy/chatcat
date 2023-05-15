@@ -13,9 +13,9 @@
 
 下载地址:
 
-- [Chatcat Mac Intel v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.dmg) (英特尔芯片)
-- [Chatcat Mac M1/M2 v0.1.2-Beta.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-arm64-installer.dmg) (苹果芯片)
-- [Chatcat Win x64 v0.1.2-Beta.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.2/chatcat-amd64-installer.exe) (支持window7系统64位及以上)
+- [Chatcat Mac Intel v0.1.3.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.3/chatcat-amd64-installer.dmg) (英特尔芯片)
+- [Chatcat Mac M1/M2 v0.1.3.dmg](https://github.com/MQEnergy/chatcat/releases/download/v0.1.3/chatcat-arm64-installer.dmg) (苹果芯片)
+- [Chatcat Win x64 v0.1.3.exe](https://github.com/MQEnergy/chatcat/releases/download/v0.1.3/chatcat-amd64-installer.exe) (支持window7系统64位及以上)
 
 # Chatcat
 
