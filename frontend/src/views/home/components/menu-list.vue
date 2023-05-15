@@ -253,8 +253,9 @@ const handleSearchChat = () => {
 }
 
 .menu-list-container .menu-list-item .menu-text-item {
-  width: 130px;
+  min-width: 130px;
   overflow: hidden;
+  height: 25px;
 }
 
 .menu-list-container .menu-list-item .menu-input-item {
