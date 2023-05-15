@@ -8,12 +8,12 @@ import (
 
 func MockSetting(db *gorm.DB) {
 	db.Create(&model.Setting{
-		ApiKey:           "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",
+		ApiKey:           "",
 		AskModel:         "gpt-3.5-turbo",
 		ChatModel:        "gpt-3.5-turbo",
 		Language:         "zh-CN",
 		Theme:            1,
-		ProxyUrl:         "",
+		ProxyUrl:         "http://127.0.0.1:7890",
 		Account:          "",
 		AccessToken:      "",
 		IsSync:           2,

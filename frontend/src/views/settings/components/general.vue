@@ -35,6 +35,12 @@
             </a-option>
           </a-select>
         </a-card>
+        <!-- proxy -->
+        <a-card class="card-container" :title="$t('settings.proxy')" :bordered="false"
+                :header-style="{borderColor: 'var(--color-fill-2)', paddingLeft: '0px'}">
+          <a-input v-model="form.proxy_url" @blur="handleGeneralSave" :placeholder="$t('settings.proxy.placeholder')"
+                   :style="{width:'460px'}"></a-input>
+        </a-card>
         <!-- theme -->
         <a-card class="card-container" :title="$t('settings.theme')" :bordered="false"
                 :header-style="{borderColor: 'var(--color-fill-2)', paddingLeft: '0px'}">

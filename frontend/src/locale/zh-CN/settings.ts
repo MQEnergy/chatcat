@@ -27,6 +27,8 @@ export default {
   'settings.theme.toDark': '暗黑模式',
   'settings.screen.toFull': '点击切换全屏模式',
   'settings.screen.toExit': '点击退出全屏模式',
+  "settings.proxy": "代理",
+  "settings.proxy.placeholder": "请输入proxy代理地址 如：http://127.0.0.1:7890",
   // 高级设置
   'settings.advanced': '高级设置',
   'settings.advanced.temperature': '随机性 (temperature)',

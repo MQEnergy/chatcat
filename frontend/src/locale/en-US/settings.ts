@@ -27,7 +27,9 @@ export default {
   'settings.theme.toDark': 'Dark mode',
   'settings.screen.toFull': 'Click to switch to full screen mode',
   'settings.screen.toExit': 'Click to exit the full screen mode',
-  // 高级设置
+  "settings.proxy": "Proxy",
+  "settings.proxy.placeholder": "Please input a proxy address eg. http://127.0.0.1:7890",
+  // advanced settings
   'settings.advanced': 'Advanced',
   'settings.advanced.temperature': 'Randomness (temperature)',
   'settings.advanced.temperature.desc': 'The larger the value, the more random the reply will be, ranging between 0 and 2. Values greater than 1 may result in garbled text.',
