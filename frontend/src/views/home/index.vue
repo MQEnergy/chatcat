@@ -16,7 +16,7 @@
         <a-layout-content class="chat-list-container">
           <a-layout>
             <a-layout-header>
-              <content-header :info="headerInfo"></content-header>
+              <content-header class="content-header-container" :info="headerInfo"></content-header>
             </a-layout-header>
             <a-layout-content class="scrollbar">
               <chat-list ref="chatListRef" @add:chat="handleChat" :chatid="headerInfo.chatId"
@@ -166,11 +166,22 @@ const handleSelectChat = (row) => {
   user-select: none; /* Standard */
 }
 
-.prompt-input-container {
+.layout-container .content-header-container {
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard */
+}
+
+.layout-container .prompt-input-container {
   position: absolute;
   z-index: 9;
   /*padding: 0 20px;*/
   bottom: 0px;
   width: -webkit-fill-available;
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard */
 }
 </style>

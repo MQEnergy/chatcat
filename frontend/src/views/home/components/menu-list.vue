@@ -268,10 +268,6 @@ const handleSearchChat = () => {
   margin-right: 10px;
 }
 
-.check-icon {
-  color: rgb(22, 93, 255);
-}
-
 .selected {
   background: var(--color-neutral-3);
   background: rgb(var(--purple-5));

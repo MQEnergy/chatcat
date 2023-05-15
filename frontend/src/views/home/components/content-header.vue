@@ -80,4 +80,8 @@ const handleNormalScreen = () => {
 .page-header :deep(.arco-page-header) {
   padding: 10px 0 !important;
 }
+
+.page-header :deep(.arco-page-header-subtitle) {
+  max-width: 300px;
+}
 </style>
