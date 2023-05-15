@@ -55,7 +55,7 @@ export default {
   'common.upgrade.notice': '更新提醒',
   'common.upgrade.btn': '下载更新',
   'common.upgrade.noTips': '暂无新版本更新',
-  'common.prompt.input.placeholder': '在此处粘贴或输入内容 Ctr + Enter 发送',
+  'common.prompt.input.placeholder': '在此处粘贴或输入内容 Ctrl + Enter 发送',
   'common.prompt.input.chatTips': '您已切换为对话模式，注意token使用量，您可删除对话内容以节约token数量',
   'common.prompt.input.system': '例如：我希望你能充当私人教练',
   'common.prompt.input.replynormal': '正常回复',

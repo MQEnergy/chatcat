@@ -55,7 +55,7 @@ export default {
   'common.upgrade.notice': 'Upgrade Notice',
   'common.upgrade.btn': 'Download',
   'common.upgrade.noTips': 'No new version available',
-  'common.prompt.input.placeholder': 'Paster or input content here Ctr + Enter to send',
+  'common.prompt.input.placeholder': 'Paster or input content here Ctrl + Enter to send',
   'common.prompt.input.chatTips': 'You have switched to conversation mode. Please be mindful of your token usage. You can delete conversation content to save token quantity.',
   'common.prompt.input.system': 'For example: I hope you can serve as a personal coach.',
   'common.prompt.input.replynormal': 'reply with normal format',
