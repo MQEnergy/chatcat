@@ -4,7 +4,7 @@
       <div class="prompt-extension">
         <a-select v-model="curSysPrompt.id" :style="{width:'160px'}" placeholder="Please select ..."
                   @change="handleSysPromptChange">
-          <a-option v-for="(item, index) in SysInputEnums" :key="index" :value="item.id" :label="item.label"/>
+          <a-option v-for="(item, index) in syProList" :key="index" :value="item.id" :label="item.label"/>
         </a-select>
         <a-apace :style="{marginLeft: '10px'}">
           <span v-if="curSysPrompt.is_sys === 1">{{ $t('common.system') }}:</span>
@@ -50,9 +50,9 @@
 <script setup>
 import {reactive, ref, watch} from "vue";
 import {BreakOffChatStream} from "../../../../wailsjs/go/chat/Service.js";
-import SysInputEnums from "../../../config/sys-input.js";
 import {Notification} from "@arco-design/web-vue";
 import {useI18n} from "vue-i18n";
+import {LOCALE_OPTIONS} from "@/locale";
 
 const {t} = useI18n();
 
@@ -70,6 +70,65 @@ const props = defineProps({
     default: false
   }
 })
+const syProList = reactive([
+  {
+    id: 1,
+    label: t('common.prompt.select.title1'),
+    desc: t('common.prompt.select.title1.desc'),
+    type: 2, // 1: chat  2：answer
+    is_sys: 2, // 1: is system
+    extra: []
+  }, {
+    id: 2,
+    label: t('common.prompt.select.title2'),
+    desc: t('common.prompt.select.title2.desc'),
+    type: 1,
+    is_sys: 1,
+    extra: []
+  }, {
+    id: 3,
+    label: t('common.prompt.select.title3'),
+    desc: t('common.prompt.select.title3.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: LOCALE_OPTIONS
+  }, {
+    id: 4,
+    label: t('common.prompt.select.title4'),
+    desc: t('common.prompt.select.title4.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: []
+  }, {
+    id: 5,
+    label: t('common.prompt.select.title5'),
+    desc: t('common.prompt.select.title5.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: []
+  }, {
+    id: 6,
+    label: t('common.prompt.select.title6'),
+    desc: t('common.prompt.select.title6.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: []
+  }, {
+    id: 7,
+    label: t('common.prompt.select.title7'),
+    desc: t('common.prompt.select.title7.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: []
+  }, {
+    id: 8,
+    label: t('common.prompt.select.title8'),
+    desc: t('common.prompt.select.title8.desc'),
+    type: 2,
+    is_sys: 2,
+    extra: []
+  },
+]);
 const promptValue = ref(props.value);
 let curSysPrompt = reactive({
   id: 1,
@@ -159,7 +218,7 @@ const handleSysPromptChange = (e) => {
       duration: 3000
     })
   }
-  const promptInfo = SysInputEnums.filter((item) => {
+  const promptInfo = syProList.filter((item) => {
     return e === item.id
   });
   if (promptInfo.length > 0) {
@@ -214,6 +273,7 @@ const handleSysPromptChange = (e) => {
   bottom: 175px;
   left: 10px;
 }
+
 .prompt-container :deep(.arco-textarea-wrapper) {
   background: none;
   border: none;
