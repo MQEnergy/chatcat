@@ -57,7 +57,7 @@ import {Button, Message, Notification, Progress, TypographyParagraph} from '@arc
 import CateAdd from "@views/home/components/cate-add.vue";
 import {GetChatCateList, SetChatCateData} from "../../../../wailsjs/go/chat/Service.js";
 import {useI18n} from "vue-i18n";
-import {UpgradeService} from "../../../plugins/upgrade/index.js";
+import {UpgradeService} from "@plugins/upgrade/index.js";
 import marked from "@plugins/markdown/marked.js";
 import "highlight.js/styles/default.css";
 

@@ -12,7 +12,7 @@ export class UpgradeService {
    */
   constructor() {
     this.isUpdate = false; // is update
-    this.lastVersionInfo == {}; // last version info
+    this.lastVersionInfo = {}; // last version info
     this.downloadFileInfo = {}; // download info include: file size, estimated download time.
     this.upgradeInfo = {}; //
   }
